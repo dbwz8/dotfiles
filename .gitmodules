@@ -14,9 +14,6 @@
 [submodule "submodules/dotbins"]
 	path = submodules/dotbins
 	url = git@github.com:basnijholt/dotbins.git
-[submodule "submodules/mydotbins"]
-	path = submodules/mydotbins
-	url = git@github.com:basnijholt/mydotbins.git
 [submodule "submodules/zsh-z"]
 	path = submodules/zsh-z
 	url = git@github.com:agkozak/zsh-z.git

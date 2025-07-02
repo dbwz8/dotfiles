@@ -13,7 +13,7 @@
     ~/.config/git/attributes: configs/git/attributes
     ~/.config/starship.toml: configs/starship/starship.toml
     ~/.direnvrc: configs/direnv/direnvrc
-    ~/.dotbins: submodules/mydotbins
+    ~/.dotbins/dotbins.yaml: configs/dotbins/dotbins.yaml
     ~/.gitconfig-personal: configs/git/gitconfig-personal
     ~/.gitconfig: configs/git/gitconfig
     ~/.local/bin/nbviewer: scripts/nbviewer.sh
@@ -32,6 +32,4 @@
 
 - shell:
   - bash scripts/sync-uv-tools.sh
-  - git submodule sync --recursive
-  - git submodule update --init --recursive --remote
   
