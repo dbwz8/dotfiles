@@ -1,5 +1,7 @@
 # zsh_plugins.sh - meant to be sourced in .zshrc
 
+set -o vi
+
 if [[ ($- == *i*) && -n "$ZSH_VERSION" ]]; then
     # -- oh-my-zsh
     [[ -z $STARSHIP_SHELL ]] && export ZSH_THEME="mytheme"
@@ -18,6 +20,8 @@ if [[ ($- == *i*) && -n "$ZSH_VERSION" ]]; then
     if command -v atuin &> /dev/null; then
         bindkey -M emacs '^r' atuin-search  # This again because `omz/lib/key-bindings.zsh` overwrote it
     fi
+    bindkey -M vicmd 'k' history-substring-search-up
+    bindkey -M vicmd 'j' history-substring-search-down
 
     # -- if on Linux
     if [[ "$(uname -s)" == "Linux" ]]; then
