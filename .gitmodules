@@ -2,9 +2,6 @@
 	path = submodules/dotbot
 	url = https://github.com/anishathalye/dotbot
 	ignore = dirty
-[submodule "submodules/zsh-fzf-history-search"]
-	path = submodules/zsh-fzf-history-search
-	url = git@github.com:joshskidmore/zsh-fzf-history-search.git
 [submodule "submodules/zsh-z"]
 	path = submodules/zsh-z
 	url = git@github.com:agkozak/zsh-z.git
