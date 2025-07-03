@@ -90,5 +90,8 @@ tools:
 
   uv:
     repo: astral-sh/uv
-    binary_name: [uv, uvx]
-    path_in_archive: [uv-*/uv, uv-*/uvx]
+    linux:
+      binary_name: [uv, uvx]
+      path_in_archive: [uv-*/uv, uv-*/uvx]
+    windows:
+      binary_name: [uv.exe, uvx.exe]
