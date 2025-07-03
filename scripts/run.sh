@@ -7,7 +7,7 @@ _arch=$(uname -m)
 [[ "$_arch" == "x86_64" ]] && _arch="amd64"
 [[ "$_arch" == "aarch64" || "$_arch" == "arm64" ]] && _arch="arm64"
 
-_bin_dir="$HOME/dotfiles/submodules/mydotbins/$_os/$_arch/bin"
+_bin_dir="$HOME/git/dotfiles/submodules/mydotbins/$_os/$_arch/bin"
 
 if [ $# -eq 0 ]; then
     echo "Usage: run <command> [args...]"

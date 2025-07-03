@@ -7,12 +7,12 @@ if [[ ($- == *i*) && -n "$ZSH_VERSION" ]]; then
     export DISABLE_AUTO_UPDATE=true  # Speedup of 40%
     plugins=( git dirhistory history sudo uv )
     command -v eza >/dev/null && zstyle ':omz:lib:directories' aliases no  # Skip aliases in directories.zsh if eza
-    export ZSH=~/dotfiles/submodules/oh-my-zsh
+    export ZSH=~/git/dotfiles/submodules/oh-my-zsh
     source $ZSH/oh-my-zsh.sh
 
     # -- zsh plugins
-    source ~/dotfiles/submodules/zsh-autosuggestions/zsh-autosuggestions.zsh
-    source ~/dotfiles/submodules/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    source ~/git/dotfiles/submodules/zsh-autosuggestions/zsh-autosuggestions.zsh
+    source ~/git/dotfiles/submodules/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
     # -- fix Atuin [Ctrl-r] key binding
     if command -v atuin &> /dev/null; then

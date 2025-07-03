@@ -11,16 +11,16 @@ RUN apt-get update && apt-get install -y git zsh
 RUN git config --global url."https://github.com/".insteadOf git@github.com:
 
 # Clone the dotfiles repository
-RUN git clone https://github.com/basnijholt/dotfiles.git ~/dotfiles
+RUN git clone https://github.com/dbwz9/dotfiles.git ~/git/dotfiles
 
 # Initialize submodules and skip the private 'secrets' submodule
-RUN cd ~/dotfiles && \
+RUN cd ~/git/dotfiles && \
     git submodule init && \
     git config submodule.secrets.update none && \
     git submodule update --init --recursive --jobs 8
 
 # Install the dotfiles
-RUN cd ~/dotfiles && ./install || true
+RUN cd ~/git/dotfiles && ./install || true
 
 # Set the working directory and entrypoint
 WORKDIR /root/dotfiles

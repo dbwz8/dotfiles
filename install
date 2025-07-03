@@ -9,5 +9,5 @@ if command -v python3 >/dev/null 2>&1; then
     DOTBOT_BIN="bin/dotbot"
     python3 "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "install.conf.yaml" "${@}"
 else
-    $HOME/dotfiles/scripts/run.sh uvx dotbot -d $HOME/dotfiles -c install.conf.yaml
+    $HOME/git/dotfiles/scripts/run.sh uvx dotbot -d $HOME/git/dotfiles -c install.conf.yaml
 fi

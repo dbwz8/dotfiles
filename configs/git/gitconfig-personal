@@ -5,7 +5,7 @@
 [maintenance]
 	repo = ~/Code/graphviz-anywidget
 	repo = ~/Code/pipefunc
-	repo = ~/dotfiles/pipefunc/src
+	repo = ~/git/dotfiles/pipefunc/src
 [safe]
 	directory = /opt/stacks
 [url "git@github.com:"]

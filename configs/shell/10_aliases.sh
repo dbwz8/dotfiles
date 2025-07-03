@@ -18,7 +18,7 @@ if [[ $- == *i* ]]; then
         alias s='/usr/local/bin/subl'
         alias ss='open -b com.apple.ScreenSaver.Engine'
         alias tun='autossh -N -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -L 8888:localhost:9999 cw'
-        alias nixswitch="darwin-rebuild switch --flake ~/dotfiles/configs/nix-darwin"
+        alias nixswitch="darwin-rebuild switch --flake ~/git/dotfiles/configs/nix-darwin"
 
         # Relies on having installed x86 brew like:
         # arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
