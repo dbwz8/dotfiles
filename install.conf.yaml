@@ -10,6 +10,7 @@
     ~/.config/atuin: configs/atuin
     ~/.config/dask/distributed.yaml: configs/dask/distributed.yaml
     ~/.config/git/attributes: configs/git/attributes
+    ~/.config/starship.toml: configs/starship/starship.toml
     ~/.direnvrc: configs/direnv/direnvrc
     ~/.dotbins/dotbins.yaml: configs/dotbins/dotbins.yaml
     ~/.gitconfig-personal: configs/git/gitconfig-personal

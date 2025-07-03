@@ -44,7 +44,7 @@ tools:
       powershell: |
         function l { eza.exe --long --all --git --icons=auto --color=always $args }
         function ll { eza.exe --long --all --git --icons=auto --color=always $args }
-        function lt { eza --long --all --git --icons=auto --sort modified --reverse --color=always $args | head -20 }
+        function lt { eza --long --all --git --icons=auto --sort modified --reverse --color=always $args 2>&1 | head -20 }
   fzf:
     repo: junegunn/fzf
     shell_code:
