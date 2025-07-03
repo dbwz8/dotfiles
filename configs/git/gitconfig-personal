@@ -1,12 +1,7 @@
+[credential]
+        credentialStore = gpg
+[pull]
+        rebase = false
 [user]
-	email = bas@nijho.lt
-	name = Bas Nijholt
-	signingkey = ~/.ssh/id_ed25519.pub
-[maintenance]
-	repo = ~/Code/graphviz-anywidget
-	repo = ~/Code/pipefunc
-	repo = ~/git/dotfiles/pipefunc/src
-[safe]
-	directory = /opt/stacks
-[url "git@github.com:"]
-	insteadOf = https://github.com/
+        email = davewecker@outlook.com
+        name = wecker

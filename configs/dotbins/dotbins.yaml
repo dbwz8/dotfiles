@@ -39,6 +39,8 @@ tools:
     shell_code:
       bash,zsh: |
         alias l="eza --long --all --git --icons=auto"
+        alias ll="eza --long --all --git --icons=auto"
+        lt() { eza --long --all --git --icons=auto --sort modified --reverse --color=always $* | head -20; }
       powershell: |
         function l { eza.exe --long --all --git --icons=auto --color=always $args }
         function ll { eza.exe --long --all --git --icons=auto --color=always $args }

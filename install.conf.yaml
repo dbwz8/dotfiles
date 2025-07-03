@@ -9,9 +9,7 @@
     ~/.condarc: configs/conda/condarc
     ~/.config/atuin: configs/atuin
     ~/.config/dask/distributed.yaml: configs/dask/distributed.yaml
-    ~/.config/dotbins/config.yaml: submodules/dotbins/dotbins.yaml
     ~/.config/git/attributes: configs/git/attributes
-    ~/.config/starship.toml: configs/starship/starship.toml
     ~/.direnvrc: configs/direnv/direnvrc
     ~/.dotbins/dotbins.yaml: configs/dotbins/dotbins.yaml
     ~/.gitconfig-personal: configs/git/gitconfig-personal
@@ -22,7 +20,6 @@
     ~/.local/bin/sync-local-dotfiles: scripts/sync-local-dotfiles.sh
     ~/.local/bin/sync-uv-tools: scripts/sync-uv-tools.sh
     ~/.local/bin/upload-file: scripts/upload-file.sh
-    ~/.local/bin/keychain: submodules/mydotbins/linux/amd64/bin/keychain
     ~/.mambarc: configs/mamba/mambarc
     ~/.oh-my-zsh: submodules/oh-my-zsh
     ~/.tmux.conf: submodules/tmux/.tmux.conf
