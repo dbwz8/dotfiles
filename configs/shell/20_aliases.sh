@@ -5,7 +5,6 @@ if [[ $- == *i* ]]; then
     #   sleep 10; alert
     alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-    alias awk='gawk'
     alias c='code'
     alias clear=/usr/bin/clear # The one in anaconda causes multi output
     alias glo='git log --oneline'

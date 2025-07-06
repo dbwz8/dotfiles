@@ -54,3 +54,7 @@
 [delta]
 	navigate = true  # use n and N to move between diff sections
 	dark = true  # or light = true, or omit for auto-detection
+[user]
+	signingkey = 9C9BA94CCF4A87C4305E46E6A923A07626BFD9BC
+[commit]
+	gpgsign = true

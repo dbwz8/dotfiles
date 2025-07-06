@@ -52,7 +52,11 @@ function _path_append {
 #############################
 function _path_dedup {
     var=${1:-PATH}
-    val=$(echo -n "${(P)var}" | gawk -v RS=':' '(!a[$0]++){if(b++)printf(RS);printf($0)}')
+    if [[ $SHELL =~ zsh ]];then
+        val=$(echo -n "${(P)var}" | awk -v RS=':' '(!a[$0]++){if(b++)printf(RS);printf($0)}')
+    else
+        val=$(echo -n "${var}" | awk -v RS=':' '(!a[$0]++){if(b++)printf(RS);printf($0)}')
+    fi
     eval "$var=\$val"
 }
 
