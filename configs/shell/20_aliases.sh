@@ -7,6 +7,7 @@ if [[ $- == *i* ]]; then
 
     alias c='code'
     alias clear=/usr/bin/clear # The one in anaconda causes multi output
+    alias do_slurm='rm slurm*.out;sbatch myjob.slurm;sleep 2;jobs;sleep 2;tail -f slurm*.out'
     alias glo='git log --oneline'
     alias gs='git status'
     alias ls='eza'
