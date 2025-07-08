@@ -6,9 +6,7 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
 
     export TMPDIR=~/.tmp/  # for VScode ssh tmp files
 
-    [[ "$(whence -w squeue)" = *alias* ]] && unalias squeue
-
-    function squeue {
+    function sq {
         /usr/bin/squeue -o "que:%9i%10M%3D%2t %5u %15N%Z" $@
     }
     function sacct {
@@ -61,11 +59,14 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
         if [[ $opts =~ [iqeo] ]]; then
             local prvMod=$(($(date --utc +%s) - 600))
             pat1=' (R|CF) '
+                echo "====================================== squeue ==================================================="
+            sq -hu $user
             while [ 1 ]; do
                 echo "================================================================================================="
                 [[ $opts =~ i ]] && sinfo -h | grep -e '#' | sed 's/^/inf:           /'
                 [[ $opts =~ q ]] && {
-                    lines=("${(@f)$(squeue -hu $user)}")
+                    lines=("${(@f)$(sq -hu $user)}")
+                    [[ -z $lines ]] && break
                     for line in $lines; do
                         [[ ! $line =~ $pat1 ]] && continue
                         dir=/home/$user/logs
