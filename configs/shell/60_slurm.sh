@@ -56,7 +56,7 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
             sacct -u $user
         fi
         if [[ $opts =~ [iqeo] ]]; then
-            local prvMod=$(($(date --utc +%s) - 6000))
+            local prvMod=$(($(date --utc +%s) - 600))
             pat1='que:(\S+) .* (R|CF) '
             echo "====================================== squeue ==================================================="
             sq -hu $user
