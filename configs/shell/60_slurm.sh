@@ -15,6 +15,22 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
         /usr/bin/sacct --format "JobID,AllocCPUS%4,State%6,CPUTimeRaw,Elapsed,NTasks%4,NodeList%20,WorkDir%21" $@ | tail -9
     }
 
+    function queues() {
+        squeue "$@" | awk '
+        BEGIN {
+            abbrev["R"]="(Running)"
+            abbrev["PD"]="(Pending)"
+            abbrev["CG"]="(Completing)"
+            abbrev["F"]="(Failed)"
+        }
+        NR>1 {a[$5]++}
+        END {
+            for (i in a) {
+                printf "%-2s %-12s %d\n", i, abbrev[i], a[i]
+            }
+        }'
+    }
+
     #######################################
     # Show SLURM queue status
     # ARGUMENTS: [-u user] [aipqeo=aiqeo]
@@ -59,6 +75,7 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
             local prvMod=$(($(date --utc +%s) - 600))
             pat1='que:(\S+) .* (R|CF) '
             echo "====================================== squeue ==================================================="
+            queues
             sq -hu $user
             echo "====================================== ==================================================="
             while [ 1 ]; do
