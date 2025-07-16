@@ -11,8 +11,11 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
     }
 
     function sacct {
-        /usr/bin/sacct --format "JobID,AllocCPUS%4,State%6,CPUTimeRaw,Elapsed,NTasks%4,NodeList%20,WorkDir%21" $@ | head -1
-        /usr/bin/sacct --format "JobID,AllocCPUS%4,State%6,CPUTimeRaw,Elapsed,NTasks%4,NodeList%20,WorkDir%21" $@ | tail -9
+	if [[ -z "$@" ]];then
+		/usr/bin/sacct --starttime=now-2hours --format "JobID,AllocCPUS%4,State%6,CPUTimeRaw,Elapsed,NTasks%4,NodeList%20,WorkDir%21"
+	else
+		/usr/bin/sacct --starttime=now-2hours --format "JobID,AllocCPUS%4,State%6,CPUTimeRaw,Elapsed,NTasks%4,NodeList%20,WorkDir%21" $@ 
+	fi
     }
 
     function queues() {
