@@ -80,19 +80,18 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
             while [ 1 ]; do
                 [[ $opts =~ i ]] && sinfo -h | grep -e '#' | sed 's/^/inf:           /'
                 [[ $opts =~ q ]] && {
-                        [[ $opts =~ o ]] && {
-                            files=(/home/$user/logs/*.out)
-                            for file in $files; do
-                                local curModOut=$(date --utc --reference=$file +%s)
-                                [[ $curModOut -gt $prvMod ]] && {
-                                    lines=$(tail -10 $file)
-                                    [[ ! -z "$lines" ]] && {
-                                        echo "=== fil: $file\n$lines"
-                                    }
+                    [[ $opts =~ o ]] && {
+                        files=(/home/$user/logs/*.out)
+                        for file in $files; do
+                            local curModOut=$(date --utc --reference=$file +%s)
+                            [[ $curModOut -gt $prvMod ]] && {
+                                lines=$(tail -10 $file)
+                                [[ ! -z "$lines" ]] && {
+                                    echo "=== fil: $file\n$lines"
                                 }
-                            done
-                        }
-                    done
+                            }
+                        done
+                    }
                     lines=("${(@f)$(sq -hu $user)}")
                     [[ -z $lines ]] && break
                     prvMod=$(($(date --utc +%s) - 2))
