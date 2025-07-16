@@ -16,6 +16,7 @@ if [[ $- == *i* ]]; then
     alias pc='pre-commit run --all-files'
     alias p="pytest"
     alias py="python"
+    alias rsync_slurm="rsync -azvh wecker@obsidian:git/sap/qec_team/data/dbwPlay_save/'*.json' ."
     alias u='cd ..'
     alias v='vim'
     alias vi='vim'

@@ -43,12 +43,11 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
         opts="aiqeo"
         dir="."
         OPTIND=1
-        while getopts ":aiqeou:" option; do
+        while getopts ":aiqou:" option; do
             case "${option}" in
             a) opts=${opts/a/} ;;
             i) opts=${opts/i/} ;;
             q) opts=${opts/q/} ;;
-            e) opts=${opts/e/} ;;
             o) opts=${opts/o/} ;;
             u) user=$OPTARG ;;
             \?)
@@ -56,7 +55,7 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
                 echo "Usage: q [-t secs] [-u user] [-aiqeo]"
                 echo "  -u = user to show (default=current user)"
                 echo "  -* = turn off reporting that option:"
-                echo "        a=acct i=info q=queue o=out e=err"
+                echo "        a=acct i=info q=queue o=out"
                 echo ""
                 return
                 ;;
@@ -81,7 +80,7 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
             while [ 1 ]; do
                 [[ $opts =~ i ]] && sinfo -h | grep -e '#' | sed 's/^/inf:           /'
                 [[ $opts =~ q ]] && {
-                    for typ in out err;do
+                    for typ in out ;do
                         [[ $opts =~ ${typ:0:1} ]] && {
                             files=(/home/$user/logs/*.$typ)
                             for file in $files; do
