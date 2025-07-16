@@ -80,9 +80,8 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
             while [ 1 ]; do
                 [[ $opts =~ i ]] && sinfo -h | grep -e '#' | sed 's/^/inf:           /'
                 [[ $opts =~ q ]] && {
-                    for typ in out ;do
-                        [[ $opts =~ ${typ:0:1} ]] && {
-                            files=(/home/$user/logs/*.$typ)
+                        [[ $opts =~ o ]] && {
+                            files=(/home/$user/logs/*.out)
                             for file in $files; do
                                 local curModOut=$(date --utc --reference=$file +%s)
                                 [[ $curModOut -gt $prvMod ]] && {
