@@ -92,5 +92,5 @@ function plantuml {
 }
 
 function slurm_status {
-    ssh obsidian '(sacct -o "JobID,Elapsed,State"|sort -r +4|(sed -u 6q;tail -n6);ls -l git/sap/qec_team/data/dbwPlay|wc -l;echo "#### TOTAL: 504 jobs,1512 runs")'
+    ssh obsidian '(squeue -u wecker;echo "Expected: 1512, data/dbwPlay: $(ls -l git/sap/qec_team/data/dbwPlay|wc -l)")'
 }

@@ -6,6 +6,7 @@ export PATH="$HOME/.local/bin:$PATH"  # Common place, e.g., my upload-file scrip
 export PATH="/nix/var/nix/profiles/default/bin:$PATH"  # nix path
 export PYTHONPATH=$SAP/qiskit-ionq:$QCIRCUITSIM:$CYPRESS
 
+export CASE_SENSITIVE="true"
 export CYPRESS=$SAP/system_performance/third_party/cypress/cypress/src
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
