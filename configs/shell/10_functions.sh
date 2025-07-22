@@ -90,3 +90,7 @@ function grepr {
 function plantuml {
     java -Djava.awt.headless=true -jar ~/kits/plantuml.jar $*
 }
+
+function slurm_status {
+    ssh obsidian '(sacct -o "JobID,Elapsed,State"|sort -r +4|(sed -u 6q;tail -n6);ls -l git/sap/qec_team/data/dbwPlay|wc -l;echo "#### TOTAL: 504 jobs,1512 runs")'
+}

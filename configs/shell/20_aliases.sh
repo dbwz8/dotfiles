@@ -7,7 +7,6 @@ if [[ $- == *i* ]]; then
 
     alias c='code'
     alias clear=/usr/bin/clear # The one in anaconda causes multi output
-    alias do_slurm='rm slurm*.out;sbatch myjob.slurm;sleep 2;jobs;sleep 2;tail -f slurm*.out'
     alias glo='git log --oneline'
     alias gs='git status'
     alias ls='eza'
@@ -16,7 +15,7 @@ if [[ $- == *i* ]]; then
     alias pc='pre-commit run --all-files'
     alias p="pytest"
     alias py="python"
-    alias rsync_slurm="rsync -azvh wecker@obsidian:git/sap/qec_team/data/dbwPlay_save/'*.json' ."
+    alias slurm_rsync="rsync -azvh wecker@obsidian:git/sap/qec_team/data/dbwPlay_save/'*.json' ~/git/sap/qec_team/data/dbwPlay_save"
     alias u='cd ..'
     alias v='vim'
     alias vi='vim'
