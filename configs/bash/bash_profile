@@ -1,1 +1,3 @@
 source ~/git/dotfiles/configs/shell/main.sh
+
+. "$HOME/.atuin/bin/env"

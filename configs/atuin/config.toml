@@ -18,3 +18,7 @@ common_subcommands = [
 
 [theme]
 name = "autumn"
+
+[daemon]
+enabled = true
+
