@@ -94,3 +94,64 @@ function plantuml {
 function slurm_status {
     ssh obsidian '(squeue -u wecker;echo "Expected: 1512, data/dbwPlay: $(ls -l git/sap/qec_team/data/dbwPlay|wc -l)")'
 }
+
+function GB {
+    local index count refbranch switch branch ahead behind colorline lines
+    count=10
+    refbranch="origin/main"
+    switch=""
+    while getopts "r:c:" option; do
+        case "${option}" in
+        r) refbranch=$OPTARG ;;
+        c) count=$OPTARG ;;
+        \?)
+            echo "Usage GB [-r refbranch] [-c count] [switch]"
+            echo "  -r branch  = Use refbranch as reference for output ($refbranch)"
+            echo "  -c count   = How many rows ($count)"
+            return
+            ;;
+        :)
+            echo "Usage: option $OPTARG requires an argument"
+            return
+            ;;
+        esac
+    done
+
+    shift $((OPTIND - 1))
+    if [[ $# -gt 0 ]]; then
+        switch=$1
+    fi
+
+    myMap() {
+        gitLines=("${(@f)$(git for-each-ref --sort=-committerdate refs/heads \
+            --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' \
+            --color=always --count=${count})}")
+    }
+    if [[ "$switch" != "" ]]; then
+        myMap
+        index=0
+        for line in "${gitLines[@]}"; do
+            branch=$(echo \"$line\" | awk 'BEGIN { FS = "|" }; { print $1 }' | tr -d '*"')
+            if [[ $index == $switch ]]; then
+                git switch $branch
+                break
+            fi
+            ((++index))
+        done
+    fi
+    myMap
+    lines=("index|ahead|behind|branch|lastcommit|message|author")
+    index=0
+    for line in "${gitLines[@]}"; do
+        branch=$(echo \"$line\" | awk 'BEGIN { FS = "|" }; { print $1 }' | tr -d '*"')
+        ahead=$(git rev-list --count "${refbranch}..${branch}")
+        behind=$(git rev-list --count "${branch}..${refbranch}")
+        colorline=$(echo \"$line\" | sed 's/^[^|]*|//' | sed 's/"$//')
+        line=$(echo "$index|$ahead|$behind|$colorline" | awk -F'|' -vOFS='|' '{$3=substr($3,1,60)}{$5=substr($5,1,70)}1')
+        lines+=("$line")
+        ((++index))
+    done
+    tput rmam
+    for line in "${lines[@]}"; do echo $line; done | column -ts'|' -c 79
+    tput smam
+}

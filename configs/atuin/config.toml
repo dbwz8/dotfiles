@@ -20,5 +20,5 @@ common_subcommands = [
 name = "autumn"
 
 [daemon]
-enabled = true
+enabled = false
 
