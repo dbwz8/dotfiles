@@ -46,13 +46,13 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
         dir="."
         OPTIND=1
         tail=10
-        while getopts "l:" option; do
+        while getopts "t:" option; do
             case "${option}" in
-            l) tail=$OPTARG;;
+            t) tail=$OPTARG;;
             \?)
                 echo ""
-                echo "Usage: q [-l lines]"
-                echo "  -l = lines to tail (default 10)"
+                echo "Usage: q [-t tail]"
+                echo "  -t = lines to tail (default 10)"
                 echo ""
                 return
                 ;;
