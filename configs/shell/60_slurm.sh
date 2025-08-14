@@ -43,22 +43,16 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
     function q {
         local OPTIND option user dir fil opts tim
         user=$USER
-        opts="aiqeo"
         dir="."
         OPTIND=1
-        while getopts ":aiqou:" option; do
+        tail=10
+        while getopts "l:" option; do
             case "${option}" in
-            a) opts=${opts/a/} ;;
-            i) opts=${opts/i/} ;;
-            q) opts=${opts/q/} ;;
-            o) opts=${opts/o/} ;;
-            u) user=$OPTARG ;;
+            l) tail=$OPTARG;;
             \?)
                 echo ""
-                echo "Usage: q [-t secs] [-u user] [-aiqeo]"
-                echo "  -u = user to show (default=current user)"
-                echo "  -* = turn off reporting that option:"
-                echo "        a=acct i=info q=queue o=out"
+                echo "Usage: q [-l lines]"
+                echo "  -l = lines to tail (default 10)"
                 echo ""
                 return
                 ;;
@@ -69,39 +63,35 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
             esac
         done
         shift $(($OPTIND - 1))
-        if [[ $opts =~ a ]]; then
-            echo "=========================================== acct ===================================================="
-            sacct -u $user
-        fi
-        if [[ $opts =~ [iqeo] ]]; then
-            local prvMod=$(($(date --utc +%s) - 600))
-            pat1='que:(\S+) .* (R|CF) '
-            echo "====================================== squeue ==================================================="
-            queues
-            sq -hu $user
-            echo "====================================== ==================================================="
-            while [ 1 ]; do
-                [[ $opts =~ i ]] && sinfo -h | grep -e '#' | sed 's/^/inf:           /'
-                [[ $opts =~ q ]] && {
-                    [[ $opts =~ o ]] && {
-                        files=(/home/$user/logs/*.out)
-                        for file in $files; do
-                            local curModOut=$(date --utc --reference=$file +%s)
-                            [[ $curModOut -gt $prvMod ]] && {
-                                lines=$(tail -10 $file)
-                                [[ ! -z "$lines" ]] && {
-                                    echo "=== fil: $file\n$lines"
-                                }
+        echo "=========================================== acct ===================================================="
+        sacct -u $user
+        local prvMod=$(($(date --utc +%s) - 600))
+        pat1='que:(\S+) .* (R|CF) '
+        echo "====================================== squeue ==================================================="
+        queues
+        sq -hu $user
+        echo "====================================== ==================================================="
+        while [ 1 ]; do
+            [[ $opts =~ i ]] && sinfo -h | grep -e '#' | sed 's/^/inf:           /'
+            [[ $opts =~ q ]] && {
+                [[ $opts =~ o ]] && {
+                    files=(/home/$user/logs/*.out)
+                    for file in $files; do
+                        local curModOut=$(date --utc --reference=$file +%s)
+                        [[ $curModOut -gt $prvMod ]] && {
+                            lines=$(tail -$tail $file)
+                            [[ ! -z "$lines" ]] && {
+                                echo "=== fil: $file\n$lines"
                             }
-                        done
-                    }
-                    lines=("${(@f)$(sq -hu $user)}")
-                    [[ -z $lines ]] && break
-                    prvMod=$(($(date --utc +%s) - 2))
+                        }
+                    done
                 }
-                sleep 5
-            done
-        fi
+                lines=("${(@f)$(sq -hu $user)}")
+                [[ -z $lines ]] && break
+                prvMod=$(($(date --utc +%s) - 2))
+            }
+            sleep 5
+        done
     }
 
 fi

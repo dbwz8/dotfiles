@@ -155,3 +155,10 @@ function GB {
     for line in "${lines[@]}"; do echo $line; done | column -ts'|' -c 79
     tput smam
 }
+
+function dump_proto {
+    local file=${1:-/tmp/native.proto}
+    local path=~/git/sap/scp-api/protos
+    /usr/local/bin/protoc --decode=circuit.v1.MirCircuit --proto_path=$path circuit/v1/mir.proto < $file
+}
+
