@@ -19,6 +19,8 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
     }
 
     function queues() {
+        /home/scripts/resources_per_user.sh
+	echo "======"
         squeue "$@" | awk '
         BEGIN {
             abbrev["R"]="(Running)"
