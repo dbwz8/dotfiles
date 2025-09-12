@@ -88,10 +88,11 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
             [[ -z $lines ]] && break
             prvMod=$(($(date --utc +%s) - 2))
             sleep 5
-            keepAlive+=5
+	    ((keepAlive += 5))
             [ $keepAlive -gt 60 ] && {
                 squeue -u $user
-                keepAlive=0
+		echo "========================================================================================="
+	        keepAlive=0
             }
         done
     }
