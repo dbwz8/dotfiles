@@ -14,6 +14,7 @@ export GPG_TTY=$(tty)
 export GITHUB_TOKEN=$(gh auth token)
 export PYDEVD_DISABLE_FILE_VALIDATION=1 
 export QCIRCUITSIM=$SAP/system_performance/qcircuitsim
+export REPORTTIME=20
 export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-389070397
 export UPLOAD_FILE_TO="transfer.sh"  # For upload-file.sh
 export SYSTEMD_EDITOR=vim

@@ -71,6 +71,7 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
         queues
         sq -hu $user
         echo "========================================================================================="
+        keepAlive=0
         while [ 1 ]; do
             sinfo -h | grep -e '#' | sed 's/^/inf:           /'
             files=(/home/$user/logs/*.out)
@@ -87,6 +88,11 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
             [[ -z $lines ]] && break
             prvMod=$(($(date --utc +%s) - 2))
             sleep 5
+            keepAlive+=5
+            [ $keepAlive -gt 10 ] && {
+                squeue -u $user
+                keepAlive=0
+            }
         done
     }
 
