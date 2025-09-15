@@ -68,6 +68,7 @@ if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
         local prvMod=$(($(date --utc +%s) - 600))
         pat1='que:(\S+) .* (R|CF) '
         echo "====================================== squeue ==================================================="
+        /home/scripts/resources_per_user.sh
         queues
         sq -hu $user
         echo "========================================================================================="
