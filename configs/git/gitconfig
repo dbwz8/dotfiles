@@ -15,7 +15,7 @@
 	pager = delta
 	preloadindex = true
 	fscache = true
-	editor = nano
+	editor = code --wait
 	fsmonitor = false
 [gc]
 	auto = 256
