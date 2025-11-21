@@ -18,6 +18,7 @@ export REPORTTIME=20
 export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-389070397
 export UPLOAD_FILE_TO="transfer.sh"  # For upload-file.sh
 export SYSTEMD_EDITOR=vim
+export WASI_SDK_PATH="$HOME/.local/wasi-sdk-29.0-x86_64-linux"
 
 export PYTHONPATH=$SAP/qiskit-ionq:$QCIRCUITSIM:$CYPRESS
 

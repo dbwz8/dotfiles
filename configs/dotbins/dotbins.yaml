@@ -95,3 +95,5 @@ tools:
       path_in_archive: [uv-*/uv, uv-*/uvx]
     windows:
       binary_name: [uv.exe, uvx.exe]
+
+  codex: openai/codex

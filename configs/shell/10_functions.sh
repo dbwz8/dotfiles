@@ -52,10 +52,10 @@ function _path_append {
 #############################
 function _path_dedup {
     var=${1:-PATH}
-    if [[ $SHELL =~ zsh ]];then
+    if [[ -n ${ZSH_VERSION-} ]]; then
         val=$(echo -n "${(P)var}" | awk -v RS=':' '(!a[$0]++){if(b++)printf(RS);printf($0)}')
     else
-        val=$(echo -n "${var}" | awk -v RS=':' '(!a[$0]++){if(b++)printf(RS);printf($0)}')
+        val=$(echo -n "${!var}" | awk -v RS=':' '(!a[$0]++){if(b++)printf(RS);printf($0)}')
     fi
     eval "$var=\$val"
 }
@@ -161,4 +161,3 @@ function dump_proto {
     local path=~/git/sap/scp-api/protos
     /usr/local/bin/protoc --decode=circuit.v1.MirCircuit --proto_path=$path circuit/v1/mir.proto < $file
 }
-
