@@ -7,7 +7,3 @@ source ~/git/dotfiles/configs/shell/main.sh
 . "$HOME/.atuin/bin/env"
 
 #eval "$(atuin init zsh --disable-up-arrow)"
-
-export WASMTIME_HOME="$HOME/.wasmtime"
-
-export PATH="$WASMTIME_HOME/bin:$PATH"
