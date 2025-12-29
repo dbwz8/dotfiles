@@ -9,20 +9,22 @@ _path_prepend "/nix/var/nix/profiles/default/bin"  # Nix path
 _path_prepend "$WASI_SDK_PATH/bin"
 
 export CASE_SENSITIVE="true"
-export CYPRESS=$SAP/system_performance/third_party/cypress/cypress/src
+export CIRCUIT_LIB_PATH=~/git/sap/arch/third_party/cypress/src/cypress_exp/llvm/test5/src/libteleport_circuit.a
+export CYPRESS=$SAP/arch/third_party/cypress/src
+export PROTOS=$SAP/arch/third_party/cypress/third_party/scp-api-python
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export EDITOR="vim"
 export GPG_TTY=$(tty)
 export GITHUB_TOKEN=$(gh auth token)
 export PYDEVD_DISABLE_FILE_VALIDATION=1 
-export QCIRCUITSIM=$SAP/system_performance/qcircuitsim
+export QCIRCUITSIM=$SAP/arch/qcircuitsim
 export REPORTTIME=20
 export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-389070397
 export UPLOAD_FILE_TO="transfer.sh"  # For upload-file.sh
 export SYSTEMD_EDITOR=vim
 
-export PYTHONPATH=$SAP/qiskit-ionq:$QCIRCUITSIM:$CYPRESS
+export PYTHONPATH=$SAP/qiskit-ionq:$QCIRCUITSIM:$CYPRESS:$PROTOS
 
 _path_prepend PKG_CONFIG_PATH /usr/share/pkgconfig
 _path_prepend PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
