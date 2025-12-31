@@ -98,7 +98,14 @@ function slurm_status {
 function GB {
     local index count refbranch switch branch ahead behind colorline lines
     count=10
-    refbranch="origin/main"
+    # Auto-detect main branch
+    if git rev-parse --verify origin/main >/dev/null 2>&1; then
+        refbranch="origin/main"
+    elif git rev-parse --verify origin/master >/dev/null 2>&1; then
+        refbranch="origin/master"
+    else
+        refbranch="origin/main"
+    fi
     switch=""
     while getopts "r:c:" option; do
         case "${option}" in
@@ -127,32 +134,32 @@ function GB {
             --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' \
             --color=always --count=${count})}")
     }
-    if [[ "$switch" != "" ]]; then
+    if [[ -n "$switch" ]]; then
         myMap
         index=0
         for line in "${gitLines[@]}"; do
-            branch=$(echo \"$line\" | awk 'BEGIN { FS = "|" }; { print $1 }' | tr -d '*"')
+            branch=$(echo "$line" | awk 'BEGIN { FS = "|" }; { print $1 }' | tr -d '*')
             if [[ $index == $switch ]]; then
                 git switch $branch
                 break
             fi
-            ((++index))
+            ((index++))
         done
     fi
     myMap
     lines=("index|ahead|behind|branch|lastcommit|message|author")
     index=0
     for line in "${gitLines[@]}"; do
-        branch=$(echo \"$line\" | awk 'BEGIN { FS = "|" }; { print $1 }' | tr -d '*"')
+        branch=$(echo "$line" | awk 'BEGIN { FS = "|" }; { print $1 }' | tr -d '*')
         ahead=$(git rev-list --count "${refbranch}..${branch}")
         behind=$(git rev-list --count "${branch}..${refbranch}")
-        colorline=$(echo \"$line\" | sed 's/^[^|]*|//' | sed 's/"$//')
+        colorline=$(echo "$line" | sed 's/^[^|]*|//')
         line=$(echo "$index|$ahead|$behind|$colorline" | awk -F'|' -vOFS='|' '{$3=substr($3,1,60)}{$5=substr($5,1,70)}1')
         lines+=("$line")
-        ((++index))
+        ((index++))
     done
     tput rmam
-    for line in "${lines[@]}"; do echo $line; done | column -ts'|' -c 79
+    for line in "${lines[@]}"; do echo "$line"; done | column -ts'|' -c 79
     tput smam
 }
 
