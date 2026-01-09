@@ -80,7 +80,11 @@ function _path_remove {
 function grepr {
     args=""
     while [[ $1 = -* ]]; do
-        args="${args} $1"
+        if [[ $args != "" ]]; then
+            args="$args $1"
+        else
+            args="$1"
+        fi
         shift
     done
     pat=${2:-*.py}
