@@ -1,17 +1,18 @@
 # exports.sh - meant to be sourced in .bash_profile/.zshrc
 
-export SAP=~/git/sap
-
+export CYPRESS_BASE=~/git/sap/arch/third_party/cypress
+export RUST_TOOLS="$HOME/.rustup/toolchains/nightly-2025-10-28-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/bin"
 export WASI_SDK_PATH="$HOME/.local/wasi-sdk-29.0-x86_64-linux"
 
-export PATH="$HOME/.local/bin:$PATH"  # Common place, e.g., my upload-file script
+_path_prepend "$HOME/.local/bin"
+_path_prepend "$RUST_TOOLS"
 _path_prepend "/nix/var/nix/profiles/default/bin"  # Nix path
 _path_prepend "$WASI_SDK_PATH/bin"
 
 export CASE_SENSITIVE="true"
-export CIRCUIT_LIB_PATH=~/git/sap/arch/third_party/cypress/src/cypress_exp/llvm/test5/src/libteleport_circuit.a
-export CYPRESS=$SAP/arch/third_party/cypress/src
-export PROTOS=$SAP/arch/third_party/cypress/third_party/scp-api-python
+export CIRCUIT_LIB_PATH=$CYPRESS_BASE/src/cypress_exp/llvm/test5/src/libteleport_circuit.a
+export CYPRESS=$CYPRESS_BASE/src
+export PROTOS=$CYPRESS_BASE/third_party/scp-api-python
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export EDITOR="vim"
