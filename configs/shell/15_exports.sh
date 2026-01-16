@@ -2,7 +2,7 @@
 
 export CYPRESS_BASE=~/git/sap/arch/third_party/cypress
 #export RUST_TOOLS="$HOME/.rustup/toolchains/nightly-2025-10-28-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/bin"
-export WASI_SDK_PATH="$HOME/.local/wasi-sdk-29.0-x86_64-linux"
+export WASI_SDK_PATH="$HOME/.local/wasi-sdk-29.0-x86_64-linux" 
 
 _path_prepend "$HOME/.local/bin"
 #_path_prepend "$RUST_TOOLS"
