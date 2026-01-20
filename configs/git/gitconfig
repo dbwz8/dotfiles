@@ -54,7 +54,7 @@
 	navigate = true  # use n and N to move between diff sections
 	dark = true  # or light = true, or omit for auto-detection
 [user]
-	signingkey = /home/wecker/.ssh/id_rsa
+	signingkey = /home/wecker/.ssh/id_ed25519.pub
 	name = wecker
 	email = davewecker@outlook.com
 [commit]

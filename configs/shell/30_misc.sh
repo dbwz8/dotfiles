@@ -13,9 +13,9 @@ fi
 # communicate with the running daemon rather than attempting direct database access.
 # The setup-atuin-daemon.sh script should be run on ZFS systems to create and 
 # start the systemd service for the daemon.
-if pgrep -f "atuin daemon" > /dev/null; then
-  export ATUIN_CONFIG_DIR="$HOME/.config/atuin/zfs"
-fi
+#if pgrep -f "atuin daemon" > /dev/null; then
+  #export ATUIN_CONFIG_DIR="$HOME/.config/atuin/zfs"
+#fi
 
 # -- Dotbins
 [ -n "$ZSH_VERSION" ] && source "$HOME/.dotbins/shell/zsh.sh"
