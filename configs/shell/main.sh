@@ -9,4 +9,5 @@ source ~/git/dotfiles/configs/shell/30_misc.sh
 source ~/git/dotfiles/configs/shell/40_keychain.sh
 source ~/git/dotfiles/configs/shell/50_python.sh
 source ~/git/dotfiles/configs/shell/60_slurm.sh
+source ~/git/dotfiles/configs/shell/65_VcXsrv.sh
 [ -n "$ZSH_VERSION" ] && source ~/git/dotfiles/configs/shell/70_zsh_plugins.sh

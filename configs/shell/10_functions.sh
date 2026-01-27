@@ -172,3 +172,12 @@ function dump_proto {
     local path=~/git/sap/scp-api/protos
     /usr/local/bin/protoc --decode=circuit.v1.MirCircuit --proto_path=$path circuit/v1/mir.proto < $file
 }
+
+function dashboard {
+    {
+    pushd ~/git/ionics/projects/ion-experiments2
+    poe sandcastle-dashboard &
+    popd
+    } >/dev/null 2>&1
+}
+

@@ -9,6 +9,10 @@ _path_prepend "$HOME/.local/bin"
 _path_prepend "/nix/var/nix/profiles/default/bin"  # Nix path
 _path_prepend "$WASI_SDK_PATH/bin"
 
+export WAYLAND_DISPLAY=wayland-0
+export XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir
+export QT_QPA_PLATFORM=wayland
+  
 export CASE_SENSITIVE="true"
 export CIRCUIT_LIB_PATH=$CYPRESS_BASE/src/cypress_exp/llvm/test5/src/libteleport_circuit.a
 export CYPRESS=$CYPRESS_BASE/src
