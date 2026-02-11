@@ -12,9 +12,10 @@ _path_prepend "$WASI_SDK_PATH/bin"
 export WAYLAND_DISPLAY=wayland-0
 export XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir
 export QT_QPA_PLATFORM=wayland
-  
+
 export CASE_SENSITIVE="true"
 export CIRCUIT_LIB_PATH=$CYPRESS_BASE/src/cypress_exp/llvm/test5/src/libteleport_circuit.a
+export COLORTERM=truecolor
 export CYPRESS=$CYPRESS_BASE/src
 export PROTOS=$CYPRESS_BASE/third_party/scp-api-python
 export LC_ALL=en_US.UTF-8
@@ -22,11 +23,17 @@ export LANG=en_US.UTF-8
 export EDITOR="vim"
 export GPG_TTY=$(tty)
 export GITHUB_TOKEN=$(gh auth token)
-export PYDEVD_DISABLE_FILE_VALIDATION=1 
+export PYDEVD_DISABLE_FILE_VALIDATION=1
 export REPORTTIME=20
 export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-389070397
 export UPLOAD_FILE_TO="transfer.sh"  # For upload-file.sh
 export SYSTEMD_EDITOR=vim
+
+export CLAUDE_CODE_USE_VERTEX=1
+export CLOUD_ML_REGION=us-east5
+export ANTHROPIC_VERTEX_PROJECT_ID="gen-lang-client-0660920503"
+export ANTHROPIC_MODEL="claude-opus-4-6"
+export ANTHROPIC_SMALL_FAST_MODEL="claude-haiku-4-5@20251001"
 
 export PYTHONPATH=$CYPRESS:$PROTOS
 

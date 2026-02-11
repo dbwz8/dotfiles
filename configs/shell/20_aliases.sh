@@ -7,6 +7,8 @@ if [[ $- == *i* ]]; then
 
     alias c='code'
     alias clear=/usr/bin/clear # The one in anaconda causes multi output
+    alias cl='claude'
+    alias vcl='CLAUDE_CODE_USE_VERTEX=1 ANTHROPIC_MODEL="claude-opus-4-6" ANTHROPIC_SMALL_FAST_MODEL="claude-haiku-4-5" ANTHROPIC_VERTEX_PROJECT_ID="gen-lang-client-0660920503" claude'
     alias glo='git log --oneline --decorate -20'
     alias gs='git status'
     alias ls='eza'

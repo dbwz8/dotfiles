@@ -181,3 +181,16 @@ function dashboard {
     } >/dev/null 2>&1
 }
 
+function master {
+    pkill artiq_master
+    pushd ~/git/ionics/systems/kasli-soc-12
+    sleep 3
+    uv run artiq_master --bind=127.0.0.1 &
+    popd
+}
+
+function test_rust_ffi {
+    clear;cargo run -p build_arches
+    master
+    uv run pytest test/rust_ffi/test_rust_ffi.py -m hitl --system-class blue-barrel --system localhost -vv
+}

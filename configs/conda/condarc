@@ -2,8 +2,9 @@ always_yes: true
 show_channel_urls: true
 solver: libmamba
 channels:
-  - conda-forge
   - nodefaults
+  - https://conda.m-labs.hk/artiq
+  - conda-forge
 pkgs_dirs:
   - ~/.conda/pkgs
 channel_priority: strict
