@@ -181,6 +181,34 @@ function dashboard {
     } >/dev/null 2>&1
 }
 
+function update_kasli {
+    cat << EOF
+cd ~/git/ionics
+git switch master
+git pull --ff-only
+git branch -D wecker/kasli_12_new 2>/dev/null || true
+git switch -c wecker/kasli_12_new
+git show wecker/kasli_12:systems/kasli-soc-12/kasli12_master_overlay.patch > /tmp/kasli12_master_overlay.patch
+git apply --3way --index /tmp/kasli12_master_overlay.patch
+git checkout wecker/kasli_12 -- .gitattributes systems/kasli-soc-12/boot-headers.bin systems/kasli-soc-12/szl.bin systems/kasli-soc-12/gateware.bin
+git add .gitattributes systems/kasli-soc-12/boot-headers.bin systems/kasli-soc-12/szl.bin systems/kasli-soc-12/gateware.bin
+git lfs fetch origin wecker/kasli_12 --include="systems/kasli-soc-12/boot-headers.bin,systems/kasli-soc-12/szl.bin,systems/kasli-soc-12/gateware.bin"
+git lfs checkout -- systems/kasli-soc-12/boot-headers.bin systems/kasli-soc-12/szl.bin systems/kasli-soc-12/gateware.bin
+git show :systems/kasli-soc-12/gateware.bin | head -n 1
+ls -lh systems/kasli-soc-12/boot-headers.bin systems/kasli-soc-12/szl.bin systems/kasli-soc-12/gateware.bin
+cd third-party/artiq-zynq
+nix build '.#kasli_soc-kasli_soc_12_drtio_main-firmware'
+cd ../../systems/kasli-soc-12
+python3 splice_boot_bin.py ../../third-party/artiq-zynq/result/runtime.bin BOOT.BIN
+sudo mount -t drvfs D: /mnt/d
+cp BOOT.BIN /mnt/d/BOOT.BIN
+sync
+sudo umount /mnt/d
+echo '#### Remember to set the DHCP address in systems/kasli-soc-12/device_db.py in all locations'
+echo '#### Also add back the items in .git/info/exclude'
+EOF
+}
+
 function master {
     pkill artiq_master
     pushd ~/git/ionics/systems/kasli-soc-12
@@ -191,6 +219,6 @@ function master {
 
 function test_rust_ffi {
     clear;cargo run -p build_arches
-    master
+    #master
     uv run pytest test/rust_ffi/test_rust_ffi.py -m hitl --system-class blue-barrel --system localhost -vv
 }
