@@ -5,10 +5,6 @@
 [submodule "submodules/zsh-z"]
 	path = submodules/zsh-z
 	url = git@github.com:agkozak/zsh-z.git
-[submodule "submodules/oh-my-zsh"]
-	path = submodules/oh-my-zsh
-	url = git@github.com:robbyrussell/oh-my-zsh.git
-	ignore = dirty
 [submodule "submodules/zsh-syntax-highlighting"]
 	path = submodules/zsh-syntax-highlighting
 	url = git@github.com:zsh-users/zsh-syntax-highlighting.git
