@@ -1,0 +1,27 @@
+session_name: work
+start_directory: ~/git
+windows:
+  - window_name: main
+    start_directory: /home/wecker
+    panes:
+      - ""
+      - ""
+    layout: even-vertical
+  - window_name: qec
+    start_directory: ~/git/qec_team/qeclib/dbwz8/simbic
+    panes:
+      - ""
+      - ""
+    layout: even-vertical
+  - window_name: liboi
+    start_directory: ~/git/ionics/projects/liboi/crates/rust_ffi
+    panes:
+      - ""
+      - ""
+    layout: even-vertical
+  - window_name: cypress
+    start_directory: ~/git/sap/arch/third_party/cypress/src/cypress_exp/llvm/test5
+    panes:
+      - ""
+      - ""
+    layout: even-vertical

@@ -16,6 +16,7 @@ export QT_QPA_PLATFORM=wayland
 export CASE_SENSITIVE="true"
 export CIRCUIT_LIB_PATH=$CYPRESS_BASE/src/cypress_exp/llvm/test5/src/libteleport_circuit.a
 export COLORTERM=truecolor
+export DISABLE_AUTO_TITLE='true'
 export CYPRESS=$CYPRESS_BASE/src
 export PROTOS=$CYPRESS_BASE/third_party/scp-api-python
 export LC_ALL=en_US.UTF-8
@@ -47,6 +48,8 @@ _path_dedup PATH
 _path_dedup LIBRARY_PATH
 _path_dedup LD_LIBRARY_PATH
 
+mkdir -p ~/.local/bin
+ln -sf ~/git/dotfiles/bin/* ~/.local/bin/
 
 #export WASMTIME_HOME="$HOME/.wasmtime"
 #export PATH="$WASMTIME_HOME/bin:$PATH"

@@ -11,3 +11,16 @@ if command -v python3 >/dev/null 2>&1; then
 else
     $HOME/git/dotfiles/scripts/run.sh uvx dotbot -d $HOME/git/dotfiles -c install.conf.yaml
 fi
+
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-$HOME/git/dotfiles}"
+
+mkdir -p "$HOME/.config/tmuxp"
+
+ln -sf "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
+
+# symlink each YAML session file
+for f in "$DOTFILES"/tmux/sessions/*.yaml; do
+  ln -sf "$f" "$HOME/.config/tmuxp/$(basename "$f")"
+done

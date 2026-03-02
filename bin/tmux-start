@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+name="${1:-work}"
+
+# -d loads detached; then we attach (works even if already running)
+tmuxp load -d "$name" || true
+exec tmux attach -t "$name"

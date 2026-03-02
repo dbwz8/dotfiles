@@ -18,6 +18,7 @@ if [[ $- == *i* ]]; then
     alias p="pytest"
     alias py="python"
     alias slurm_rsync="rsync -azvh wecker@obsidian:git/sap/qec_team/data/dbwPlay_save/'*.json' ~/git/sap/qec_team/data/dbwPlay_save"
+    alias ts='tmux-start work'
     alias u='cd ..'
     alias v='vim'
     alias vi='vim'
