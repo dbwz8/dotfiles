@@ -1,0 +1,1 @@
+/home/wecker/git/dotfiles/configs/zsh/mytheme.zsh-theme
