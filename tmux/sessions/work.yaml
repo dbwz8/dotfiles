@@ -2,7 +2,7 @@ session_name: work
 start_directory: ~/git
 windows:
   - window_name: main
-    start_directory: /home/wecker
+    start_directory: ~
     panes:
       - ""
       - ""

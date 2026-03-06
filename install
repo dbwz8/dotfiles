@@ -18,7 +18,7 @@ DOTFILES="${DOTFILES:-$HOME/git/dotfiles}"
 
 mkdir -p "$HOME/.config/tmuxp"
 
-ln -sf "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
+ln -sf "$DOTFILES/submodules/tmux/.tmux.conf" "$HOME/.tmux.conf"
 
 # symlink each YAML session file
 for f in "$DOTFILES"/tmux/sessions/*.yaml; do
