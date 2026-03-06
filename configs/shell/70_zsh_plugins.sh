@@ -11,6 +11,8 @@ if [[ ($- == *i*) && -n "$ZSH_VERSION" ]]; then
     command -v eza >/dev/null && zstyle ':omz:lib:directories' aliases no  # Skip aliases in directories.zsh if eza
     export ZSH=~/git/dotfiles/submodules/oh-my-zsh
     source $ZSH/oh-my-zsh.sh
+    # Drop conflicting Oh My Zsh git alias; keep system `gcp` command available.
+    (( $+aliases[gcp] )) && unalias gcp
 
     # -- zsh plugins
     source ~/git/dotfiles/submodules/zsh-autosuggestions/zsh-autosuggestions.zsh
