@@ -20,6 +20,7 @@ tools:
   hyperfine: sharkdp/hyperfine
   rg: BurntSushi/ripgrep
   yazi: sxyazi/yazi
+  zellij: zellij-org/zellij
 
   bat:
     repo: sharkdp/bat

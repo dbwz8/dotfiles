@@ -1,0 +1,13 @@
+// Start with a repo-managed layout that keeps the full status bar visible.
+default_layout "starter"
+session_name "standard"
+mouse_mode true
+
+// Windows-friendly pane controls that avoid colliding with terminal-level shortcuts.
+keybinds {
+    shared_except "locked" {
+        bind "F7" { NewPane "Down"; }
+        bind "F8" { NewPane "Right"; }
+        bind "Ctrl F4" { CloseFocus; }
+    }
+}

@@ -1,0 +1,36 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="tab-bar"
+        }
+        children
+        pane size=2 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+
+    tab name="local" split_direction="horizontal" {
+        pane name="1" focus=true
+        pane name="2" size="50%"
+    }
+
+    tab name="gcp" split_direction="horizontal" {
+        pane name="1" focus=true
+        pane name="2" size="50%"
+    }
+
+    tab name="qec" split_direction="horizontal" {
+        pane name="1" focus=true
+        pane name="2" size="50%"
+    }
+
+    tab name="liboi" split_direction="horizontal" {
+        pane name="1" focus=true
+        pane name="2" size="50%"
+    }
+
+    tab name="cypress" split_direction="horizontal" {
+        pane name="1" focus=true
+        pane name="2" size="50%"
+    }
+}

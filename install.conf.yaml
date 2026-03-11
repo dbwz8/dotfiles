@@ -11,6 +11,7 @@
     ~/.config/dask/distributed.yaml: configs/dask/distributed.yaml
     ~/.config/git/attributes: configs/git/attributes
     ~/.config/starship.toml: configs/starship/starship.toml
+    ~/.config/zellij: configs/zellij
     ~/.direnvrc: configs/direnv/direnvrc
     ~/.dotbins/dotbins.yaml: configs/dotbins/dotbins.yaml
     ~/.gitconfig-personal: configs/git/gitconfig-personal
