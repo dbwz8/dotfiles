@@ -1,0 +1,2 @@
+# Placeholder config so repo-level pre-commit invocations succeed.
+repos: []

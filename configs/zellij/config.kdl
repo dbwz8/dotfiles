@@ -3,9 +3,22 @@ default_layout "starter"
 session_name "standard"
 mouse_mode true
 
+plugins {
+    compact-bar location="zellij:compact-bar" {
+        tooltip "F1"
+    }
+}
+
 // Windows-friendly pane controls that avoid colliding with terminal-level shortcuts.
 keybinds {
     shared_except "locked" {
+        // Add direction-specific resize chords while leaving Alt +/- on Zellij's generic resize.
+        bind "Alt =" "Alt +" { Resize "Increase"; }
+        bind "Alt -" { Resize "Decrease"; }
+        bind "Alt Shift h" { Resize "Increase Left"; }
+        bind "Alt Shift j" "Alt Shift Down" { Resize "Increase Down"; }
+        bind "Alt Shift k" { Resize "Increase Up"; }
+        bind "Alt Shift l" { Resize "Increase Right"; }
         bind "F7" { NewPane "Down"; }
         bind "F8" { NewPane "Right"; }
         bind "Ctrl F4" { CloseFocus; }
