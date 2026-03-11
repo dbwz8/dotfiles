@@ -9,9 +9,15 @@ _path_prepend "$HOME/.local/bin"
 _path_prepend "/nix/var/nix/profiles/default/bin"  # Nix path
 _path_prepend "$WASI_SDK_PATH/bin"
 
-export WAYLAND_DISPLAY=wayland-0
-export XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir
-export QT_QPA_PLATFORM=wayland
+_default_runtime_dir="/run/user/$(id -u)"
+if [ -z "${SSH_CONNECTION:-}${SSH_CLIENT:-}${SSH_TTY:-}" ] && [ -d /mnt/wslg/runtime-dir ] && [ -w /mnt/wslg/runtime-dir ]; then
+    export WAYLAND_DISPLAY=wayland-0
+    export XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir
+    export QT_QPA_PLATFORM=wayland
+elif [ -d "$_default_runtime_dir" ] && [ -w "$_default_runtime_dir" ]; then
+    export XDG_RUNTIME_DIR="$_default_runtime_dir"
+fi
+unset _default_runtime_dir
 
 export CASE_SENSITIVE="true"
 export CIRCUIT_LIB_PATH=$CYPRESS_BASE/src/cypress_exp/llvm/test5/src/libteleport_circuit.a

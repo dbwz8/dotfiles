@@ -28,7 +28,4 @@
     ~/.tmux.conf.local: submodules/tmux/.tmux.conf.local
     ~/.zshrc: configs/zsh/zshrc
     ~/git/dotfiles/submodules/oh-my-zsh/themes/mytheme.zsh-theme: configs/zsh/mytheme.zsh-theme
-
-- shell:
-  - bash scripts/sync-uv-tools.sh
   

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${BASEDIR}"
@@ -12,9 +12,30 @@ else
     $HOME/git/dotfiles/scripts/run.sh uvx dotbot -d $HOME/git/dotfiles -c install.conf.yaml
 fi
 
-set -euo pipefail
+dotbins_bin() {
+    if command -v dotbins >/dev/null 2>&1; then
+        command -v dotbins
+        return 0
+    fi
+
+    if [ -x "$HOME/.local/bin/dotbins" ]; then
+        printf '%s\n' "$HOME/.local/bin/dotbins"
+        return 0
+    fi
+
+    return 1
+}
+
+if DOTBINS_BIN="$(dotbins_bin)"; then
+    "${DOTBINS_BIN}" sync --current
+else
+    printf '%s\n' "⚠️  dotbins is not installed; skipping CLI tool sync." >&2
+    printf '%s\n' "    Install dotbins and rerun ./install to provision tools like zellij." >&2
+fi
 
 DOTFILES="${DOTFILES:-$HOME/git/dotfiles}"
+
+bash "${DOTFILES}/scripts/sync-uv-tools.sh"
 
 mkdir -p "$HOME/.config/tmuxp"
 

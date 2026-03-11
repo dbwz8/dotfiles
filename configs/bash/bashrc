@@ -5,3 +5,9 @@ source ~/.bash_profile
 [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
 eval "$(atuin init bash)"
 . "$HOME/.cargo/env"
+# Setup/Configure pyenv & python
+export PYENV_HOME="${HOME}/.pyenv"
+export LD_LIBRARY_PATH="${PYENV_HOME}/versions/3.11.4/lib:${LD_LIBRARY_PATH}"
+export PATH="${PYENV_HOME}/shims:${PYENV_HOME}/bin:${PATH}"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
