@@ -26,6 +26,7 @@
     ~/.oh-my-zsh: submodules/oh-my-zsh
     ~/.tmux.conf: submodules/tmux/.tmux.conf
     ~/.tmux.conf.local: submodules/tmux/.tmux.conf.local
+    ~/.zshenv: configs/zsh/zshenv
     ~/.zshrc: configs/zsh/zshrc
     ~/git/dotfiles/submodules/oh-my-zsh/themes/mytheme.zsh-theme: configs/zsh/mytheme.zsh-theme
   

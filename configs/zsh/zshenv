@@ -1,0 +1,18 @@
+# Keep early zsh startup quiet and safe. This runs before /etc/zsh/zshrc.
+
+# Work around broken vendor completion symlinks (seen with Docker Desktop on WSL)
+# before the system zshrc runs compinit.
+vendor_completions_dir=/usr/share/zsh/vendor-completions
+if [[ -d "$vendor_completions_dir" ]]; then
+    for completion_file in "$vendor_completions_dir"/_*(N); do
+        if [[ -L "$completion_file" && ! -r "$completion_file" ]]; then
+            fpath=(${fpath:#$vendor_completions_dir})
+            break
+        fi
+    done
+fi
+unset vendor_completions_dir
+
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+
+if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
