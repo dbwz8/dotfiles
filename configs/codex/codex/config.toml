@@ -1,1 +1,8 @@
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
+model = "gpt-5.4"
+
+[projects."/home/wecker"]
+trust_level = "trusted"
+
+[notice.model_migrations]
+"gpt-5.3-codex" = "gpt-5.4"
