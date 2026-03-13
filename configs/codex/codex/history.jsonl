@@ -1,2 +1,4 @@
 {"session_id":"019ce7b1-96e7-7e61-bebd-f33c0b8faed7","ts":1773426309,"text":"I didn't know it wasn't supposed to be sourced. Checking running it now"}
 {"session_id":"019ce7b1-96e7-7e61-bebd-f33c0b8faed7","ts":1773426354,"text":"That's OK.... I think I've learned my lesson ;)"}
+{"session_id":"019ce7b1-96e7-7e61-bebd-f33c0b8faed7","ts":1773427449,"text":"It looks like I'm missing micromamba on the remote machine (expect it in ~/.local/bin/micromamba). Shouldn't this also be managed by dotfiles?"}
+{"session_id":"019ce7b1-96e7-7e61-bebd-f33c0b8faed7","ts":1773427618,"text":"Yes please patch... but when I did your above, I still didn't get a micromamba in my .local/bin"}
