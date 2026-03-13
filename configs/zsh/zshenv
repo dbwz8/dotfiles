@@ -7,11 +7,17 @@ if [[ -d "$vendor_completions_dir" ]]; then
     for completion_file in "$vendor_completions_dir"/_*(N); do
         if [[ -L "$completion_file" && ! -r "$completion_file" ]]; then
             fpath=(${fpath:#$vendor_completions_dir})
+            # Drop stale completion dumps created before vendor-completions was filtered.
+            for dump_file in "${ZDOTDIR:-$HOME}"/.zcompdump*(N); do
+                if command grep -aq '_python-argcomplete' "$dump_file" 2>/dev/null; then
+                    command rm -f "$dump_file" "$dump_file".zwc
+                fi
+            done
             break
         fi
     done
 fi
-unset vendor_completions_dir
+unset completion_file dump_file vendor_completions_dir
 
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
