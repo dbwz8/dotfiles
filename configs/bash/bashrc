@@ -1,13 +1,17 @@
+# Keep non-interactive shells quiet for tools like VS Code Remote SSH.
+[[ $- != *i* ]] && return
+
 source ~/.bash_profile
 
-. "$HOME/.atuin/bin/env"
-
+[[ -f "$HOME/.atuin/bin/env" ]] && . "$HOME/.atuin/bin/env"
 [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
-eval "$(atuin init bash)"
-. "$HOME/.cargo/env"
+command -v atuin >/dev/null 2>&1 && eval "$(atuin init bash)"
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 # Setup/Configure pyenv & python
 export PYENV_HOME="${HOME}/.pyenv"
 export LD_LIBRARY_PATH="${PYENV_HOME}/versions/3.11.4/lib:${LD_LIBRARY_PATH}"
 export PATH="${PYENV_HOME}/shims:${PYENV_HOME}/bin:${PATH}"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+if command -v pyenv >/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+fi
