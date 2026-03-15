@@ -25,11 +25,30 @@ export COLORTERM=truecolor
 export DISABLE_AUTO_TITLE='true'
 export CYPRESS=$CYPRESS_BASE/src
 export PROTOS=$CYPRESS_BASE/third_party/scp-api-python
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
+if locale -a 2>/dev/null | grep -qi '^en_US\.utf-?8$'; then
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+elif locale -a 2>/dev/null | grep -qi '^c\.utf8$'; then
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+fi
 export EDITOR="vim"
 export GPG_TTY=$(tty)
-export GITHUB_TOKEN=$(gh auth token)
+if command -v gh >/dev/null 2>&1; then
+    _gh_token="$(gh auth token 2>/dev/null || true)"
+    if [ -n "$_gh_token" ]; then
+        export GITHUB_TOKEN="$_gh_token"
+    fi
+    unset _gh_token
+fi
+
+if [ -z "${GITHUB_TOKEN:-}" ]; then
+    unset GITHUB_TOKEN
+fi
+
+if [ -z "${GH_TOKEN:-}" ]; then
+    unset GH_TOKEN
+fi
 export PYDEVD_DISABLE_FILE_VALIDATION=1
 export REPORTTIME=20
 export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-389070397

@@ -1,4 +1,5 @@
 prefix_rule(pattern=["bash", "-n", "/home/wecker/git/dotfiles/install"], decision="allow")
+prefix_rule(pattern=["bash", "-n", "/home/dbwz8/git/dotfiles/install"], decision="allow")
 prefix_rule(pattern=["/usr/bin/zsh", "-lc", "XDG_CACHE_HOME=/tmp/.cache /home/wecker/.dotbins/linux/amd64/bin/micromamba list -n qeclib"], decision="allow")
 prefix_rule(pattern=["/usr/bin/zsh", "-lc", "XDG_CACHE_HOME=/tmp/.cache /home/wecker/.dotbins/linux/amd64/bin/micromamba run -n qeclib python -m pip freeze"], decision="allow")
 prefix_rule(pattern=["sudo", "apt-get"], decision="allow")

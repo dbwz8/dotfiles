@@ -7,6 +7,9 @@ trust_level = "trusted"
 [projects."/home/wecker/git/dotfiles"]
 trust_level = "trusted"
 
+[projects."/home/dbwz8/git/dotfiles"]
+trust_level = "trusted"
+
 [notice.model_migrations]
 "gpt-5.3-codex" = "gpt-5.4"
 

@@ -3,18 +3,52 @@ set -euo pipefail
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${BASEDIR}"
-DOTFILES="${DOTFILES:-$HOME/git/dotfiles}"
+DOTFILES="${DOTFILES:-$BASEDIR}"
 
-if command -v python3 >/dev/null 2>&1; then
-    DOTBOT_DIR="submodules/dotbot"
-    DOTBOT_BIN="bin/dotbot"
-    python3 "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "install.conf.yaml" "${@}"
+uv_bin() {
+    if command -v uv >/dev/null 2>&1; then
+        command -v uv
+        return 0
+    fi
+
+    local os arch candidate
+    os=$(uname -s | tr '[:upper:]' '[:lower:]')
+    if [ "$os" = "darwin" ]; then
+        os="macos"
+    fi
+
+    arch=$(uname -m)
+    if [ "$arch" = "x86_64" ]; then
+        arch="amd64"
+    elif [ "$arch" = "aarch64" ] || [ "$arch" = "arm64" ]; then
+        arch="arm64"
+    fi
+
+    candidate="$HOME/.dotbins/$os/$arch/bin/uv"
+    if [ -x "$candidate" ]; then
+        printf '%s\n' "$candidate"
+        return 0
+    fi
+
+    return 1
+}
+
+DOTBOT_BIN="${BASEDIR}/submodules/dotbot/bin/dotbot"
+if [ -f "$DOTBOT_BIN" ] && command -v python3 >/dev/null 2>&1; then
+    python3 "$DOTBOT_BIN" -d "$BASEDIR" -c "install.conf.yaml" "${@}"
+elif UV_BIN="$(uv_bin)"; then
+    "$UV_BIN" tool run dotbot -d "$BASEDIR" -c "install.conf.yaml" "${@}"
 else
-    $HOME/git/dotfiles/scripts/run.sh uvx dotbot -d $HOME/git/dotfiles -c install.conf.yaml
+    printf '%s\n' "dotbot is unavailable." >&2
+    printf '%s\n' "Initialize submodules with: git submodule update --init --recursive" >&2
+    printf '%s\n' "Or install uv and rerun ./install to bootstrap dotbot without the submodule." >&2
+    exit 1
 fi
 
 if [ -x "${DOTFILES}/scripts/install-slurm-client.sh" ]; then
-    "${DOTFILES}/scripts/install-slurm-client.sh"
+    if ! "${DOTFILES}/scripts/install-slurm-client.sh"; then
+        printf '%s\n' "⚠️  slurm-client installation failed; continuing dotfiles install." >&2
+    fi
 fi
 
 dotbins_bin() {
@@ -31,6 +65,10 @@ dotbins_bin() {
     return 1
 }
 
+# Some GitHub clients treat an empty token as credentials and then fail every request with 401.
+[ -n "${GITHUB_TOKEN:-}" ] || unset GITHUB_TOKEN
+[ -n "${GH_TOKEN:-}" ] || unset GH_TOKEN
+
 bash "${DOTFILES}/scripts/sync-uv-tools.sh"
 
 if DOTBINS_BIN="$(dotbins_bin)"; then
@@ -42,7 +80,13 @@ fi
 
 mkdir -p "$HOME/.config/tmuxp"
 
-ln -sf "$DOTFILES/submodules/tmux/.tmux.conf" "$HOME/.tmux.conf"
+if [ -f "$DOTFILES/submodules/tmux/.tmux.conf" ]; then
+    ln -sf "$DOTFILES/submodules/tmux/.tmux.conf" "$HOME/.tmux.conf"
+fi
+
+if [ -f "$DOTFILES/submodules/tmux/.tmux.conf.local" ]; then
+    ln -sf "$DOTFILES/submodules/tmux/.tmux.conf.local" "$HOME/.tmux.conf.local"
+fi
 
 # symlink each YAML session file
 for f in "$DOTFILES"/tmux/sessions/*.yaml; do

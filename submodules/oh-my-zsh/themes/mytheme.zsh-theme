@@ -1,1 +1,1 @@
-/home/wecker/git/dotfiles/configs/zsh/mytheme.zsh-theme
+../../../configs/zsh/mytheme.zsh-theme
