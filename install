@@ -3,6 +3,7 @@ set -euo pipefail
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${BASEDIR}"
+DOTFILES="${DOTFILES:-$HOME/git/dotfiles}"
 
 if command -v python3 >/dev/null 2>&1; then
     DOTBOT_DIR="submodules/dotbot"
@@ -10,6 +11,10 @@ if command -v python3 >/dev/null 2>&1; then
     python3 "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "install.conf.yaml" "${@}"
 else
     $HOME/git/dotfiles/scripts/run.sh uvx dotbot -d $HOME/git/dotfiles -c install.conf.yaml
+fi
+
+if [ -x "${DOTFILES}/scripts/install-slurm-client.sh" ]; then
+    "${DOTFILES}/scripts/install-slurm-client.sh"
 fi
 
 dotbins_bin() {
@@ -26,16 +31,14 @@ dotbins_bin() {
     return 1
 }
 
+bash "${DOTFILES}/scripts/sync-uv-tools.sh"
+
 if DOTBINS_BIN="$(dotbins_bin)"; then
     "${DOTBINS_BIN}" sync --current
 else
     printf '%s\n' "⚠️  dotbins is not installed; skipping CLI tool sync." >&2
-    printf '%s\n' "    Install dotbins and rerun ./install to provision tools like zellij." >&2
+    printf '%s\n' "    Install uv and rerun ./install to provision tools like micromamba." >&2
 fi
-
-DOTFILES="${DOTFILES:-$HOME/git/dotfiles}"
-
-bash "${DOTFILES}/scripts/sync-uv-tools.sh"
 
 mkdir -p "$HOME/.config/tmuxp"
 

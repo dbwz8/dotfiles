@@ -1,20 +1,54 @@
 # slurm.sh - meant to be sourced in .bash_profile/.zshrc
 
-if [[ $- == *i* ]] && command -v squeue &> /dev/null; then
+_obsidian_slurm() { "$@"; }
+_obsidian_slurm_ssh() { command ssh obsidian "$@"; }
+
+case "$(hostname -s 2>/dev/null || true)" in
+    obsidian|obsidian-*)
+        ;;
+    *)
+        if [ -f /tmp/slurm.conf ]; then
+            mkdir -p "$HOME/.config/slurm"
+            _slurm_client_conf="$HOME/.config/slurm/obsidian-client.conf"
+            _slurm_tmp_conf="${_slurm_client_conf}.$$"
+            sed \
+                -e '/^Include \/etc\/slurm\/slurm.conf.d\/multi-cluster.conf$/d' \
+                -e 's/^SlurmctldHost=obsidian$/SlurmctldHost=obsidian.ionq.net/' \
+                -e 's/^AccountingStorageHost=obsidian$/AccountingStorageHost=obsidian.ionq.net/' \
+                /tmp/slurm.conf > "$_slurm_tmp_conf"
+            mv "$_slurm_tmp_conf" "$_slurm_client_conf"
+            export OBSIDIAN_SLURM_CONF="$_slurm_client_conf"
+            # Obsidian currently runs Slurm 25.05 while this machine ships a
+            # 23.11 client, so interactive read-only commands are more
+            # reliable when executed on the cluster over SSH.
+            _obsidian_slurm() { _obsidian_slurm_ssh "$@"; }
+            squeue() { _obsidian_slurm squeue "$@"; }
+            sinfo() { _obsidian_slurm sinfo "$@"; }
+            scontrol() { _obsidian_slurm scontrol "$@"; }
+            unset _slurm_client_conf _slurm_tmp_conf
+        else
+            unset OBSIDIAN_SLURM_CONF
+        fi
+        unset SLURM_CLUSTERS
+        unset SLURM_CONF_SERVER
+        ;;
+esac
+
+if [[ $- == *i* ]] && [ -x /usr/bin/squeue ]; then
     export SCHEDULER_SYSTEM="SLURM"
     sshnode () { ssh -o StrictHostKeyChecking=no `scontrol show node "$@" | grep NodeAddr | awk '{print $1;}' | cut -d "=" -f 2`; }
 
     export TMPDIR=~/.tmp/  # for VScode ssh tmp files
 
     function sq {
-        /usr/bin/squeue -o "que:%i %10M%3D%2t %5u %15N%Z" $@
+        squeue -o "que:%i %10M%3D%2t %5u %15N%Z" $@
     }
 
     function sacct {
 	if [[ -z "$@" ]];then
-		/usr/bin/sacct --starttime=now-2hours --format "JobID,AllocCPUS%4,State%6,CPUTimeRaw,Elapsed,NTasks%4,NodeList%20,WorkDir%21"
+		_obsidian_slurm sacct --starttime=now-2hours --format "JobID,AllocCPUS%4,State%6,CPUTimeRaw,Elapsed,NTasks%4,NodeList%20,WorkDir%21"
 	else
-		/usr/bin/sacct --starttime=now-2hours --format "JobID,AllocCPUS%4,State%6,CPUTimeRaw,Elapsed,NTasks%4,NodeList%20,WorkDir%21" $@ 
+		_obsidian_slurm sacct --starttime=now-2hours --format "JobID,AllocCPUS%4,State%6,CPUTimeRaw,Elapsed,NTasks%4,NodeList%20,WorkDir%21" $@ 
 	fi
     }
 

@@ -44,3 +44,6 @@ Thumbs.db
 
 scripts/rclone-log.txt
 rclone-log.txt
+
+# Secrets
+configs/codex/codex/shell_snapshots/

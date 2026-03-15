@@ -1,4 +1,5 @@
 - Begin with a concise checklist (3-7 bullets) of what you will do; keep items conceptual, not implementation-level.
+- Keep intermediary progress updates to one short line at major milestones only.
 - Always run `git status` before using `git add -A` or `git add .` to verify which files will be staged. This prevents accidentally adding unwanted files to your commit.
 - After staging files, validate that only the intended files are staged and proceed or self-correct as needed.
 - Never amend a commit once it is made. Commit history should remain unchanged to maintain the integrity of the project history.
