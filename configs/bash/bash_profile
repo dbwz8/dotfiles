@@ -1,7 +1,7 @@
 # Keep non-interactive login shells quiet for tools like VS Code Remote SSH.
 [[ $- != *i* ]] && return
 
-source ~/git/dotfiles/configs/shell/main.sh
+source "$HOME/.config/dotfiles-shell/main.sh"
 
 [[ -f "$HOME/.atuin/bin/env" ]] && . "$HOME/.atuin/bin/env"
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"

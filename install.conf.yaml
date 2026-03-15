@@ -25,6 +25,7 @@
     ~/.local/bin/upload-file: scripts/upload-file.sh
     ~/.mambarc: configs/mamba/mambarc
     ~/.oh-my-zsh: submodules/oh-my-zsh
+    ~/.config/dotfiles-shell: configs/shell
     ~/.zshenv: configs/zsh/zshenv
     ~/.zshrc: configs/zsh/zshrc
   

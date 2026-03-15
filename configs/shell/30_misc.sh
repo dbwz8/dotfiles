@@ -27,8 +27,8 @@ if [ -f "$HOME/.cargo/env" ]; then
 fi
 
 # -- Non-public parts
-if [ -f "$HOME/git/dotfiles/secrets/configs/shell/main.sh" ]; then
-    . "$HOME/git/dotfiles/secrets/configs/shell/main.sh"
+if [ -n "${DOTFILES:-}" ] && [ -f "$DOTFILES/secrets/configs/shell/main.sh" ]; then
+    . "$DOTFILES/secrets/configs/shell/main.sh"
 fi
 
 # -- LM Studio CLI (lms)

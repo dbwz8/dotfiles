@@ -102,7 +102,9 @@ _path_dedup LIBRARY_PATH
 _path_dedup LD_LIBRARY_PATH
 
 mkdir -p ~/.local/bin
-ln -sf ~/git/dotfiles/bin/* ~/.local/bin/
+if [ -n "${DOTFILES:-}" ] && [ -d "$DOTFILES/bin" ]; then
+    ln -sf "$DOTFILES"/bin/* ~/.local/bin/ 2>/dev/null || true
+fi
 
 #export WASMTIME_HOME="$HOME/.wasmtime"
 #export PATH="$WASMTIME_HOME/bin:$PATH"

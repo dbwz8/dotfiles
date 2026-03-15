@@ -1,8 +1,10 @@
-# Use WSLg (built-in X server for WSL2) instead of VcXsrv
-# WSLg uses Unix sockets, avoiding network/firewall issues
-export DISPLAY=:0
-unset WAYLAND_DISPLAY
+# Use WSLg (built-in X server for WSL2) instead of VcXsrv.
+if [ -d /mnt/wslg/runtime-dir ]; then
+    export DISPLAY=:0
+    unset WAYLAND_DISPLAY
 
-# Update systemd environment for GUI apps started via systemd
-dbus-update-activation-environment --systemd DISPLAY
+    if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+        dbus-update-activation-environment --systemd DISPLAY
+    fi
+fi
 

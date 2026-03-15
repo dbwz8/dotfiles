@@ -21,7 +21,11 @@ tools:
   hyperfine: sharkdp/hyperfine
   rg: BurntSushi/ripgrep
   yazi: sxyazi/yazi
-  zellij: zellij-org/zellij
+  zellij:
+    repo: zellij-org/zellij
+    asset_patterns:
+      windows:
+        amd64: null
 
   bat:
     repo: sharkdp/bat
@@ -36,6 +40,8 @@ tools:
     shell_code:
       bash,zsh: |
         eval "$(direnv hook __DOTBINS_SHELL__)"
+      powershell: |
+        Invoke-Expression (& { (direnv hook pwsh | Out-String) })
   eza:
     repo: eza-community/eza
     shell_code:
@@ -63,9 +69,15 @@ tools:
         set-alias lg lazygit.exe
   micromamba:
     repo: mamba-org/micromamba-releases
+    asset_patterns:
+      windows:
+        amd64: micromamba-win-64.exe
     shell_code:
       bash,zsh: |
         alias mm="micromamba"
+      powershell: |
+        set-alias mm micromamba.exe
+        Invoke-Expression (& { (micromamba shell hook -s powershell | Out-String) })
   starship:
     repo: starship/starship
     shell_code:
@@ -85,6 +97,9 @@ tools:
     shell_code:
       bash,zsh: |
         eval "$(atuin init __DOTBINS_SHELL__ --disable-up-arrow)"
+      powershell: |
+        Invoke-Expression (& { (atuin init powershell | Out-String) })
+
 
   keychain:
     repo: funtoo/keychain
@@ -92,10 +107,9 @@ tools:
 
   uv:
     repo: astral-sh/uv
-    linux:
-      binary_name: [uv, uvx]
-      path_in_archive: [uv-*/uv, uv-*/uvx]
-    windows:
-      binary_name: [uv.exe, uvx.exe]
+    asset_patterns:
+      windows:
+        amd64: uv-x86_64-pc-windows-msvc.zip
+    binary_name: [uv, uvx]
 
   codex: openai/codex

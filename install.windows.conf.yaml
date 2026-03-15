@@ -1,0 +1,17 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+
+- link:
+    ~/.codex: configs/codex/codex
+    ~/.config/atuin: configs/atuin
+    ~/.config/git/attributes: configs/git/attributes
+    ~/.config/starship.toml: configs/starship/starship.toml
+    ~/.config/zellij: configs/zellij
+    ~/.dotbins/dotbins.yaml: configs/dotbins/dotbins.yaml
+    ~/.gitconfig-personal: configs/git/gitconfig-personal
+    ~/.gitconfig: configs/git/gitconfig
+    ~/.mambarc: configs/mamba/mambarc
+    ~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1: configs/powershell/Microsoft.PowerShell_profile.ps1
+    ~/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1: configs/powershell/Microsoft.PowerShell_profile.ps1
