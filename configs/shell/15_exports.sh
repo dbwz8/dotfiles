@@ -34,21 +34,49 @@ elif locale -a 2>/dev/null | grep -qi '^c\.utf8$'; then
 fi
 export EDITOR="vim"
 export GPG_TTY=$(tty)
-if command -v gh >/dev/null 2>&1; then
-    _gh_token="$(gh auth token 2>/dev/null || true)"
-    if [ -n "$_gh_token" ]; then
+_is_valid_github_token() {
+    case "${1:-}" in
+        ""|*[[:space:]]*) return 1 ;;
+    esac
+    return 0
+}
+
+_load_gh_token() {
+    if env -u GITHUB_TOKEN -u GH_TOKEN gh auth token >/dev/null 2>&1; then
+        env -u GITHUB_TOKEN -u GH_TOKEN gh auth token 2>/dev/null
+        return 0
+    fi
+
+    env -u GITHUB_TOKEN -u GH_TOKEN gh auth status -t 2>/dev/null \
+        | sed -n 's/^[[:space:]-]*Token: //p' \
+        | head -n 1
+}
+
+if ! _is_valid_github_token "${GITHUB_TOKEN:-}"; then
+    unset GITHUB_TOKEN
+fi
+
+if ! _is_valid_github_token "${GH_TOKEN:-}"; then
+    unset GH_TOKEN
+fi
+
+if [ -z "${GITHUB_TOKEN:-}" ] && [ -n "${GH_TOKEN:-}" ]; then
+    export GITHUB_TOKEN="${GH_TOKEN}"
+fi
+
+if [ -z "${GITHUB_TOKEN:-}" ] && command -v gh >/dev/null 2>&1; then
+    _gh_token="$(_load_gh_token)"
+    if _is_valid_github_token "$_gh_token"; then
         export GITHUB_TOKEN="$_gh_token"
     fi
     unset _gh_token
 fi
 
-if [ -z "${GITHUB_TOKEN:-}" ]; then
-    unset GITHUB_TOKEN
+if [ -z "${GH_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+    export GH_TOKEN="${GITHUB_TOKEN}"
 fi
 
-if [ -z "${GH_TOKEN:-}" ]; then
-    unset GH_TOKEN
-fi
+unset -f _is_valid_github_token _load_gh_token
 export PYDEVD_DISABLE_FILE_VALIDATION=1
 export REPORTTIME=20
 export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-389070397

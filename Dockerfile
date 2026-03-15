@@ -17,7 +17,7 @@ RUN git clone https://github.com/dbwz9/dotfiles.git ~/git/dotfiles
 RUN cd ~/git/dotfiles && \
     git submodule init && \
     git config submodule.secrets.update none && \
-    git submodule update --init --recursive --jobs 8
+    git submodule update --init --recursive --remote --jobs 8
 
 # Install the dotfiles
 RUN cd ~/git/dotfiles && ./install || true

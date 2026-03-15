@@ -16,6 +16,7 @@ tools:
         set-alias du duf.exe
   dust: bootandy/dust
   fd: sharkdp/fd
+  gh: cli/cli
   git-lfs: git-lfs/git-lfs
   hyperfine: sharkdp/hyperfine
   rg: BurntSushi/ripgrep

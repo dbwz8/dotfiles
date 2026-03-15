@@ -40,7 +40,7 @@ elif UV_BIN="$(uv_bin)"; then
     "$UV_BIN" tool run dotbot -d "$BASEDIR" -c "install.conf.yaml" "${@}"
 else
     printf '%s\n' "dotbot is unavailable." >&2
-    printf '%s\n' "Initialize submodules with: git submodule update --init --recursive" >&2
+    printf '%s\n' "Initialize submodules with: git submodule update --init --recursive --remote" >&2
     printf '%s\n' "Or install uv and rerun ./install to bootstrap dotbot without the submodule." >&2
     exit 1
 fi
@@ -65,9 +65,21 @@ dotbins_bin() {
     return 1
 }
 
-# Some GitHub clients treat an empty token as credentials and then fail every request with 401.
-[ -n "${GITHUB_TOKEN:-}" ] || unset GITHUB_TOKEN
-[ -n "${GH_TOKEN:-}" ] || unset GH_TOKEN
+sanitize_github_token_env() {
+    case "${GITHUB_TOKEN:-}" in
+        ""|*[[:space:]]*) unset GITHUB_TOKEN ;;
+    esac
+
+    case "${GH_TOKEN:-}" in
+        ""|*[[:space:]]*) unset GH_TOKEN ;;
+    esac
+
+    if [ -z "${GITHUB_TOKEN:-}" ] && [ -n "${GH_TOKEN:-}" ]; then
+        export GITHUB_TOKEN="${GH_TOKEN}"
+    fi
+}
+
+sanitize_github_token_env
 
 bash "${DOTFILES}/scripts/sync-uv-tools.sh"
 
