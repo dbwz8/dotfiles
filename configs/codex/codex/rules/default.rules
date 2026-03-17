@@ -1,4 +1,5 @@
 prefix_rule(pattern=["bash", "-n", "/home/wecker/git/dotfiles/install"], decision="allow")
+<<<<<<< HEAD
 prefix_rule(pattern=["bash", "-n", "/home/dbwz8/git/dotfiles/install"], decision="allow")
 prefix_rule(pattern=["/usr/bin/zsh", "-lc", "XDG_CACHE_HOME=/tmp/.cache /home/wecker/.dotbins/linux/amd64/bin/micromamba list -n qeclib"], decision="allow")
 prefix_rule(pattern=["/usr/bin/zsh", "-lc", "XDG_CACHE_HOME=/tmp/.cache /home/wecker/.dotbins/linux/amd64/bin/micromamba run -n qeclib python -m pip freeze"], decision="allow")
@@ -58,3 +59,4 @@ prefix_rule(pattern=["bash", ".github/scripts/test.sh"], decision="allow")
 prefix_rule(pattern=["uv", "run", ".github/scripts/repo_structure.py"], decision="allow")
 prefix_rule(pattern=["env", "-u", "GITHUB_TOKEN", "-u", "GH_TOKEN", "dotbins", "--config-file", "configs/dotbins/dotbins.yaml", "sync", "--current", "--no-readme", "--no-shell-scripts", "--no-copy-config-file", "gh"], decision="allow")
 prefix_rule(pattern=["sudo", "ln", "-sf", "/usr/bin/python3.10", "/usr/bin/python3"], decision="allow")
+prefix_rule(pattern=["git", "restore"], decision="allow")

@@ -4,6 +4,9 @@ model = "gpt-5.4"
 [projects."/home/wecker"]
 trust_level = "trusted"
 
+[projects."/home/wecker/git/qec_team"]
+trust_level = "trusted"
+
 [projects."/home/wecker/git/dotfiles"]
 trust_level = "trusted"
 
