@@ -55,7 +55,9 @@ configs/codex/codex/history.jsonl
 configs/codex/codex/log/
 configs/codex/codex/logs*
 configs/codex/codex/models_cache.json
+configs/codex/codex/session_index.jsonl
 configs/codex/codex/sessions/
+configs/codex/codex/memories/
 configs/codex/codex/tmp/
 configs/codex/codex/version.json
 configs/codex/codex/*.sqlite-*
