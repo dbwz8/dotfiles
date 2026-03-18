@@ -51,6 +51,7 @@ configs/codex/codex/shell_snapshots/
 
 # Codex local state
 configs/codex/codex/.personality_migration
+configs/codex/codex/config.toml
 configs/codex/codex/history.jsonl
 configs/codex/codex/log/
 configs/codex/codex/logs*
@@ -58,6 +59,7 @@ configs/codex/codex/models_cache.json
 configs/codex/codex/rules/default.rules
 configs/codex/codex/session_index.jsonl
 configs/codex/codex/sessions/
+configs/codex/codex/skills/.system/
 configs/codex/codex/memories/
 configs/codex/codex/tmp/
 configs/codex/codex/version.json
