@@ -24,6 +24,9 @@ if [[ ($- == *i*) && -n "$ZSH_VERSION" ]]; then
     if [ -f "$_dotfiles_root/submodules/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
         source "$_dotfiles_root/submodules/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     fi
+    if [ -f "$_dotfiles_root/submodules/zsh-z/zsh-z.plugin.zsh" ]; then
+        source "$_dotfiles_root/submodules/zsh-z/zsh-z.plugin.zsh"
+    fi
 
     # -- fix Atuin [Ctrl-r] key binding
     if command -v atuin &> /dev/null; then
