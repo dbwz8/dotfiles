@@ -4,9 +4,7 @@ source "$HOME/.config/dotfiles-shell/main.sh"
 
 # zprof # Uncomment for profiling
 
-[ -f "$HOME/.atuin/bin/env" ] && . "$HOME/.atuin/bin/env"
-
-#eval "$(atuin init zsh --disable-up-arrow)"
+command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh --disable-up-arrow)"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
