@@ -222,3 +222,19 @@ function test_rust_ffi {
     #master
     uv run pytest test/rust_ffi/test_rust_ffi.py -m hitl --system-class blue-barrel --system localhost -vv $@
 }
+
+function headtail {
+  local n="${1:-5}"
+  awk -v n="$n" '
+    NR<=n { print }
+    { buf[NR % n] = $0 }
+    END {
+      if (NR > n) print "..."
+      start = (NR > n) ? NR - n + 1 : 1
+      for (i = start; i <= NR; i++) {
+        if (i > n) print buf[i % n]
+      }
+    }
+  '
+}
+
