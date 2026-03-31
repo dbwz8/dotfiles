@@ -2,6 +2,7 @@
 default_layout "starter"
 session_name "standard"
 mouse_mode true
+support_kitty_keyboard_protocol true
 
 plugins {
     compact-bar location="zellij:compact-bar" {
@@ -12,6 +13,8 @@ plugins {
 // Windows-friendly pane controls that avoid colliding with terminal-level shortcuts.
 keybinds {
     shared_except "locked" {
+        // Preserve Shift-Enter for apps that rely on kitty keyboard protocol.
+        bind "Shift Enter" { WriteChars "\u{1b}[13;2u"; }
         // Add direction-specific resize chords while leaving Alt +/- on Zellij's generic resize.
         bind "Alt =" "Alt +" { Resize "Increase"; }
         bind "Alt -" { Resize "Decrease"; }

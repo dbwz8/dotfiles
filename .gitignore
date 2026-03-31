@@ -64,3 +64,5 @@ configs/codex/codex/memories/
 configs/codex/codex/tmp/
 configs/codex/codex/version.json
 configs/codex/codex/*.sqlite-*
+configs/codex/codex/.tmp/
+configs/codex/codex/plugins/cache/
