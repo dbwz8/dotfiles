@@ -76,8 +76,15 @@ tools:
       bash,zsh: |
         alias mm="micromamba"
       powershell: |
-        set-alias mm micromamba.exe
-        Invoke-Expression (& { (micromamba shell hook -s powershell | Out-String) })
+        $env:MAMBA_EXE = (Get-Command micromamba).Source
+        if (-not $env:MAMBA_ROOT_PREFIX) {
+            $env:MAMBA_ROOT_PREFIX = Join-Path $HOME "micromamba"
+        }
+        $mambaModule = Join-Path $env:MAMBA_ROOT_PREFIX "condabin\Mamba.psm1"
+        if (Test-Path $mambaModule) {
+            set-alias mm micromamba.exe
+            Invoke-Expression (& { (micromamba shell hook -s powershell | Out-String) })
+        }
   starship:
     repo: starship/starship
     shell_code:
@@ -113,3 +120,4 @@ tools:
     binary_name: [uv, uvx]
 
   codex: openai/codex
+

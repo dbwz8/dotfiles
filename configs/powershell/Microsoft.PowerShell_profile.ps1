@@ -9,6 +9,14 @@ if (Test-Path (Join-Path $dotfilesFromProfile "configs")) {
     $env:DOTFILES = $dotfilesFromProfile
 }
 
+$repoBin = $null
+if ($env:DOTFILES) {
+    $repoBin = Join-Path $env:DOTFILES "bin"
+    if ((Test-Path $repoBin) -and -not (($env:PATH -split [System.IO.Path]::PathSeparator) -contains $repoBin)) {
+        $env:PATH = "$repoBin$([System.IO.Path]::PathSeparator)$env:PATH"
+    }
+}
+
 $arch = "386"
 try {
     $processor = Get-CimInstance -Class Win32_Processor -ErrorAction Stop | Select-Object -First 1
@@ -80,5 +88,13 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
     function gs { git status @args }
     function glo { git log --oneline --decorate -20 @args }
 }
+if ($env:DOTFILES) {
+    $zellijStart = Join-Path $env:DOTFILES "scripts\start-zellij.ps1"
+    if (Test-Path $zellijStart) {
+        function zellij { & $zellijStart @args }
+        function zj { & $zellijStart @args }
+    }
+}
 if (Get-Command python -ErrorAction SilentlyContinue) { Set-Alias py python }
 if (Get-Command claude -ErrorAction SilentlyContinue) { Set-Alias cl claude }
+

@@ -1,5 +1,6 @@
 // Start with a repo-managed layout that keeps the full status bar visible.
 default_layout "starter"
+default_shell "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
 session_name "standard"
 mouse_mode true
 
@@ -24,3 +25,5 @@ keybinds {
         bind "Ctrl F4" { CloseFocus; }
     }
 }
+
+
