@@ -24,4 +24,5 @@ if [[ $- == *i* ]]; then
     alias v='nvim'
     alias vi='nvim'
     alias wrap='tput smam'
+    alias zj=zellij
 fi
