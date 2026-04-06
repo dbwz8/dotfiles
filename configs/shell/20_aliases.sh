@@ -11,6 +11,7 @@ if [[ $- == *i* ]]; then
     alias vcl='CLAUDE_CODE_USE_VERTEX=1 ANTHROPIC_MODEL="claude-opus-4-6" ANTHROPIC_SMALL_FAST_MODEL="claude-haiku-4-5" ANTHROPIC_VERTEX_PROJECT_ID="gen-lang-client-0660920503" claude'
     alias glo='git log --oneline --decorate -20'
     alias gs='git status'
+    alias hound=' cargo run -- chat --checkpoint-dir checkpoints/holmes_sft_seed_v17_runtime_extractive_mix_from_v3base --book hound'
     alias ls='eza'
     alias mm="micromamba"
     alias nowrap='tput rmam'
@@ -20,7 +21,7 @@ if [[ $- == *i* ]]; then
     alias slurm_rsync="rsync -azvh wecker@obsidian:git/sap/qec_team/data/dbwPlay_save/'*.json' ~/git/sap/qec_team/data/dbwPlay_save"
     alias ts='tmux-start work'
     alias u='cd ..'
-    alias v='vim'
-    alias vi='vim'
+    alias v='nvim'
+    alias vi='nvim'
     alias wrap='tput smam'
 fi

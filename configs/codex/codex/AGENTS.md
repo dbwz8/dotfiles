@@ -5,5 +5,6 @@
 - Never amend a commit once it is made. Commit history should remain unchanged to maintain the integrity of the project history.
 - Do not run `python`, `python3`, `pip`, or `pip3` directly. Always use `uv run` or `uv sync --all-extras` to ensure the correct virtual environment and dependencies are used for the project.
 - Most projects utilize `pre-commit` hooks to automate code formatting and linting.
+- After asking once per session and receiving approval, treat user requests as standing authorization to edit any file under the directory where the session started. Do not ask for permission again for edits within that directory unless the action is destructive, outside that directory, or otherwise requires sandbox escalation.
 - Only make the minimal necessary changes to complete your task.
 - Avoid making changes that are not directly related to the task at hand.
