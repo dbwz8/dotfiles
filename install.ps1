@@ -65,6 +65,66 @@ function Invoke-Dotbot {
     & $uv tool run dotbot -d $RepoRoot -c "install.windows.conf.yaml"
 }
 
+function Resolve-PwshPath {
+    $pwsh = Get-Command pwsh.exe -ErrorAction SilentlyContinue
+    if ($pwsh) {
+        return $pwsh.Source
+    }
+
+    $candidatePaths = @(
+        (Join-Path ${env:ProgramFiles} "PowerShell\7\pwsh.exe"),
+        (Join-Path ${env:ProgramW6432} "PowerShell\7\pwsh.exe"),
+        (Join-Path $HOME "AppData\Local\Microsoft\WindowsApps\pwsh.exe")
+    ) | Where-Object { $_ }
+
+    foreach ($candidate in $candidatePaths) {
+        if (Test-Path $candidate) {
+            return $candidate
+        }
+    }
+
+    $winGetPackagesDir = Join-Path $HOME "AppData\Local\Microsoft\WinGet\Packages"
+    if (Test-Path $winGetPackagesDir) {
+        $discoveredPwsh = Get-ChildItem -Path $winGetPackagesDir -Recurse -Filter pwsh.exe -ErrorAction SilentlyContinue |
+            Select-Object -First 1 -ExpandProperty FullName
+        if ($discoveredPwsh) {
+            return $discoveredPwsh
+        }
+    }
+
+    return $null
+}
+
+function Ensure-Pwsh {
+    $pwshPath = Resolve-PwshPath
+    if (-not $pwshPath) {
+        $winget = Get-Command winget.exe -ErrorAction SilentlyContinue
+        if (-not $winget) {
+            throw "pwsh.exe is required for the Windows shell setup, but it is not installed and winget.exe is unavailable."
+        }
+
+        Write-Host "Installing PowerShell 7 with winget..."
+        & $winget.Source install --exact --id Microsoft.PowerShell --scope user --accept-package-agreements --accept-source-agreements --disable-interactivity
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to install PowerShell 7 with winget."
+        }
+
+        $pwshPath = Resolve-PwshPath
+        if (-not $pwshPath) {
+            throw "PowerShell 7 installation completed, but pwsh.exe could not be located afterwards."
+        }
+    }
+
+    $pwshBinDir = Split-Path -Parent $pwshPath
+    if ($pwshBinDir -and -not (($env:PATH -split [System.IO.Path]::PathSeparator) -contains $pwshBinDir)) {
+        $env:PATH = "$pwshBinDir$([System.IO.Path]::PathSeparator)$env:PATH"
+    }
+
+    return $pwshPath
+}
+
+Ensure-Pwsh | Out-Null
+
 Invoke-Dotbot
 
 $zellijSourceDir = Join-Path $RepoRoot "configs\zellij"
