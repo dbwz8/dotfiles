@@ -1,4 +1,4 @@
-default_shell "C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+default_shell "pwsh.exe"
 
 layout {
     default_tab_template {
@@ -12,7 +12,7 @@ layout {
     }
 
     tab name="local" split_direction="horizontal" {
-        pane name="1" focus=true command="C:\\Program Files\\PowerShell\\7\\pwsh.exe"
-        pane name="2" size="50%" command="C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+        pane name="1" focus=true command="pwsh.exe"
+        pane name="2" size="50%" command="pwsh.exe"
     }
 }

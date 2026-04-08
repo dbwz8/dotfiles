@@ -446,6 +446,8 @@ mv ~/.gitconfig ~/.gitconfig.bak
 ./install
 ```
 
+On Windows, run `.\install.ps1`. The installer now bootstraps PowerShell 7 with `winget` when `pwsh.exe` is missing, then syncs the Zellij config that uses `pwsh.exe` for new panes.
+
 ## 📚 Additional Resources
 
 - [dotbot repo](https://github.com/anishathalye/dotbot)
