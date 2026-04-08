@@ -1,12 +1,27 @@
 $profileItem = Get-Item -LiteralPath $PSCommandPath -Force
-if ($profileItem.Target) {
-    $profilePath = $profileItem.Target
-} else {
-    $profilePath = (Resolve-Path -LiteralPath $PSCommandPath).Path
+if (-not $env:DOTFILES) {
+    $dotfilesCandidates = @()
+    if ($profileItem.Target) {
+        $dotfilesCandidates += Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $profileItem.Target))
+    }
+    $dotfilesCandidates += @(
+        (Join-Path $HOME "git\dotfiles"),
+        (Join-Path $HOME "dotfiles")
+    )
+
+    foreach ($candidate in $dotfilesCandidates) {
+        if ($candidate -and (Test-Path (Join-Path $candidate "configs")) -and (Test-Path (Join-Path $candidate "scripts\start-zellij.ps1"))) {
+            $env:DOTFILES = $candidate
+            break
+        }
+    }
 }
-$dotfilesFromProfile = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $profilePath))
-if (Test-Path (Join-Path $dotfilesFromProfile "configs")) {
-    $env:DOTFILES = $dotfilesFromProfile
+
+if ($env:DOTFILES) {
+    $zellijConfigDir = Join-Path $env:DOTFILES "configs\zellij"
+    if (Test-Path $zellijConfigDir) {
+        $env:ZELLIJ_CONFIG_DIR = $zellijConfigDir
+    }
 }
 
 $repoBin = $null

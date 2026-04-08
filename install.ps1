@@ -67,6 +67,17 @@ function Invoke-Dotbot {
 
 Invoke-Dotbot
 
+$zellijSourceDir = Join-Path $RepoRoot "configs\zellij"
+if (Test-Path $zellijSourceDir) {
+    foreach ($zellijTargetDir in @(
+        (Join-Path $HOME ".config\zellij"),
+        (Join-Path $env:APPDATA "Zellij\config")
+    )) {
+        New-Item -ItemType Directory -Force -Path $zellijTargetDir | Out-Null
+        Copy-Item (Join-Path $zellijSourceDir "*") $zellijTargetDir -Recurse -Force
+    }
+}
+
 $dotbinsDir = Join-Path $HOME ".dotbins"
 New-Item -ItemType Directory -Force -Path $dotbinsDir | Out-Null
 Copy-Item (Join-Path $RepoRoot "configs\dotbins\dotbins.yaml") (Join-Path $dotbinsDir "dotbins.yaml") -Force
