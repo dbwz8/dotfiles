@@ -24,5 +24,19 @@ if [[ $- == *i* ]]; then
     alias v='nvim'
     alias vi='nvim'
     alias wrap='tput smam'
-    alias zj=zellij
+
+    zellij() {
+        local zellij_tmp_base="${TMPDIR:-/tmp}/zellij-$(id -u)"
+        local zellij_config_args=()
+        mkdir -p "$HOME/.cache/zellij" "$HOME/.local/share/zellij"
+        mkdir -p "$zellij_tmp_base/zellij-log"
+        if [ -n "${XDG_RUNTIME_DIR:-}" ]; then
+            mkdir -p "$XDG_RUNTIME_DIR/zellij"
+        fi
+        if [ -n "${WSL_DISTRO_NAME:-}" ] && [ -f "${DOTFILES:-$HOME/git/dotfiles}/configs/zellij/config-wsl.kdl" ]; then
+            zellij_config_args=(--config-dir "${DOTFILES:-$HOME/git/dotfiles}/configs/zellij" --config "${DOTFILES:-$HOME/git/dotfiles}/configs/zellij/config-wsl.kdl")
+        fi
+        command zellij "${zellij_config_args[@]}" "$@"
+    }
+    alias zj='zellij'
 fi

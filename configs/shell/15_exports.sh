@@ -10,12 +10,15 @@ _path_prepend "/nix/var/nix/profiles/default/bin"  # Nix path
 _path_prepend "$WASI_SDK_PATH/bin"
 
 _default_runtime_dir="/run/user/$(id -u)"
+if [ -d "$_default_runtime_dir" ]; then
+    export XDG_RUNTIME_DIR="$_default_runtime_dir"
+elif [ -z "${SSH_CONNECTION:-}${SSH_CLIENT:-}${SSH_TTY:-}" ] && [ -d /mnt/wslg/runtime-dir ] && [ -w /mnt/wslg/runtime-dir ]; then
+    export XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir
+fi
+
 if [ -z "${SSH_CONNECTION:-}${SSH_CLIENT:-}${SSH_TTY:-}" ] && [ -d /mnt/wslg/runtime-dir ] && [ -w /mnt/wslg/runtime-dir ]; then
     export WAYLAND_DISPLAY=wayland-0
-    export XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir
     export QT_QPA_PLATFORM=wayland
-elif [ -d "$_default_runtime_dir" ] && [ -w "$_default_runtime_dir" ]; then
-    export XDG_RUNTIME_DIR="$_default_runtime_dir"
 fi
 unset _default_runtime_dir
 
@@ -114,4 +117,3 @@ fi
 
 #export WASMTIME_HOME="$HOME/.wasmtime"
 #export PATH="$WASMTIME_HOME/bin:$PATH"
-
