@@ -28,4 +28,9 @@ layout {
         pane name="1" focus=true
         pane name="2" size="50%"
     }
+
+    tab name="obsidian" split_direction="horizontal" {
+        pane name="1" focus=true
+        pane name="2" size="50%"
+    }
 }
