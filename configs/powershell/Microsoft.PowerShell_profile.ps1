@@ -21,6 +21,10 @@ if ($env:DOTFILES) {
     $zellijConfigDir = Join-Path $env:DOTFILES "configs\zellij"
     if (Test-Path $zellijConfigDir) {
         $env:ZELLIJ_CONFIG_DIR = $zellijConfigDir
+        $zellijWindowsConfig = Join-Path $zellijConfigDir "config-windows.kdl"
+        if (Test-Path $zellijWindowsConfig) {
+            $env:ZELLIJ_CONFIG_FILE = $zellijWindowsConfig
+        }
     }
 }
 

@@ -129,12 +129,16 @@ Invoke-Dotbot
 
 $zellijSourceDir = Join-Path $RepoRoot "configs\zellij"
 if (Test-Path $zellijSourceDir) {
+    $zellijWindowsConfig = Join-Path $zellijSourceDir "config-windows.kdl"
     foreach ($zellijTargetDir in @(
         (Join-Path $HOME ".config\zellij"),
         (Join-Path $env:APPDATA "Zellij\config")
     )) {
         New-Item -ItemType Directory -Force -Path $zellijTargetDir | Out-Null
         Copy-Item (Join-Path $zellijSourceDir "*") $zellijTargetDir -Recurse -Force
+        if (Test-Path $zellijWindowsConfig) {
+            Copy-Item $zellijWindowsConfig (Join-Path $zellijTargetDir "config.kdl") -Force
+        }
     }
 }
 
