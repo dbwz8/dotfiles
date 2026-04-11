@@ -1,10 +1,11 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "tools": [
     {
       "server_name": "codex_apps",
       "tool_name": "_add_comment_to_issue",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_add_comment_to_issue",
         "title": "add_comment_to_issue",
@@ -86,6 +87,7 @@
       "server_name": "codex_apps",
       "tool_name": "_add_reaction_to_issue_comment",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_add_reaction_to_issue_comment",
         "title": "add_reaction_to_issue_comment",
@@ -258,6 +260,7 @@
       "server_name": "codex_apps",
       "tool_name": "_add_reaction_to_pr",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_add_reaction_to_pr",
         "title": "add_reaction_to_pr",
@@ -430,6 +433,7 @@
       "server_name": "codex_apps",
       "tool_name": "_add_reaction_to_pr_review_comment",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_add_reaction_to_pr_review_comment",
         "title": "add_reaction_to_pr_review_comment",
@@ -602,6 +606,7 @@
       "server_name": "codex_apps",
       "tool_name": "_add_review_to_pr",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_add_review_to_pr",
         "title": "add_review_to_pr",
@@ -828,6 +833,7 @@
       "server_name": "codex_apps",
       "tool_name": "_check_repo_initialized",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_check_repo_initialized",
         "title": "check_repo_initialized",
@@ -896,6 +902,7 @@
       "server_name": "codex_apps",
       "tool_name": "_compare_commits",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_compare_commits",
         "title": "compare_commits",
@@ -949,6 +956,7 @@
       "server_name": "codex_apps",
       "tool_name": "_create_blob",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_create_blob",
         "title": "create_blob",
@@ -1025,6 +1033,7 @@
       "server_name": "codex_apps",
       "tool_name": "_create_branch",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_create_branch",
         "title": "create_branch",
@@ -1097,6 +1106,7 @@
       "server_name": "codex_apps",
       "tool_name": "_create_commit",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_create_commit",
         "title": "create_commit",
@@ -1175,6 +1185,7 @@
       "server_name": "codex_apps",
       "tool_name": "_create_file",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_create_file",
         "title": "create_file",
@@ -1266,6 +1277,7 @@
       "server_name": "codex_apps",
       "tool_name": "_create_pull_request",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_create_pull_request",
         "title": "create_pull_request",
@@ -1356,6 +1368,7 @@
       "server_name": "codex_apps",
       "tool_name": "_create_tree",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_create_tree",
         "title": "create_tree",
@@ -1439,6 +1452,7 @@
       "server_name": "codex_apps",
       "tool_name": "_download_user_content",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_download_user_content",
         "title": "download_user_content",
@@ -1499,6 +1513,7 @@
       "server_name": "codex_apps",
       "tool_name": "_enable_auto_merge",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_enable_auto_merge",
         "title": "enable_auto_merge",
@@ -1565,6 +1580,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch",
         "title": "fetch",
@@ -1676,6 +1692,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch_blob",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch_blob",
         "title": "fetch_blob",
@@ -1742,6 +1759,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch_commit",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch_commit",
         "title": "fetch_commit",
@@ -1860,6 +1878,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch_file",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch_file",
         "title": "fetch_file",
@@ -1942,6 +1961,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch_issue",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch_issue",
         "title": "fetch_issue",
@@ -2048,6 +2068,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch_issue_comments",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch_issue_comments",
         "title": "fetch_issue_comments",
@@ -2156,6 +2177,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch_pr",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch_pr",
         "title": "fetch_pr",
@@ -2293,6 +2315,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch_pr_comments",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch_pr_comments",
         "title": "fetch_pr_comments",
@@ -2401,6 +2424,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch_pr_file_patch",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch_pr_file_patch",
         "title": "fetch_pr_file_patch",
@@ -2522,6 +2546,7 @@
       "server_name": "codex_apps",
       "tool_name": "_fetch_pr_patch",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_fetch_pr_patch",
         "title": "fetch_pr_patch",
@@ -2660,6 +2685,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_commit_combined_status",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_commit_combined_status",
         "title": "get_commit_combined_status",
@@ -2740,6 +2766,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_issue_comment_reactions",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_issue_comment_reactions",
         "title": "get_issue_comment_reactions",
@@ -2947,6 +2974,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_pr_diff",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_pr_diff",
         "title": "get_pr_diff",
@@ -3032,6 +3060,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_pr_info",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_pr_info",
         "title": "get_pr_info",
@@ -3098,6 +3127,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_pr_reactions",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_pr_reactions",
         "title": "get_pr_reactions",
@@ -3305,6 +3335,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_pr_review_comment_reactions",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_pr_review_comment_reactions",
         "title": "get_pr_review_comment_reactions",
@@ -3512,6 +3543,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_profile",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_profile",
         "title": "get_profile",
@@ -3635,6 +3667,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_repo",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_repo",
         "title": "get_repo",
@@ -3694,6 +3727,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_repo_collaborator_permission",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_repo_collaborator_permission",
         "title": "get_repo_collaborator_permission",
@@ -3779,6 +3813,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_user_login",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_user_login",
         "title": "get_user_login",
@@ -3830,6 +3865,7 @@
       "server_name": "codex_apps",
       "tool_name": "_get_users_recent_prs_in_repo",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_get_users_recent_prs_in_repo",
         "title": "get_users_recent_prs_in_repo",
@@ -3928,6 +3964,7 @@
       "server_name": "codex_apps",
       "tool_name": "_label_pr",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_label_pr",
         "title": "label_pr",
@@ -4000,6 +4037,7 @@
       "server_name": "codex_apps",
       "tool_name": "_list_installations",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_list_installations",
         "title": "list_installations",
@@ -4065,6 +4103,7 @@
       "server_name": "codex_apps",
       "tool_name": "_list_installed_accounts",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_list_installed_accounts",
         "title": "list_installed_accounts",
@@ -4130,6 +4169,7 @@
       "server_name": "codex_apps",
       "tool_name": "_list_pr_changed_filenames",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_list_pr_changed_filenames",
         "title": "list_pr_changed_filenames",
@@ -4209,6 +4249,7 @@
       "server_name": "codex_apps",
       "tool_name": "_list_recent_issues",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_list_recent_issues",
         "title": "list_recent_issues",
@@ -4280,6 +4321,7 @@
       "server_name": "codex_apps",
       "tool_name": "_list_repositories",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_list_repositories",
         "title": "list_repositories",
@@ -4364,6 +4406,7 @@
       "server_name": "codex_apps",
       "tool_name": "_list_repositories_by_affiliation",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_list_repositories_by_affiliation",
         "title": "list_repositories_by_affiliation",
@@ -4450,6 +4493,7 @@
       "server_name": "codex_apps",
       "tool_name": "_list_repositories_by_installation",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_list_repositories_by_installation",
         "title": "list_repositories_by_installation",
@@ -4536,6 +4580,7 @@
       "server_name": "codex_apps",
       "tool_name": "_list_user_org_memberships",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_list_user_org_memberships",
         "title": "list_user_org_memberships",
@@ -4587,6 +4632,7 @@
       "server_name": "codex_apps",
       "tool_name": "_list_user_orgs",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_list_user_orgs",
         "title": "list_user_orgs",
@@ -4638,6 +4684,7 @@
       "server_name": "codex_apps",
       "tool_name": "_remove_reaction_from_issue_comment",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_remove_reaction_from_issue_comment",
         "title": "remove_reaction_from_issue_comment",
@@ -4719,6 +4766,7 @@
       "server_name": "codex_apps",
       "tool_name": "_remove_reaction_from_pr",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_remove_reaction_from_pr",
         "title": "remove_reaction_from_pr",
@@ -4800,6 +4848,7 @@
       "server_name": "codex_apps",
       "tool_name": "_remove_reaction_from_pr_review_comment",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_remove_reaction_from_pr_review_comment",
         "title": "remove_reaction_from_pr_review_comment",
@@ -4881,6 +4930,7 @@
       "server_name": "codex_apps",
       "tool_name": "_reply_to_review_comment",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_reply_to_review_comment",
         "title": "reply_to_review_comment",
@@ -4968,6 +5018,7 @@
       "server_name": "codex_apps",
       "tool_name": "_search",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_search",
         "title": "search",
@@ -5080,6 +5131,7 @@
       "server_name": "codex_apps",
       "tool_name": "_search_branches",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_search_branches",
         "title": "search_branches",
@@ -5171,6 +5223,7 @@
       "server_name": "codex_apps",
       "tool_name": "_search_commits",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_search_commits",
         "title": "search_commits",
@@ -5326,6 +5379,7 @@
       "server_name": "codex_apps",
       "tool_name": "_search_installed_repositories_streaming",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_search_installed_repositories_streaming",
         "title": "search_installed_repositories_streaming",
@@ -5417,6 +5471,7 @@
       "server_name": "codex_apps",
       "tool_name": "_search_installed_repositories_v2",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_search_installed_repositories_v2",
         "title": "search_installed_repositories_v2",
@@ -5525,6 +5580,7 @@
       "server_name": "codex_apps",
       "tool_name": "_search_issues",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_search_issues",
         "title": "search_issues",
@@ -5667,6 +5723,7 @@
       "server_name": "codex_apps",
       "tool_name": "_search_prs",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_search_prs",
         "title": "search_prs",
@@ -5825,6 +5882,7 @@
       "server_name": "codex_apps",
       "tool_name": "_search_repositories",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_search_repositories",
         "title": "search_repositories",
@@ -5944,6 +6002,7 @@
       "server_name": "codex_apps",
       "tool_name": "_update_issue_comment",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_update_issue_comment",
         "title": "update_issue_comment",
@@ -6025,6 +6084,7 @@
       "server_name": "codex_apps",
       "tool_name": "_update_ref",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_update_ref",
         "title": "update_ref",
@@ -6103,6 +6163,7 @@
       "server_name": "codex_apps",
       "tool_name": "_update_review_comment",
       "tool_namespace": "mcp__codex_apps__github",
+      "server_instructions": null,
       "tool": {
         "name": "github_update_review_comment",
         "title": "update_review_comment",
