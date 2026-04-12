@@ -10,12 +10,12 @@ if ! command -v apt-get >/dev/null 2>&1; then
 fi
 
 if ! command -v sudo >/dev/null 2>&1; then
-    printf '%s\n' "⚠️  sudo is not available; skipping eog installation." >&2
+    printf '%s\n' "⚠️  sudo is not available; skipping Linux package installation." >&2
     exit 0
 fi
 
 missing_packages=()
-for pkg in eog adwaita-icon-theme-full; do
+for pkg in eog adwaita-icon-theme-full neovim; do
     if ! dpkg-query -W -f='${Status}\n' "$pkg" 2>/dev/null | grep -qx 'install ok installed'; then
         missing_packages+=("$pkg")
     fi

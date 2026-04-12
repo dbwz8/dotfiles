@@ -51,9 +51,9 @@ if [ -x "${DOTFILES}/scripts/install-slurm-client.sh" ]; then
     fi
 fi
 
-if [ -f "${DOTFILES}/scripts/install-eog.sh" ]; then
-    if ! bash "${DOTFILES}/scripts/install-eog.sh"; then
-        printf '%s\n' "⚠️  eog installation failed; continuing dotfiles install." >&2
+if [ -f "${DOTFILES}/scripts/install-linux-packages.sh" ]; then
+    if ! bash "${DOTFILES}/scripts/install-linux-packages.sh"; then
+        printf '%s\n' "⚠️  Linux package installation failed; continuing dotfiles install." >&2
     fi
 fi
 
