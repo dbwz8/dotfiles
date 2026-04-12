@@ -95,6 +95,12 @@ function plantuml {
     java -Djava.awt.headless=true -jar ~/kits/plantuml.jar $*
 }
 
+function plotAA {
+	ssh weckerAA 'cd git/nanochat;source .venv/bin/activate;~/.local/bin/uv run python -m scripts.plot_training_curve --model-tag d20-5090-long-eager'
+	scp wecker@weckerAA:.cache/nanochat/plots/d20-5090-long-eager.png /tmp
+	eog /tmp/d20-5090-long-eager.png
+}
+
 function slurm_status {
     ssh obsidian '(squeue -u wecker;echo "Expected: 1512, data/dbwPlay: $(ls -l git/sap/qec_team/data/dbwPlay|wc -l)")'
 }
