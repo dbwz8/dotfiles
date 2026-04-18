@@ -19,6 +19,9 @@ tools:
   gh: cli/cli
   git-lfs: git-lfs/git-lfs
   hyperfine: sharkdp/hyperfine
+  neovim:
+    repo: neovim/neovim
+    binary_name: nvim
   rg: BurntSushi/ripgrep
   yazi: sxyazi/yazi
   zellij:
@@ -120,4 +123,3 @@ tools:
     binary_name: [uv, uvx]
 
   codex: openai/codex
-

@@ -9,6 +9,10 @@ _path_prepend "$HOME/.local/bin"
 _path_prepend "/nix/var/nix/profiles/default/bin"  # Nix path
 _path_prepend "$WASI_SDK_PATH/bin"
 
+if [ -n "${WSL_DISTRO_NAME:-}" ] && [ -d /usr/lib/wsl/lib ]; then
+    _path_prepend "/usr/lib/wsl/lib"
+fi
+
 _default_runtime_dir="/run/user/$(id -u)"
 if [ -d "$_default_runtime_dir" ]; then
     export XDG_RUNTIME_DIR="$_default_runtime_dir"
