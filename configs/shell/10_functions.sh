@@ -96,9 +96,10 @@ function plantuml {
 }
 
 function plotAA {
-	ssh weckerAA 'cd git/nanochat;source .venv/bin/activate;~/.local/bin/uv run python -m scripts.plot_training_curve --model-tag d20-5090-long-eager'
-	scp wecker@weckerAA:.cache/nanochat/plots/d20-5090-long-eager.png /tmp
-	eog /tmp/d20-5090-long-eager.png
+    d=outputs/adapters/`ssh weckerAA 'cd git/Qwen3/outputs/adapters;ls -t|head -1'`
+    ssh weckerAA "cd git/Qwen3;source .venv/bin/activate;~/.local/bin/uv run python scripts/plot_training_metrics.py --metrics $d/metrics.jsonl --output-dir $d/plots"
+    scp wecker@weckerAA:git/Qwen3/$d/plots/bits_per_token.png /tmp
+    eog /tmp/bits_per_token.png
 }
 
 function slurm_status {
