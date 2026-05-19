@@ -1,10 +1,10 @@
 personality = "pragmatic"
-model = "gpt-5.4"
-model_reasoning_effort = "high"
+model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
 approvals_reviewer = "user"
 
-[tui]
-vim_mode_default = true
+#[tui]
+#vim_mode_default = true
 
 [tui.keymap.editor]
 insert_newline = "enter"

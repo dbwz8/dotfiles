@@ -105,9 +105,9 @@ _path_prepend PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 _path_prepend LD_LIBRARY_PATH "$WASI_SDK_PATH/lib"
 
 # CUDA stuff
-export CUDA_HOME=/usr/local/cuda-13.0
-export CUDA_PATH=/usr/local/cuda-13.0
-export PATH=/usr/local/cuda-13.0/bin:$PATH
+export CUDA_HOME=/usr/local/cuda-12.8
+export CUDA_PATH=/usr/local/cuda-12.8
+export PATH=/usr/local/cuda-12.8/bin:$PATH
 export CUDA_COMPUTE_CAP=120
 
 # Clean up anything we might have duplicated
