@@ -52,4 +52,6 @@ configs/codex/codex/shell_snapshots/
 # Codex local state
 configs/codex/codex/*
 !configs/codex/codex/AGENTS.md
+!configs/codex/codex/config.toml
 
+/configs/codex/codex/cache/codex_apps_tools
