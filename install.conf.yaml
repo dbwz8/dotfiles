@@ -9,6 +9,12 @@
     ~/.condarc: configs/conda/condarc
     ~/.codex: configs/codex/codex
     ~/.config/atuin: configs/atuin
+    ~/.config/Code/User/keybindings.json:
+      if: '[ `uname` = Linux ]'
+      path: configs/vscode/Code/User/keybindings.json
+    ~/.config/Code/User/settings.json:
+      if: '[ `uname` = Linux ]'
+      path: configs/vscode/Code/User/settings.json
     ~/.config/dask/distributed.yaml: configs/dask/distributed.yaml
     ~/.config/git/attributes: configs/git/attributes
     ~/.config/starship.toml: configs/starship/starship.toml
@@ -17,6 +23,12 @@
     ~/.dotbins/dotbins.yaml: configs/dotbins/dotbins.yaml
     ~/.gitconfig-personal: configs/git/gitconfig-personal
     ~/.gitconfig: configs/git/gitconfig
+    ~/Library/Application Support/Code/User/keybindings.json:
+      if: '[ `uname` = Darwin ]'
+      path: configs/vscode/Code/User/keybindings.json
+    ~/Library/Application Support/Code/User/settings.json:
+      if: '[ `uname` = Darwin ]'
+      path: configs/vscode/Code/User/settings.json
     ~/.local/bin/nbviewer: scripts/nbviewer.sh
     ~/.local/bin/run: scripts/run.sh
     ~/.local/bin/sync-dotfiles: scripts/sync-dotfiles.sh

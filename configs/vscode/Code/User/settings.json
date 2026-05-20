@@ -1,0 +1,174 @@
+{
+    "git.confirmSync": false,
+    "githubPullRequests.pullBranch": "never",
+    "extensions.ignoreRecommendations": true,
+    "githubPullRequests.createOnPublishBranch": "never",
+    "remote.SSH.remotePlatform": {
+        "g1": "linux",
+        "gcp": "linux",
+        "weckerbox": "linux",
+        "obsidian.ionq.net": "linux",
+        "obsidian": "linux",
+        "weckerAA": "linux",
+        "weckerAA-remote": "linux"
+    },
+    "spellright.ignoreFiles": [
+        "**/*.proto",
+        "**/.gitignore",
+        "**/.spellignore"
+    ],
+    "workbench.startupEditor": "none",
+    "git.replaceTagsWhenPull": true,
+    "lldb.suppressUpdateNotifications": true,
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "security.workspace.trust.untrustedFiles": "open",
+    "gitlens.views.scm.grouped.views": {
+        "commits": true,
+        "branches": true,
+        "remotes": true,
+        "stashes": true,
+        "tags": true,
+        "worktrees": true,
+        "contributors": true,
+        "repositories": true,
+        "searchAndCompare": true,
+        "launchpad": false
+    },
+    "makefile.configureOnOpen": true,
+    "git.openRepositoryInParentFolders": "never",
+    "security.allowedUNCHosts": [
+        "tp-share",
+        "wsl.localhost",
+        "wsl$"
+    ],
+    "jupyter.runStartupCommands": [
+        "%load_ext autoreload",
+        "%autoreload 2"
+    ],
+    "jupyter.debugJustMyCode": false,
+    "debugpy.debugJustMyCode": false,
+    "notebook.output.scrolling": true,
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "right"
+    },
+    "jupyter.askForKernelRestart": false,
+    "window.newWindowDimensions": "inherit",
+    "remote.autoForwardPortsSource": "hybrid",
+    "notebook.lineNumbers": "on",
+    "geminicodeassist.project": "",
+    "git.blame.editorDecoration.enabled": true,
+    "notebook.formatOnSave.enabled": true,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python",
+        "editor.formatOnSave": true
+    },
+    "go.toolsEnvVars": {},
+    "go.docsTool": "gogetdoc",
+    "editor.multiCursorModifier": "ctrlCmd",
+    "chat.commandCenter.enabled": false,
+    "ruff.exclude": [
+        "SageIons.ipynb"
+    ],
+    "python.analysis.exclude": [
+        "**/SageIons.ipynb",
+    ],
+    "python.analysis.extraPaths": [
+        "~/git/sap/cypress",
+        "~/git/sap/qiskit-ionq",
+        "~/git/sap/qec_team"
+    ],
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportAttributeAccessIssue": "none"
+    },
+    "python.terminal.activateEnvironment": false,
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.env.linux": { },
+    "dataWrangler.experiments.copilot.enabled": false,
+    "window.confirmSaveUntitledWorkspace": false,
+    "workbench.tree.enableStickyScroll": false,
+    "mypy.extraArguments": [
+        "--ignore-missing-imports"
+    ],
+    "githubIssues.queries": [
+        {
+            "label": "My Issues",
+            "query": "is:open assignee:${user} repo:${owner}/${repository}",
+            "groupBy": [
+                "milestone"
+            ]
+        },
+        {
+            "label": "Created Issues",
+            "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc"
+        },
+        {
+            "label": "Recent Issues",
+            "query": "state:open repo:${owner}/${repository} sort:updated-desc"
+        }
+    ],
+    "breadcrumbs.enabled": false,
+    "mypy.enabled": false,
+    "git-graph.repository.sign.commits": true,
+    "git.enableCommitSigning": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "editor.suggest.showInlineDetails": false,
+    "editor.screenReaderAnnounceInlineSuggestion": false,
+    "editor.quickSuggestions": {
+        "comments": "on",
+        "strings": "on"
+    },
+    "terminal.integrated.suggest.quickSuggestions": {
+
+        "commands": "off",
+        "arguments": "off",
+        "unknown": "off"
+    },
+    "editor.inlineSuggest.edits.showCollapsed": true,
+    "accessibility.signals.lineHasInlineSuggestion": {
+        "sound": "off"
+    },
+    "emmet.useInlineCompletions": true,
+    "powershell.promptToUpdatePowerShell": false,
+    "git.enableSmartCommit": true,
+    "files.associations": {
+        "*.pyx": "cython",
+        "*.qasm": "openqasm",
+        "*.ll": "llvm",
+        "*.ll_inp": "llvm"
+    },
+    "workbench.editor.empty.hint": "hidden",
+    "update.showReleaseNotes": false,
+    "explorer.confirmDragAndDrop": false,
+    "debug.allowBreakpointsEverywhere": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "--continue-on-collection-errors",
+        "--rootdir",
+        "${workspaceFolder}/tests",
+        "-m \"not notebooks\"",
+        "--cov=${workspaceFolder}",
+        "-n 8"
+    ],
+    "notebook.markup.fontSize": 14,
+    "rust-analyzer.check.command": "clippy",
+
+    // Cleanup whitespace changes.
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    // Remove cruft.
+    "telemetry.telemetryLevel": "off",
+    "gitlens.views.branches.pullRequests.showForBranches": false,
+    "claudeCode.preferredLocation": "sidebar",
+    "claudeCode.selectedModel": "claude-opus-4-6",
+    "claudeCode.useTerminal": true,
+    "workbench.secondarySideBar.defaultVisibility": "hidden",
+    "debug.terminal.clearBeforeReusing": true,
+    "workbench.sideBar.location": "right",
+    "gitlens.ai.model": "vscode",
+    "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+    "chat.viewSessions.orientation": "stacked",
+    "jupyter.interactiveWindow.creationMode": "perFile"
+}
