@@ -90,11 +90,12 @@ export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-
 export UPLOAD_FILE_TO="transfer.sh"  # For upload-file.sh
 export SYSTEMD_EDITOR=vim
 
-export CLAUDE_CODE_USE_VERTEX=1
+#export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5
-export ANTHROPIC_VERTEX_PROJECT_ID="gen-lang-client-0660920503"
+#export ANTHROPIC_VERTEX_PROJECT_ID="gen-lang-client-0660920503"
 export ANTHROPIC_MODEL="claude-opus-4-6"
 export ANTHROPIC_SMALL_FAST_MODEL="claude-haiku-4-5@20251001"
+export CLAUDE_CODE_OAUTH_TOKEN=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
 
 export PYTHONPATH=$CYPRESS:$PROTOS
 
@@ -104,9 +105,9 @@ _path_prepend PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
 _path_prepend LD_LIBRARY_PATH "$WASI_SDK_PATH/lib"
 
 # CUDA stuff
-export CUDA_HOME=/usr/local/cuda-13.0
-export CUDA_PATH=/usr/local/cuda-13.0
-export PATH=/usr/local/cuda-13.0/bin:$PATH
+export CUDA_HOME=/usr/local/cuda-12.8
+export CUDA_PATH=/usr/local/cuda-12.8
+export PATH=/usr/local/cuda-12.8/bin:$PATH
 export CUDA_COMPUTE_CAP=120
 
 # Clean up anything we might have duplicated
