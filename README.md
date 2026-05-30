@@ -446,7 +446,7 @@ mv ~/.gitconfig ~/.gitconfig.bak
 ./install
 ```
 
-On Windows, run `.\install.ps1`. The installer now bootstraps PowerShell 7 with `winget` when `pwsh.exe` is missing, then syncs the Zellij config that uses `pwsh.exe` for new panes.
+On Windows, run `.\install.ps1`. The installer now bootstraps PowerShell 7 with `winget` when `pwsh.exe` is missing, syncs the Zellij config that uses `pwsh.exe` for new panes, and installs the local WLM Rust app from `$HOME\git\languages\rust\WLM` into `~\.cargo\bin` when that checkout and `cargo.exe` are available. Set `WLM_SOURCE` before running the installer to use a different WLM checkout path.
 
 ## 📚 Additional Resources
 

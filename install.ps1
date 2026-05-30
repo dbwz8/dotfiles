@@ -155,6 +155,8 @@ foreach ($profileDir in @(
     Copy-Item $profileSource (Join-Path $profileDir "Microsoft.PowerShell_profile.ps1") -Force
 }
 
+& (Join-Path $RepoRoot "scripts\install-wlm.ps1")
+
 & (Join-Path $RepoRoot "scripts\sync-uv-tools.ps1")
 
 $dotbins = $null
