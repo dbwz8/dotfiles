@@ -73,6 +73,12 @@ approval_mode = "approve"
 [mcp_servers.slack-reader.tools.list_conversations]
 approval_mode = "approve"
 
+[mcp_servers.slack-reader.tools.read_conversation]
+approval_mode = "approve"
+
+[mcp_servers.slack-reader.tools.read_thread]
+approval_mode = "approve"
+
 [mcp_servers.ionq-mcp-gateway]
 url = "https://prod-mcp-gateway.ionq.co/mcp"
 oauth_resource = "https://prod-mcp-gateway.ionq.co/mcp"
