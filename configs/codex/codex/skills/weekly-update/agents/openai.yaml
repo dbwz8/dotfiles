@@ -1,0 +1,4 @@
+interface:
+  display_name: "Weekly Update"
+  short_description: "Draft Dave's weekly update from work sources"
+  default_prompt: "Use $weekly-update to produce this week's structured update for Dave."

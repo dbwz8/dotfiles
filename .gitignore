@@ -53,5 +53,8 @@ configs/codex/codex/shell_snapshots/
 configs/codex/codex/*
 !configs/codex/codex/AGENTS.md
 !configs/codex/codex/config.toml
+!configs/codex/codex/skills/
+!configs/codex/codex/skills/**
+configs/codex/codex/skills/.system/
 
 /configs/codex/codex/cache/codex_apps_tools

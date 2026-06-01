@@ -66,3 +66,52 @@ enabled = true
 
 [mcp_servers.slack-reader]
 url = "https://slack-reader-gateway-fwckdiaypa-uk.a.run.app/mcp"
+
+[mcp_servers.slack-reader.tools.whoami]
+approval_mode = "approve"
+
+[mcp_servers.slack-reader.tools.list_conversations]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway]
+url = "https://prod-mcp-gateway.ionq.co/mcp"
+oauth_resource = "https://prod-mcp-gateway.ionq.co/mcp"
+
+[mcp_servers.ionq-mcp-gateway.tools.google-calendar_list_events]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.slack-gateway-reader-mcp_list_conversations]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.slack-gateway-reader-mcp_read_thread]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.slack-gateway-reader-mcp_read_conversation]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.google-drive_read_file_content]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.google-calendar_list_calendars]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.slack-gateway-reader-mcp_whoami]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.portal_list_servers]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.portal_toggle_servers]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.google-drive_search_files]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.gmail_search_threads]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.gmail_get_thread]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.google-drive_get_file_metadata]
+approval_mode = "approve"
