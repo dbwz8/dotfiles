@@ -8,6 +8,7 @@ _path_prepend "$HOME/.local/bin"
 #_path_prepend "$RUST_TOOLS"
 _path_prepend "/nix/var/nix/profiles/default/bin"  # Nix path
 _path_prepend "$WASI_SDK_PATH/bin"
+_path_append /usr/lib/wsl/lib
 
 if [ -n "${WSL_DISTRO_NAME:-}" ] && [ -d /usr/lib/wsl/lib ]; then
     _path_prepend "/usr/lib/wsl/lib"

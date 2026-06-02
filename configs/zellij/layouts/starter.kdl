@@ -14,30 +14,6 @@ layout {
         pane name="2" size="50%"
     }
 
-    tab name="qec" split_direction="horizontal" {
-        pane name="1" focus=true
-        pane name="2" size="50%"
-    }
-
-    tab name="liboi" split_direction="horizontal" {
-        pane name="1" focus=true
-        pane name="2" size="50%"
-    }
-
-    tab name="cypress" split_direction="horizontal" {
-        pane name="1" focus=true
-        pane name="2" size="50%"
-    }
-
-    tab name="obsidian" split_direction="horizontal" {
-        pane name="1" focus=true command="ssh" {
-            args "obsidian"
-        }
-        pane name="2" size="50%" command="ssh" {
-            args "obsidian"
-        }
-    }
-
     tab name="weckerAA" split_direction="horizontal" {
         pane name="1" focus=true command="ssh" {
             args "weckerAA"
