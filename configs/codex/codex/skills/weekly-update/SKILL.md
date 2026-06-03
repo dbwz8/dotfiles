@@ -70,7 +70,8 @@ Keep a compact source log while gathering: date ranges searched, Obsidian/Drive 
 
 1. Determine the week.
    - Anchor to the actual current date.
-   - Use Monday through Friday for a full-week report, or Monday through today when mid-week.
+   - Default to starting on the most recent Monday that is at least 7 days before today, ending today, inclusive, so mid-week reports cover activity since the previous full Monday.
+   - If Dave explicitly asks for a calendar-week report, use Monday through Friday for a full week, or Monday through today when mid-week.
    - Use this range in the title and section headers.
 
 2. Gather Dave's TODOs.
