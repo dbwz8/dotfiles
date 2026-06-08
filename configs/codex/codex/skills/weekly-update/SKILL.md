@@ -64,7 +64,7 @@ Use the best available source access in this order:
 
 If a connector is not already available, use tool discovery only once per source type. Do not use web search for private work sources unless Dave explicitly asks.
 
-Keep a compact source log while gathering: date ranges searched, Obsidian/Drive files checked, calendar ranges inspected, Slack channels/DMs or search terms used, Jira/Confluence/Outline searches and fetched items, targeted Gmail/GitHub searches, and source gaps.
+Keep a compact source log while gathering: date ranges searched, Obsidian/Drive files checked, calendar ranges inspected, Slack channels/DMs or search terms used, Jira/Confluence/Outline searches and fetched items, targeted Gmail/GitHub searches, collaboration opportunity terms checked, and source gaps.
 
 ## Workflow
 
@@ -109,12 +109,22 @@ Keep a compact source log while gathering: date ranges searched, Obsidian/Drive 
    - Keep the schedule concise and decision-oriented; avoid listing low-signal personal events or raw calendar noise.
    - For today's remaining meetings, keep the existing TODO subsection as action-oriented meeting prompts.
 
-6. Identify outstanding problems.
+6. Identify potential collaboration areas.
+   - Add a dedicated `Potential Collaboration Areas` section after team activity and before outstanding problems.
+   - Use already-read sources first, then a bounded targeted pass across Slack, calendar-linked docs, Jira/Confluence, Outline, Drive-native files, Gmail, and GitHub when those sources are available.
+   - Look for current-week or upcoming workstreams, requests, problems, staffing gaps, design discussions, technical blockers, or planning docs that match Dave's team's active work or team-member skills.
+   - Treat team fit as evidence-based: derive it from Dave's TODOs, direct-report activity, known workstreams, and source-grounded mentions of skills or responsibilities. Do not invent skills or infer sensitive personnel details.
+   - Prefer opportunities that are not already covered by Dave's TODOs, team activity, recurring meetings, or active ownership. If an item is already known, include it only when the sources reveal a new partner, unresolved ask, or adjacent outreach opportunity.
+   - For each candidate, include the collaboration area, source signal, why Dave's team may fit, suggested contact or team when known, and a concrete outreach step.
+   - Keep the section concise: usually 3-6 bullets. If no credible new opportunities are found, say "No clear new collaboration opportunities found" rather than stretching weak evidence.
+   - Avoid turning this into a broad org scan; search targeted terms from current team work, direct-report names, project names, and recurring technical themes.
+
+7. Identify outstanding problems.
    - Surface unresolved cross-cutting issues, blockers, risks, and deadlines going into next week.
    - Include owner, needed unblock, and deadline when known.
    - Build this mostly from Dave's open TODOs, unresolved Slack threads, Jira/Confluence/Outline items, and GitHub PRs/issues already read; do not start a new broad search just for this section.
 
-7. Write the report to Dave's Obsidian Weekly Update output file.
+8. Write the report to Dave's Obsidian Weekly Update output file.
    - Final destination is the existing Google Drive / Obsidian markdown file `IonQ/Diary/Weekly Update output.md`.
    - Prefer writing the local synced Obsidian file directly when available: `/mnt/c/Users/wecker/Documents/ObsidianSync/IonQ/Diary/Weekly Update output.md`.
    - Use file ID `1svvdFwwgyh8HFb1VkLXYWdI4MBBPrclu` and parent folder `IonQ/Diary` when confirming the target.
@@ -213,6 +223,12 @@ Keep a compact source log while gathering: date ranges searched, Obsidian/Drive 
 ---
 
 [repeat for each direct report, then Dave Wecker]
+
+---
+
+## Potential Collaboration Areas
+
+* **[Area / workstream]** - [source signal; why Dave's team may fit; suggested contact/team; proposed outreach step]
 
 ---
 
