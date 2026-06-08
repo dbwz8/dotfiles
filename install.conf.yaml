@@ -34,6 +34,7 @@
     ~/.local/bin/sync-dotfiles: scripts/sync-dotfiles.sh
     ~/.local/bin/sync-local-dotfiles: scripts/sync-local-dotfiles.sh
     ~/.local/bin/sync-uv-tools: scripts/sync-uv-tools.sh
+    ~/.local/bin/ulm: scripts/ulm.sh
     ~/.local/bin/upload-file: scripts/upload-file.sh
     ~/.mambarc: configs/mamba/mambarc
     ~/.oh-my-zsh: submodules/oh-my-zsh
