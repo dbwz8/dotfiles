@@ -15,6 +15,12 @@
     ~/.config/Code/User/settings.json:
       if: '[ `uname` = Linux ]'
       path: configs/vscode/Code/User/settings.json
+    ~/.local/share/applications/ulm.desktop:
+      if: '[ `uname` = Linux ]'
+      path: configs/applications/ulm.desktop
+    ~/.local/share/icons/hicolor/256x256/apps/ulm.png:
+      if: '[ `uname` = Linux ]'
+      path: configs/icons/ulm.png
     ~/.config/dask/distributed.yaml: configs/dask/distributed.yaml
     ~/.config/git/attributes: configs/git/attributes
     ~/.config/starship.toml: configs/starship/starship.toml

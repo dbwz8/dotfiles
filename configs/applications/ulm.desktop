@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=ULM
+GenericName=Window Layout Manager
+Comment=Ubuntu Layout Manager
+Exec=/home/dbwz8/.local/bin/ulm run
+Icon=ulm
+Terminal=false
+Categories=Utility;
+StartupNotify=true
+StartupWMClass=ulm
