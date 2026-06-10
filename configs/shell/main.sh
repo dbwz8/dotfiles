@@ -16,6 +16,7 @@ fi
 [ -n "$ZSH_VERSION" ] && source "$DOTFILES/configs/shell/05_zsh_completions.sh"
 source "$DOTFILES/configs/shell/10_functions.sh"
 source "$DOTFILES/configs/shell/15_exports.sh"
+source "$DOTFILES/configs/shell/18_codex.sh"
 source "$DOTFILES/configs/shell/20_aliases.sh"
 source "$DOTFILES/configs/shell/30_misc.sh"
 source "$DOTFILES/configs/shell/40_keychain.sh"
