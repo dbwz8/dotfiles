@@ -157,6 +157,8 @@ foreach ($profileDir in @(
 
 & (Join-Path $RepoRoot "scripts\install-wlm.ps1")
 
+& (Join-Path $RepoRoot "scripts\install-codex.ps1")
+
 & (Join-Path $RepoRoot "scripts\sync-uv-tools.ps1")
 
 $dotbins = $null
@@ -191,8 +193,7 @@ if ($dotbins) {
         "zoxide",
         "atuin",
         "keychain",
-        "uv",
-        "codex"
+        "uv"
     )
     if ($githubAuthValid) {
         & $dotbins sync --current @tools

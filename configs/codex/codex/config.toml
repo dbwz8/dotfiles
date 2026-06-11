@@ -79,8 +79,26 @@ trust_level = "trusted"
 hide_rate_limit_model_nudge = true
 hide_full_access_warning = true
 
+[windows]
+sandbox = "elevated"
+
 [plugins."github@openai-curated"]
 enabled = true
+
+[projects."C:\\Users\\wecker\\git\\dotfiles"]
+trust_level = "trusted"
+
+[projects."C:\\Users\\wecker\\git"]
+trust_level = "trusted"
+
+[projects."C:\\Users\\wecker\\git\\languages"]
+trust_level = "trusted"
+
+[projects."D:\\"]
+trust_level = "trusted"
+
+[projects."D:\\data"]
+trust_level = "trusted"
 
 [mcp_servers.ionq-mcp-gateway]
 url = "https://prod-mcp-gateway.ionq.co/mcp"

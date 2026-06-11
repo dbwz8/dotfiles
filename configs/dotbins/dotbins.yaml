@@ -126,5 +126,3 @@ tools:
       windows:
         amd64: uv-x86_64-pc-windows-msvc.zip
     binary_name: [uv, uvx]
-
-  codex: openai/codex

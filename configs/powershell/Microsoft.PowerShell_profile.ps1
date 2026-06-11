@@ -57,6 +57,12 @@ if (Test-Path $dotbinsBin) {
     $env:PATH = "$dotbinsBin$([System.IO.Path]::PathSeparator)$env:PATH"
 }
 
+$localAppData = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
+$codexBin = Join-Path $localAppData "Programs\OpenAI\Codex\bin"
+if (Test-Path $codexBin) {
+    $env:PATH = "$codexBin$([System.IO.Path]::PathSeparator)$env:PATH"
+}
+
 if (Test-Path (Join-Path $HOME ".cargo\bin")) {
     $env:PATH += ";$HOME\.cargo\bin"
 }

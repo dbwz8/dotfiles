@@ -83,6 +83,10 @@ if should_install_linux_packages; then
     fi
 fi
 
+if [ -f "${DOTFILES}/scripts/install-codex.sh" ]; then
+    bash "${DOTFILES}/scripts/install-codex.sh"
+fi
+
 dotbins_bin() {
     if command -v dotbins >/dev/null 2>&1; then
         command -v dotbins
