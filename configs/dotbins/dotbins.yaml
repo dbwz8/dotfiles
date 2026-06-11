@@ -42,8 +42,13 @@ tools:
     repo: direnv/direnv
     shell_code:
       bash,zsh: |
+        export DIRENV_LOG_FORMAT=
         eval "$(direnv hook __DOTBINS_SHELL__)"
       powershell: |
+        if (-not $env:HOME) {
+            $env:HOME = $HOME
+        }
+        $env:DIRENV_LOG_FORMAT = ""
         Invoke-Expression (& { (direnv hook pwsh | Out-String) })
   eza:
     repo: eza-community/eza

@@ -1,4 +1,8 @@
 $profileItem = Get-Item -LiteralPath $PSCommandPath -Force
+if (-not $env:HOME) {
+    $env:HOME = $HOME
+}
+
 if (-not $env:DOTFILES) {
     $dotfilesCandidates = @()
     if ($profileItem.Target) {
@@ -63,6 +67,7 @@ if (Test-Path (Join-Path $HOME ".lmstudio\bin\lms.exe")) {
 
 $env:COLORTERM = "truecolor"
 $env:EDITOR = "code --wait"
+$env:DIRENV_LOG_FORMAT = ""
 if (-not $env:GH_TOKEN -and $env:GITHUB_TOKEN) {
     $env:GH_TOKEN = $env:GITHUB_TOKEN
 }

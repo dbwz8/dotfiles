@@ -30,6 +30,7 @@ unset _default_runtime_dir
 export CASE_SENSITIVE="true"
 export CIRCUIT_LIB_PATH=$CYPRESS_BASE/src/cypress_exp/llvm/test5/src/libteleport_circuit.a
 export COLORTERM=truecolor
+export DIRENV_LOG_FORMAT=
 export DISABLE_AUTO_TITLE='true'
 export CYPRESS=$CYPRESS_BASE/src
 export PROTOS=$CYPRESS_BASE/third_party/scp-api-python
