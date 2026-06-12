@@ -76,6 +76,9 @@ trust_level = "trusted"
 [projects."/mnt/d/data"]
 trust_level = "trusted"
 
+[projects."/home/dbwz8"]
+trust_level = "trusted"
+
 [notice]
 hide_rate_limit_model_nudge = true
 hide_full_access_warning = true
@@ -98,8 +101,11 @@ trust_level = "trusted"
 [projects."D:\\"]
 trust_level = "trusted"
 
-[projects."D:\\data"]
-trust_level = "trusted"
+[mcp_servers.slack-reader.tools.read_thread]
+approval_mode = "approve"
+
+[mcp_servers.slack-reader.tools.whoami]
+approval_mode = "approve"
 
 [mcp_servers.ionq-mcp-gateway]
 url = "https://prod-mcp-gateway.ionq.co/mcp"
