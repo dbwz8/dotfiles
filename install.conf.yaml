@@ -37,6 +37,7 @@
       path: configs/vscode/Code/User/settings.json
     ~/.local/bin/nbviewer: scripts/nbviewer.sh
     ~/.local/bin/run: scripts/run.sh
+    ~/.local/bin/install-codex: scripts/install-codex.sh
     ~/.local/bin/sync-dotfiles: scripts/sync-dotfiles.sh
     ~/.local/bin/sync-local-dotfiles: scripts/sync-local-dotfiles.sh
     ~/.local/bin/sync-uv-tools: scripts/sync-uv-tools.sh

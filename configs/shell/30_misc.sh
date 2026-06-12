@@ -21,7 +21,8 @@ fi
 [ -n "$ZSH_VERSION" ] && source "$HOME/.dotbins/shell/zsh.sh"
 [ -n "$BASH_VERSION" ] && source "$HOME/.dotbins/shell/bash.sh"
 if [ -x "$HOME/.local/bin/codex" ]; then
-    _path_prepend "$HOME/.local/bin"
+    export PATH="$HOME/.local/bin${PATH:+":$PATH"}"
+    _path_dedup PATH
 fi
 
 # -- Rust

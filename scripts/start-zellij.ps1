@@ -10,9 +10,6 @@ if (-not $env:DOTFILES) {
 }
 
 $zellijConfigDir = Join-Path $env:DOTFILES "configs\zellij"
-$zellijConfigFile = Join-Path $zellijConfigDir "config.kdl"
-$windowsConfigFile = Join-Path $zellijConfigDir "config-windows.kdl"
-$windowsLayoutFile = Join-Path $zellijConfigDir "layouts\windows-starter.kdl"
 if (Test-Path $zellijConfigDir) {
     $env:ZELLIJ_CONFIG_DIR = $zellijConfigDir
 }
@@ -27,36 +24,6 @@ $zellijConfigArgs = @()
 if (Test-Path $zellijConfigDir) {
     $zellijConfigArgs += @("--config-dir", $zellijConfigDir)
 }
-if (Test-Path $zellijConfigFile) {
-    $zellijConfigArgs += @("--config", $zellijConfigFile)
-}
 
-$windowsConfigArgs = @()
-if (Test-Path $zellijConfigDir) {
-    $windowsConfigArgs += @("--config-dir", $zellijConfigDir)
-}
-if (Test-Path $windowsConfigFile) {
-    $windowsConfigArgs += @("--config", $windowsConfigFile)
-} elseif (Test-Path $zellijConfigFile) {
-    $windowsConfigArgs += @("--config", $zellijConfigFile)
-}
-
-if ($ZellijArgs.Count -gt 0) {
-    & $zellij.Source @zellijConfigArgs @ZellijArgs
-    exit $LASTEXITCODE
-}
-
-$sessionName = "windows"
-$existingSessions = & $zellij.Source @windowsConfigArgs list-sessions 2>$null
-if ($LASTEXITCODE -eq 0 -and ($existingSessions -split "`r?`n" | ForEach-Object { ($_ -split '\s+', 2)[0] } | Where-Object { $_ -eq $sessionName })) {
-    & $zellij.Source @windowsConfigArgs attach $sessionName
-    exit $LASTEXITCODE
-}
-
-if (Test-Path $windowsLayoutFile) {
-    & $zellij.Source @windowsConfigArgs -s $sessionName -n $windowsLayoutFile
-} else {
-    & $zellij.Source @windowsConfigArgs -s $sessionName -n windows-starter
-}
+& $zellij.Source @zellijConfigArgs @ZellijArgs
 exit $LASTEXITCODE
-

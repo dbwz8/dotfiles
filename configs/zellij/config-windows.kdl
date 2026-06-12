@@ -1,8 +1,3 @@
-// Used by scripts/start-zellij.ps1 so the Windows session does not inherit
-// the shared "standard" session name or multi-tab starter layout.
-default_layout "windows-starter"
-default_shell "pwsh.exe"
-session_name "windows"
 mouse_mode true
 support_kitty_keyboard_protocol true
 

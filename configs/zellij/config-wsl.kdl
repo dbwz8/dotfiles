@@ -1,7 +1,3 @@
-// Start with a repo-managed layout that keeps the full status bar visible.
-default_layout "starter"
-default_shell "/usr/bin/zsh"
-session_name "standard"
 mouse_mode true
 support_kitty_keyboard_protocol true
 

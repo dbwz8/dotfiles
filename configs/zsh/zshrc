@@ -31,3 +31,7 @@ fi
 export WASMTIME_HOME="$HOME/.wasmtime"
 
 export PATH="$WASMTIME_HOME/bin:$PATH"
+
+# >>> Codex installer >>>
+export PATH="/home/wecker/.local/bin:$PATH"
+# <<< Codex installer <<<
