@@ -107,6 +107,9 @@ approval_mode = "approve"
 [mcp_servers.slack-reader.tools.whoami]
 approval_mode = "approve"
 
+[projects."/home/wecker/git/sap/arch"]
+trust_level = "trusted"
+
 [mcp_servers.ionq-mcp-gateway]
 url = "https://prod-mcp-gateway.ionq.co/mcp"
 

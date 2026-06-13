@@ -23,6 +23,7 @@ if [[ $- == *i* ]]; then
     alias u='cd ..'
     alias v='nvim'
     alias vi='nvim'
+    alias vim='nvim'
     alias wrap='tput smam'
 
     zellij() {

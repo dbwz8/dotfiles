@@ -23,6 +23,9 @@
       path: configs/icons/ulm.png
     ~/.config/dask/distributed.yaml: configs/dask/distributed.yaml
     ~/.config/git/attributes: configs/git/attributes
+    ~/.config/nvim:
+      path: configs/nvim
+      force: true
     ~/.config/starship.toml: configs/starship/starship.toml
     ~/.config/zellij: configs/zellij
     ~/.direnvrc: configs/direnv/direnvrc

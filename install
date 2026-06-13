@@ -5,6 +5,31 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${BASEDIR}"
 DOTFILES="${DOTFILES:-$BASEDIR}"
 
+ensure_required_submodules() {
+    local missing=()
+
+    if [ ! -f "${BASEDIR}/submodules/dotbot/bin/dotbot" ]; then
+        missing+=("submodules/dotbot")
+    fi
+
+    if [ ! -f "${BASEDIR}/submodules/kickstart.nvim/init.lua" ]; then
+        missing+=("submodules/kickstart.nvim")
+    fi
+
+    if [ "${#missing[@]}" -eq 0 ]; then
+        return 0
+    fi
+
+    if ! command -v git >/dev/null 2>&1; then
+        printf '%s\n' "⚠️  git is unavailable; cannot initialize required submodules: ${missing[*]}" >&2
+        return 1
+    fi
+
+    printf '%s\n' "📦 Initializing required submodules: ${missing[*]}"
+    git submodule sync -- "${missing[@]}"
+    git submodule update --init --recursive -- "${missing[@]}"
+}
+
 should_install_linux_packages() {
     case "${DOTFILES_INSTALL_SYSTEM_PACKAGES:-auto}" in
         1|true|TRUE|yes|YES)
@@ -56,6 +81,8 @@ uv_bin() {
 
     return 1
 }
+
+ensure_required_submodules
 
 DOTBOT_BIN="${BASEDIR}/submodules/dotbot/bin/dotbot"
 if [ -f "$DOTBOT_BIN" ] && command -v python3 >/dev/null 2>&1; then

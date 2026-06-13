@@ -23,6 +23,14 @@ tools:
     repo: neovim/neovim
     binary_name: nvim
   rg: BurntSushi/ripgrep
+  tree-sitter:
+    repo: tree-sitter/tree-sitter
+    asset_patterns:
+      linux:
+        amd64: tree-sitter-cli-linux-x64.zip
+        arm64: tree-sitter-cli-linux-arm64.zip
+      windows:
+        amd64: tree-sitter-cli-windows-x64.zip
   yazi: sxyazi/yazi
   zellij:
     repo: zellij-org/zellij
