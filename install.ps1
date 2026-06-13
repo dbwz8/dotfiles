@@ -176,13 +176,113 @@ $dotbinsDir = Join-Path $HOME ".dotbins"
 New-Item -ItemType Directory -Force -Path $dotbinsDir | Out-Null
 Copy-Item (Join-Path $RepoRoot "configs\dotbins\dotbins.yaml") (Join-Path $dotbinsDir "dotbins.yaml") -Force
 
-$profileSource = Join-Path $RepoRoot "configs\powershell\Microsoft.PowerShell_profile.ps1"
-foreach ($profileDir in @(
-    (Join-Path $HOME "Documents\PowerShell"),
-    (Join-Path $HOME "Documents\WindowsPowerShell")
-)) {
-    New-Item -ItemType Directory -Force -Path $profileDir | Out-Null
-    Copy-Item $profileSource (Join-Path $profileDir "Microsoft.PowerShell_profile.ps1") -Force
+function Install-ManagedFileLink {
+    param(
+        [Parameter(Mandatory = $true)][string]$SourcePath,
+        [Parameter(Mandatory = $true)][string]$TargetPath
+    )
+
+    $targetDir = Split-Path -Parent $TargetPath
+    New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
+
+    if (Test-Path -LiteralPath $TargetPath) {
+        $targetItem = Get-Item -LiteralPath $TargetPath -Force
+        if ($targetItem.PSIsContainer) {
+            throw "Cannot replace directory with managed file link: $TargetPath"
+        }
+        Remove-Item -LiteralPath $TargetPath -Force
+    }
+
+    try {
+        New-Item -ItemType SymbolicLink -Path $TargetPath -Target $SourcePath -Force | Out-Null
+    } catch {
+        New-Item -ItemType HardLink -Path $TargetPath -Target $SourcePath -Force | Out-Null
+    }
+}
+
+function Install-ManagedDirectoryLink {
+    param(
+        [Parameter(Mandatory = $true)][string]$SourcePath,
+        [Parameter(Mandatory = $true)][string]$TargetPath
+    )
+
+    $targetParent = Split-Path -Parent $TargetPath
+    New-Item -ItemType Directory -Force -Path $targetParent | Out-Null
+
+    if (Test-Path -LiteralPath $TargetPath) {
+        $targetItem = Get-Item -LiteralPath $TargetPath -Force
+        if ($targetItem.LinkType -or ($targetItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {
+            Remove-Item -LiteralPath $TargetPath -Force
+        } else {
+            Write-Warning "Skipping managed directory link because a regular directory already exists: $TargetPath"
+            return
+        }
+    }
+
+    New-Item -ItemType Junction -Path $TargetPath -Target $SourcePath | Out-Null
+}
+
+function Install-CodexConfigLinks {
+    $codexSource = Join-Path $RepoRoot "configs\codex\codex"
+    $codexHome = Join-Path $HOME ".codex"
+
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $codexSource "config.toml") `
+        -TargetPath (Join-Path $codexHome "config.toml")
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $codexSource "AGENTS.md") `
+        -TargetPath (Join-Path $codexHome "AGENTS.md")
+    Install-ManagedDirectoryLink `
+        -SourcePath (Join-Path $codexSource "skills\weekly-update") `
+        -TargetPath (Join-Path $codexHome "skills\weekly-update")
+}
+
+function Install-VSCodeConfigLinks {
+    $vscodeSource = Join-Path $RepoRoot "configs\vscode\Code\User"
+    $vscodeTarget = Join-Path $HOME "AppData\Roaming\Code\User"
+
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $vscodeSource "keybindings.json") `
+        -TargetPath (Join-Path $vscodeTarget "keybindings.json")
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $vscodeSource "settings.json") `
+        -TargetPath (Join-Path $vscodeTarget "settings.json")
+}
+
+Install-CodexConfigLinks
+Install-VSCodeConfigLinks
+
+function Install-PowerShellProfileBootstrap {
+    param([Parameter(Mandatory = $true)][string]$TargetPath)
+
+    $profileSource = Join-Path $RepoRoot "configs\powershell\Microsoft.PowerShell_profile.ps1"
+    $escapedRepoRoot = $RepoRoot.Replace("'", "''")
+    $escapedProfileSource = $profileSource.Replace("'", "''")
+    $bootstrap = @(
+        "`$env:DOTFILES = '$escapedRepoRoot'",
+        ". '$escapedProfileSource'"
+    )
+
+    $targetDir = Split-Path -Parent $TargetPath
+    New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
+
+    if (Test-Path -LiteralPath $TargetPath) {
+        $targetItem = Get-Item -LiteralPath $TargetPath -Force
+        if ($targetItem.LinkType -or ($targetItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {
+            Remove-Item -LiteralPath $TargetPath -Force
+        }
+    }
+
+    Set-Content -LiteralPath $TargetPath -Value $bootstrap -Encoding UTF8
+}
+
+$profileTargets = @(
+    (Join-Path $HOME "Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
+    (Join-Path $HOME "Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1")
+) | Select-Object -Unique
+
+foreach ($profileTarget in $profileTargets) {
+    Install-PowerShellProfileBootstrap -TargetPath $profileTarget
 }
 
 & (Join-Path $RepoRoot "scripts\install-wlm.ps1")
@@ -228,7 +328,24 @@ if ($dotbins) {
         "uv"
     )
     if ($githubAuthValid) {
-        & $dotbins sync --current @tools
+        $previousPythonIoEncoding = $env:PYTHONIOENCODING
+        $previousPythonUtf8 = $env:PYTHONUTF8
+        $env:PYTHONIOENCODING = "utf-8"
+        $env:PYTHONUTF8 = "1"
+        try {
+            & $dotbins sync --current @tools
+        } finally {
+            if ($null -eq $previousPythonIoEncoding) {
+                Remove-Item Env:\PYTHONIOENCODING -ErrorAction SilentlyContinue
+            } else {
+                $env:PYTHONIOENCODING = $previousPythonIoEncoding
+            }
+            if ($null -eq $previousPythonUtf8) {
+                Remove-Item Env:\PYTHONUTF8 -ErrorAction SilentlyContinue
+            } else {
+                $env:PYTHONUTF8 = $previousPythonUtf8
+            }
+        }
     } else {
         Write-Warning "Skipping dotbins sync because GitHub CLI authentication is missing or invalid."
         Write-Warning "Run 'gh auth login -h github.com' and then rerun .\install.ps1 to install/update CLI tools."

@@ -22,7 +22,7 @@ $tools = @(
     "bump-my-version",
     "clip-files",
     "conda-lock",
-    "dotbins",
+    "dotbins --force",
     "dotbot",
     "fileup",
     "llm --with llm-gemini --with llm-anthropic --with llm-ollama",

@@ -4,10 +4,7 @@
       relink: true
 
 - link:
-    ~/.codex: configs/codex/codex
     ~/.config/atuin: configs/atuin
-    ~/AppData/Roaming/Code/User/keybindings.json: configs/vscode/Code/User/keybindings.json
-    ~/AppData/Roaming/Code/User/settings.json: configs/vscode/Code/User/settings.json
     ~/.config/git/attributes: configs/git/attributes
     ~/AppData/Local/nvim:
       path: configs/nvim
@@ -18,5 +15,3 @@
     ~/.gitconfig-personal: configs/git/gitconfig-personal
     ~/.gitconfig: configs/git/gitconfig
     ~/.mambarc: configs/mamba/mambarc
-    ~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1: configs/powershell/Microsoft.PowerShell_profile.ps1
-    ~/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1: configs/powershell/Microsoft.PowerShell_profile.ps1

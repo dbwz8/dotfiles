@@ -8,10 +8,13 @@ disabled = true
 success_symbol = '[|ψ❯](bold green) '
 error_symbol = '[✗](bold red) '
 
-[custom.bash]
-command = "echo bash"
-description = "Displays 'bash' if in bash shell"
-when = '[ "$STARSHIP_SHELL" = "bash" ]'
-format = '[$output](cyan bold) '
+[shell]
+bash_indicator = "bash"
+cmd_indicator = ""
+fish_indicator = ""
+powershell_indicator = ""
+zsh_indicator = ""
+unknown_indicator = ""
+format = '[$indicator](cyan bold) '
 disabled = false
 

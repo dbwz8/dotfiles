@@ -5,7 +5,15 @@
         "command": "workbench.action.terminal.sendSequence",
         "when": "terminalFocus",
         "args": {
-        "text": "\u001b[13;5u"
+            "text": "\u001b[13;5u"
+        }
+    },
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "when": "terminalFocus",
+        "args": {
+            "text": "\r"
         }
     },
     {
@@ -50,11 +58,5 @@
     {
         "key": "ctrl+j",
         "command": "-workbench.action.togglePanel"
-    },
-    {
-    "key": "ctrl+j",
-    "command": "workbench.action.sendSequence",
-    "args": { "text": "\n" },
-    "when": "editorFocus && codexPanelFocus"
     }
 ]

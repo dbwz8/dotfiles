@@ -37,7 +37,8 @@ if (-not $cargo) {
 Write-Host "Installing WLM from $SourcePath..."
 & $cargo install --path $SourcePath --locked --force
 if ($LASTEXITCODE -ne 0) {
-    throw "cargo install failed for WLM."
+    Write-Warning "Skipping WLM update because cargo install failed with exit code $LASTEXITCODE. If WLM.exe is running, close it and rerun scripts\install-wlm.ps1."
+    return
 }
 
 $cargoInstallRoot = $env:CARGO_INSTALL_ROOT

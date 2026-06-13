@@ -1,12 +1,13 @@
-$profileItem = Get-Item -LiteralPath $PSCommandPath -Force
+$profileItem = if ($PSCommandPath) { Get-Item -LiteralPath $PSCommandPath -Force } else { $null }
 if (-not $env:HOME) {
     $env:HOME = $HOME
 }
 
 if (-not $env:DOTFILES) {
     $dotfilesCandidates = @()
-    if ($profileItem.Target) {
-        $dotfilesCandidates += Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $profileItem.Target))
+    if ($profileItem) {
+        $profileSourcePath = if ($profileItem.Target) { $profileItem.Target } else { $profileItem.FullName }
+        $dotfilesCandidates += Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $profileSourcePath))
     }
     $dotfilesCandidates += @(
         (Join-Path $HOME "git\dotfiles"),
