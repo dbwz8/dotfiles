@@ -8,6 +8,40 @@ $githubAuthValid = $false
 $env:GITHUB_TOKEN = $null
 $env:GH_TOKEN = $null
 
+function Ensure-RequiredSubmodules {
+    $missing = @()
+
+    if (-not (Test-Path (Join-Path $RepoRoot "submodules\dotbot\bin\dotbot"))) {
+        $missing += "submodules/dotbot"
+    }
+
+    if (-not (Test-Path (Join-Path $RepoRoot "submodules\kickstart.nvim\init.lua"))) {
+        $missing += "submodules/kickstart.nvim"
+    }
+
+    if ($missing.Count -eq 0) {
+        return
+    }
+
+    $git = Get-Command git.exe -ErrorAction SilentlyContinue
+    if (-not $git) {
+        throw "git.exe is unavailable; cannot initialize required submodules: $($missing -join ', ')"
+    }
+
+    Write-Host "Initializing required submodules: $($missing -join ', ')"
+    & $git.Source submodule sync -- @missing
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to sync required submodules."
+    }
+
+    & $git.Source submodule update --init --recursive -- @missing
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to initialize required submodules."
+    }
+}
+
+Ensure-RequiredSubmodules
+
 $gh = Get-Command gh.exe -ErrorAction SilentlyContinue
 if ($gh) {
     try {
