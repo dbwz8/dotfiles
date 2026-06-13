@@ -41,7 +41,9 @@ elif locale -a 2>/dev/null | grep -qi '^c\.utf8$'; then
     export LC_ALL=C.UTF-8
     export LANG=C.UTF-8
 fi
-export EDITOR="vim"
+export EDITOR="nvim"
+export VISUAL="nvim"
+export GIT_EDITOR="nvim"
 export GPG_TTY=$(tty)
 _is_valid_github_token() {
     case "${1:-}" in
@@ -90,7 +92,7 @@ export PYDEVD_DISABLE_FILE_VALIDATION=1
 export REPORTTIME=20
 export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-389070397
 export UPLOAD_FILE_TO="transfer.sh"  # For upload-file.sh
-export SYSTEMD_EDITOR=vim
+export SYSTEMD_EDITOR=nvim
 
 #export CLAUDE_CODE_USE_VERTEX=1
 export CLOUD_ML_REGION=us-east5

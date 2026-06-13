@@ -14,3 +14,6 @@
 [submodule "submodules/tmux"]
 	path = submodules/tmux
 	url = https://github.com/gpakosz/.tmux.git
+[submodule "submodules/kickstart.nvim"]
+	path = submodules/kickstart.nvim
+	url = https://github.com/nvim-lua/kickstart.nvim.git

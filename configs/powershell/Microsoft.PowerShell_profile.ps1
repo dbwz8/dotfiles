@@ -72,7 +72,9 @@ if (Test-Path (Join-Path $HOME ".lmstudio\bin\lms.exe")) {
 }
 
 $env:COLORTERM = "truecolor"
-$env:EDITOR = "code --wait"
+$env:EDITOR = "nvim"
+$env:VISUAL = "nvim"
+$env:GIT_EDITOR = "nvim"
 $env:DIRENV_LOG_FORMAT = ""
 if (-not $env:GH_TOKEN -and $env:GITHUB_TOKEN) {
     $env:GH_TOKEN = $env:GITHUB_TOKEN
@@ -114,6 +116,11 @@ if (Get-Command micromamba -ErrorAction SilentlyContinue) {
 }
 
 if (Get-Command code -ErrorAction SilentlyContinue) { Set-Alias c code }
+if (Get-Command nvim -ErrorAction SilentlyContinue) {
+    Set-Alias v nvim.exe
+    Set-Alias vi nvim.exe
+    Set-Alias vim nvim.exe
+}
 if (Get-Command git -ErrorAction SilentlyContinue) {
     function gs { git status @args }
     function glo { git log --oneline --decorate -20 @args }
@@ -127,4 +134,3 @@ if ($env:DOTFILES) {
 }
 if (Get-Command python -ErrorAction SilentlyContinue) { Set-Alias py python }
 if (Get-Command claude -ErrorAction SilentlyContinue) { Set-Alias cl claude }
-

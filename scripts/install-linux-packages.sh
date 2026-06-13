@@ -15,9 +15,13 @@ if ! command -v sudo >/dev/null 2>&1; then
 fi
 
 missing_packages=()
-for pkg in eog adwaita-icon-theme-full neovim curl bubblewrap; do
+for pkg in eog adwaita-icon-theme-full neovim curl bubblewrap tree-sitter-cli; do
     if ! dpkg-query -W -f='${Status}\n' "$pkg" 2>/dev/null | grep -qx 'install ok installed'; then
-        missing_packages+=("$pkg")
+        if apt-cache show "$pkg" >/dev/null 2>&1; then
+            missing_packages+=("$pkg")
+        else
+            printf '%s\n' "⚠️  apt package '$pkg' is unavailable; skipping." >&2
+        fi
     fi
 done
 

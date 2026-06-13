@@ -9,6 +9,9 @@
     ~/AppData/Roaming/Code/User/keybindings.json: configs/vscode/Code/User/keybindings.json
     ~/AppData/Roaming/Code/User/settings.json: configs/vscode/Code/User/settings.json
     ~/.config/git/attributes: configs/git/attributes
+    ~/AppData/Local/nvim:
+      path: configs/nvim
+      force: true
     ~/.config/starship.toml: configs/starship/starship.toml
     ~/.config/zellij: configs/zellij
     ~/.dotbins/dotbins.yaml: configs/dotbins/dotbins.yaml
