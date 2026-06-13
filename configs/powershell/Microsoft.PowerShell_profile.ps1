@@ -127,9 +127,9 @@ if (Get-Command micromamba -ErrorAction SilentlyContinue) {
 
 if (Get-Command code -ErrorAction SilentlyContinue) { Set-Alias c code }
 if (Get-Command nvim -ErrorAction SilentlyContinue) {
-    Set-Alias v nvim.exe
-    Set-Alias vi nvim.exe
-    Set-Alias vim nvim.exe
+    Set-Alias -Name v -Value nvim.exe -Force
+    Set-Alias -Name vi -Value nvim.exe -Force
+    Set-Alias -Name vim -Value nvim.exe -Force
 }
 if (Get-Command git -ErrorAction SilentlyContinue) {
     function gs { git status @args }

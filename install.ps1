@@ -84,13 +84,14 @@ function Invoke-Dotbot {
     $dotbot = Join-Path $RepoRoot "submodules\dotbot\bin\dotbot"
     $py = Get-Command py.exe -ErrorAction SilentlyContinue
     $python = Get-Command python.exe -ErrorAction SilentlyContinue
+    $windowsAppsDir = Join-Path $HOME "AppData\Local\Microsoft\WindowsApps"
 
     if ((Test-Path $dotbot) -and $py) {
         & $py.Source -3 $dotbot -d $RepoRoot -c "install.windows.conf.yaml"
         return
     }
 
-    if ((Test-Path $dotbot) -and $python) {
+    if ((Test-Path $dotbot) -and $python -and -not ($python.Source -like "$windowsAppsDir\*")) {
         & $python.Source $dotbot -d $RepoRoot -c "install.windows.conf.yaml"
         return
     }
@@ -159,6 +160,8 @@ function Ensure-Pwsh {
 
 Ensure-Pwsh | Out-Null
 
+$MinimumNeovimVersion = [version]"0.12.0"
+
 function Resolve-NeovimPath {
     $dotbinsNeovim = Join-Path $HOME ".dotbins\windows\amd64\neovim\bin\nvim.exe"
     if (Test-Path $dotbinsNeovim) {
@@ -180,6 +183,22 @@ function Resolve-NeovimPath {
         if (Test-Path $candidate) {
             return $candidate
         }
+    }
+
+    return $null
+}
+
+function Get-NeovimVersion {
+    param([Parameter(Mandatory = $true)][string]$NvimPath)
+
+    try {
+        $versionLine = & $NvimPath --version 2>$null | Select-Object -First 1
+    } catch {
+        return $null
+    }
+
+    if ($versionLine -match "NVIM v(?<Version>\d+\.\d+\.\d+)") {
+        return [version]$Matches.Version
     }
 
     return $null
@@ -234,6 +253,24 @@ function Ensure-Neovim {
         if (-not $nvimPath) {
             throw "Neovim installation completed, but nvim.exe could not be located afterwards."
         }
+    } else {
+        $nvimVersion = Get-NeovimVersion -NvimPath $nvimPath
+        if (-not $nvimVersion -or $nvimVersion -lt $MinimumNeovimVersion) {
+            $displayVersion = if ($nvimVersion) { $nvimVersion.ToString() } else { "unknown" }
+            Write-Host "Installing Neovim $($MinimumNeovimVersion)+ from the official Windows ZIP because $nvimPath is $displayVersion..."
+            Install-NeovimZip
+
+            $nvimPath = Resolve-NeovimPath
+            if (-not $nvimPath) {
+                throw "Neovim installation completed, but nvim.exe could not be located afterwards."
+            }
+        }
+    }
+
+    $nvimVersion = Get-NeovimVersion -NvimPath $nvimPath
+    if (-not $nvimVersion -or $nvimVersion -lt $MinimumNeovimVersion) {
+        $displayVersion = if ($nvimVersion) { $nvimVersion.ToString() } else { "unknown" }
+        throw "Neovim $($MinimumNeovimVersion)+ is required by this config, but $nvimPath is $displayVersion."
     }
 
     $nvimBinDir = Split-Path -Parent $nvimPath
@@ -336,8 +373,23 @@ function Install-VSCodeConfigLinks {
         -TargetPath (Join-Path $vscodeTarget "settings.json")
 }
 
+function Install-NeovimConfigLink {
+    $nvimSource = Join-Path $RepoRoot "configs\nvim"
+    $localAppData = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
+    $nvimTarget = Join-Path $localAppData "nvim"
+
+    if (-not (Test-Path $nvimSource)) {
+        throw "Neovim config source is missing: $nvimSource"
+    }
+
+    Install-ManagedDirectoryLink `
+        -SourcePath $nvimSource `
+        -TargetPath $nvimTarget
+}
+
 Install-CodexConfigLinks
 Install-VSCodeConfigLinks
+Install-NeovimConfigLink
 
 function Install-PowerShellProfileBootstrap {
     param([Parameter(Mandatory = $true)][string]$TargetPath)
@@ -363,10 +415,20 @@ function Install-PowerShellProfileBootstrap {
     Set-Content -LiteralPath $TargetPath -Value $bootstrap -Encoding UTF8
 }
 
+$documentsDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::MyDocuments)
 $profileTargets = @(
+    $PROFILE.CurrentUserAllHosts,
+    $PROFILE.CurrentUserCurrentHost,
     (Join-Path $HOME "Documents\PowerShell\Microsoft.PowerShell_profile.ps1"),
     (Join-Path $HOME "Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1")
-) | Select-Object -Unique
+)
+if ($documentsDir) {
+    $profileTargets += @(
+        (Join-Path $documentsDir "PowerShell\Microsoft.PowerShell_profile.ps1"),
+        (Join-Path $documentsDir "WindowsPowerShell\Microsoft.PowerShell_profile.ps1")
+    )
+}
+$profileTargets = $profileTargets | Where-Object { $_ } | Select-Object -Unique
 
 foreach ($profileTarget in $profileTargets) {
     Install-PowerShellProfileBootstrap -TargetPath $profileTarget
