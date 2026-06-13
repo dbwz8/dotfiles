@@ -159,6 +159,93 @@ function Ensure-Pwsh {
 
 Ensure-Pwsh | Out-Null
 
+function Resolve-NeovimPath {
+    $dotbinsNeovim = Join-Path $HOME ".dotbins\windows\amd64\neovim\bin\nvim.exe"
+    if (Test-Path $dotbinsNeovim) {
+        return $dotbinsNeovim
+    }
+
+    $nvim = Get-Command nvim.exe -ErrorAction SilentlyContinue
+    if ($nvim) {
+        return $nvim.Source
+    }
+
+    $candidatePaths = @(
+        (Join-Path $env:LOCALAPPDATA "Programs\Neovim\bin\nvim.exe"),
+        (Join-Path ${env:ProgramFiles} "Neovim\bin\nvim.exe"),
+        (Join-Path ${env:ProgramW6432} "Neovim\bin\nvim.exe")
+    ) | Where-Object { $_ }
+
+    foreach ($candidate in $candidatePaths) {
+        if (Test-Path $candidate) {
+            return $candidate
+        }
+    }
+
+    return $null
+}
+
+function Install-NeovimZip {
+    $neovimRoot = Join-Path $HOME ".dotbins\windows\amd64\neovim"
+    $archivePath = Join-Path ([System.IO.Path]::GetTempPath()) "nvim-win64.zip"
+    $extractRoot = Join-Path ([System.IO.Path]::GetTempPath()) "dotfiles-neovim"
+
+    $release = Invoke-RestMethod `
+        -Uri "https://api.github.com/repos/neovim/neovim/releases/latest" `
+        -Headers @{ "User-Agent" = "dotfiles-install" }
+    $asset = $release.assets | Where-Object { $_.name -eq "nvim-win64.zip" } | Select-Object -First 1
+    if (-not $asset) {
+        throw "Could not find nvim-win64.zip in the latest Neovim release."
+    }
+
+    if (Test-Path $extractRoot) {
+        Remove-Item -LiteralPath $extractRoot -Recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path $extractRoot | Out-Null
+
+    Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $archivePath
+    Expand-Archive -LiteralPath $archivePath -DestinationPath $extractRoot -Force
+
+    $expandedRoot = Join-Path $extractRoot "nvim-win64"
+    if (-not (Test-Path (Join-Path $expandedRoot "bin\nvim.exe"))) {
+        throw "Downloaded Neovim archive did not contain nvim-win64\bin\nvim.exe."
+    }
+
+    if (Test-Path $neovimRoot) {
+        Remove-Item -LiteralPath $neovimRoot -Recurse -Force
+    }
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $neovimRoot) | Out-Null
+    Move-Item -LiteralPath $expandedRoot -Destination $neovimRoot
+}
+
+function Ensure-Neovim {
+    $dotbinsNvim = Join-Path $HOME ".dotbins\windows\amd64\bin\nvim.exe"
+    if (Test-Path $dotbinsNvim) {
+        Write-Host "Removing incomplete dotbins Neovim binary..."
+        Remove-Item -LiteralPath $dotbinsNvim -Force
+    }
+
+    $nvimPath = Resolve-NeovimPath
+    if (-not $nvimPath) {
+        Write-Host "Installing Neovim from the official Windows ZIP..."
+        Install-NeovimZip
+
+        $nvimPath = Resolve-NeovimPath
+        if (-not $nvimPath) {
+            throw "Neovim installation completed, but nvim.exe could not be located afterwards."
+        }
+    }
+
+    $nvimBinDir = Split-Path -Parent $nvimPath
+    if ($nvimBinDir -and -not (($env:PATH -split [System.IO.Path]::PathSeparator) -contains $nvimBinDir)) {
+        $env:PATH = "$nvimBinDir$([System.IO.Path]::PathSeparator)$env:PATH"
+    }
+
+    return $nvimPath
+}
+
+Ensure-Neovim | Out-Null
+
 Invoke-Dotbot
 
 $zellijSourceDir = Join-Path $RepoRoot "configs\zellij"
@@ -319,7 +406,6 @@ if ($dotbins) {
         "fzf",
         "lazygit",
         "micromamba",
-        "neovim",
         "starship",
         "tree-sitter",
         "zoxide",

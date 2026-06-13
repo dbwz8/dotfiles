@@ -19,9 +19,6 @@ tools:
   gh: cli/cli
   git-lfs: git-lfs/git-lfs
   hyperfine: sharkdp/hyperfine
-  neovim:
-    repo: neovim/neovim
-    binary_name: nvim
   rg: BurntSushi/ripgrep
   tree-sitter:
     repo: tree-sitter/tree-sitter

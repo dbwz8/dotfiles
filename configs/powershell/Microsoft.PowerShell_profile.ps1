@@ -53,6 +53,10 @@ $dotbinsBin = Join-Path $HOME ".dotbins\windows\$arch\bin"
 if (Test-Path $dotbinsBin) {
     $env:PATH = "$dotbinsBin$([System.IO.Path]::PathSeparator)$env:PATH"
 }
+$dotbinsNeovimBin = Join-Path $HOME ".dotbins\windows\$arch\neovim\bin"
+if (Test-Path $dotbinsNeovimBin) {
+    $env:PATH = "$dotbinsNeovimBin$([System.IO.Path]::PathSeparator)$env:PATH"
+}
 
 $localAppData = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
 $codexBin = Join-Path $localAppData "Programs\OpenAI\Codex\bin"
@@ -66,6 +70,15 @@ if (Test-Path (Join-Path $HOME ".cargo\bin")) {
 
 if (Test-Path (Join-Path $HOME ".lmstudio\bin\lms.exe")) {
     $env:PATH += ";$HOME\.lmstudio\bin"
+}
+
+$gitFind = Get-Command find.exe -All -ErrorAction SilentlyContinue |
+    Where-Object { $_.Source -like "*\Git\usr\bin\find.exe" } |
+    Select-Object -First 1
+if ($gitFind) {
+    $global:DotfilesFindExe = $gitFind.Source
+    function global:find { & $global:DotfilesFindExe @args }
+    function global:find.exe { & $global:DotfilesFindExe @args }
 }
 
 $env:COLORTERM = "truecolor"
