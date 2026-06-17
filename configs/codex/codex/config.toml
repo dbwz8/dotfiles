@@ -2,7 +2,7 @@ personality = "pragmatic"
 model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
 approval_policy = "on-request"
-approvals_reviewer = "auto_review"
+approvals_reviewer = "user"
 
 #[tui]
 #vim_mode_default = true
@@ -104,6 +104,9 @@ trust_level = "trusted"
 [projects."/home/wecker/git/sap/arch"]
 trust_level = "trusted"
 
+[projects."/home/wecker/presentations"]
+trust_level = "trusted"
+
 [mcp_servers.ionq-mcp-gateway]
 url = "https://prod-mcp-gateway.ionq.co/mcp"
 
@@ -120,4 +123,13 @@ approval_mode = "approve"
 approval_mode = "approve"
 
 [mcp_servers.ionq-mcp-gateway.tools.google-drive_read_file_content]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.gmail_search_threads]
+approval_mode = "approve"
+
+[mcp_servers.ionq-mcp-gateway.tools.gmail_get_thread]
+approval_mode = "approve"
+
+[apps.connector_5f3c8c41a1e54ad7a76272c89e2554fa.tools."google drive_update_file"]
 approval_mode = "approve"
