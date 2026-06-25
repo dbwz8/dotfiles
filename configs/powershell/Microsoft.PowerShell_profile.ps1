@@ -1,3 +1,8 @@
+if ((Get-Variable -Name DotfilesPowerShellProfileLoaded -Scope Global -ErrorAction SilentlyContinue) -and $global:DotfilesPowerShellProfileLoaded) {
+    return
+}
+$global:DotfilesPowerShellProfileLoaded = $true
+
 $profileItem = if ($PSCommandPath) { Get-Item -LiteralPath $PSCommandPath -Force } else { $null }
 if (-not $env:HOME) {
     $env:HOME = $HOME
@@ -111,6 +116,7 @@ if (Get-Command bat -ErrorAction SilentlyContinue) {
 if (Get-Command eza -ErrorAction SilentlyContinue) {
     function l { eza.exe --long --all --git --icons=auto --color=always $args }
     function ll { eza.exe --long --all --git --icons=auto --color=always $args }
+    function lt { eza.exe -l --sort=modified -r $args | head }
 }
 if (Get-Command lazygit -ErrorAction SilentlyContinue) { Set-Alias lg lazygit.exe }
 if (Get-Command micromamba -ErrorAction SilentlyContinue) {
