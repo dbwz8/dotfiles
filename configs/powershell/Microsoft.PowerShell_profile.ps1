@@ -69,8 +69,9 @@ if (Test-Path $codexBin) {
     $env:PATH = "$codexBin$([System.IO.Path]::PathSeparator)$env:PATH"
 }
 
-if (Test-Path (Join-Path $HOME ".cargo\bin")) {
-    $env:PATH += ";$HOME\.cargo\bin"
+$cargoBin = Join-Path $HOME ".cargo\bin"
+if (-not (($env:PATH -split [System.IO.Path]::PathSeparator) -contains $cargoBin)) {
+    $env:PATH = "$cargoBin$([System.IO.Path]::PathSeparator)$env:PATH"
 }
 
 if (Test-Path (Join-Path $HOME ".lmstudio\bin\lms.exe")) {

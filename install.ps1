@@ -160,6 +160,30 @@ function Ensure-Pwsh {
 
 Ensure-Pwsh | Out-Null
 
+function Ensure-UserPathEntry {
+    param([Parameter(Mandatory = $true)][string]$PathEntry)
+
+    New-Item -ItemType Directory -Force -Path $PathEntry | Out-Null
+
+    $pathSeparator = [System.IO.Path]::PathSeparator
+    if (-not (($env:PATH -split $pathSeparator) -contains $PathEntry)) {
+        $env:PATH = "$PathEntry$pathSeparator$env:PATH"
+    }
+
+    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    $userPathEntries = @()
+    if ($userPath) {
+        $userPathEntries = $userPath -split $pathSeparator | Where-Object { $_ }
+    }
+
+    if (-not ($userPathEntries -contains $PathEntry)) {
+        $userPathEntries += $PathEntry
+        [Environment]::SetEnvironmentVariable("Path", ($userPathEntries -join $pathSeparator), "User")
+    }
+}
+
+Ensure-UserPathEntry -PathEntry (Join-Path $HOME ".cargo\bin")
+
 $MinimumNeovimVersion = [version]"0.12.0"
 
 function Resolve-NeovimPath {
