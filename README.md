@@ -446,7 +446,9 @@ mv ~/.gitconfig ~/.gitconfig.bak
 ./install
 ```
 
-On Windows, run `.\install.ps1`. The installer now bootstraps PowerShell 7 with `winget` when `pwsh.exe` is missing, syncs the shared Zellij config, installs Codex with OpenAI's standalone installer, and installs the local WLM Rust app from `$HOME\git\languages\rust\WLM` into `~\.cargo\bin` when that checkout and `cargo.exe` are available. Set `WLM_SOURCE` before running the installer to use a different WLM checkout path.
+On Ubuntu, `./install` installs the local Sudoku Rust app from `$HOME/git/languages/rust/Sudoku` or the current `$HOME/git/languages/rust/Sudoko` checkout into `~/.cargo/bin` when that checkout and Cargo are available. It also writes a desktop launcher for the GUI.
+
+On Windows, run `.\install.ps1`. The installer now bootstraps PowerShell 7 with `winget` when `pwsh.exe` is missing, syncs the shared Zellij config, installs Codex with OpenAI's standalone installer, and installs the local WLM Rust app from `$HOME\git\languages\rust\WLM` into `~\.cargo\bin` when that checkout and `cargo.exe` are available. It also installs the local Sudoku Rust app from `$HOME\git\languages\rust\Sudoku` or `$HOME\git\languages\rust\Sudoko`. Set `WLM_SOURCE` or `SUDOKU_SOURCE` before running the installer to use a different checkout path.
 
 Codex is installed outside dotbins so Windows and WSL use OpenAI's standalone installers directly. `./install` runs `scripts/install-codex.sh` on Unix-like systems, including WSL, and adds `bubblewrap` to apt-based Linux setups for the Codex Linux sandbox. Set `DOTFILES_INSTALL_CODEX=0` before running the installer to skip Codex.
 

@@ -15,7 +15,7 @@ if ! command -v sudo >/dev/null 2>&1; then
 fi
 
 missing_packages=()
-for pkg in eog adwaita-icon-theme-full neovim curl bubblewrap tree-sitter-cli; do
+for pkg in eog adwaita-icon-theme-full neovim curl bubblewrap tree-sitter-cli build-essential pkg-config libwayland-dev libxkbcommon-dev; do
     if ! dpkg-query -W -f='${Status}\n' "$pkg" 2>/dev/null | grep -qx 'install ok installed'; then
         if apt-cache show "$pkg" >/dev/null 2>&1; then
             missing_packages+=("$pkg")
