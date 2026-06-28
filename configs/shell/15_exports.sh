@@ -2,13 +2,16 @@
 
 export CYPRESS_BASE=~/git/sap/arch/third_party/cypress
 #export RUST_TOOLS="$HOME/.rustup/toolchains/nightly-2025-10-28-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/bin"
-export WASI_SDK_PATH="$HOME/.local/wasi-sdk-29.0-x86_64-linux"
+if [ -d "$HOME/.local/wasi-sdk-29.0-x86_64-linux" ]; then
+    export WASI_SDK_PATH="$HOME/.local/wasi-sdk-29.0-x86_64-linux"
+fi
 
 _path_prepend "$HOME/.local/bin"
 #_path_prepend "$RUST_TOOLS"
 _path_prepend "/nix/var/nix/profiles/default/bin"  # Nix path
-_path_prepend "$WASI_SDK_PATH/bin"
-_path_append /usr/lib/wsl/lib
+if [ -n "${WASI_SDK_PATH:-}" ] && [ -d "$WASI_SDK_PATH/bin" ]; then
+    _path_prepend "$WASI_SDK_PATH/bin"
+fi
 
 if [ -n "${WSL_DISTRO_NAME:-}" ] && [ -d /usr/lib/wsl/lib ]; then
     _path_prepend "/usr/lib/wsl/lib"
@@ -90,7 +93,9 @@ fi
 unset -f _is_valid_github_token _load_gh_token
 export PYDEVD_DISABLE_FILE_VALIDATION=1
 export REPORTTIME=20
-export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-389070397
+if [ "$(uname -s)" != "Darwin" ]; then
+    export TMPDIR=/tmp # https://github.com/dotnet/runtime/issues/3168#issuecomment-389070397
+fi
 export UPLOAD_FILE_TO="transfer.sh"  # For upload-file.sh
 export SYSTEMD_EDITOR=nvim
 
@@ -103,16 +108,24 @@ export CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-e2s9x68Z6lLludbvSQobf8PYq8VoEc454bOD
 
 export PYTHONPATH=$CYPRESS:$PROTOS
 
-_path_prepend PKG_CONFIG_PATH /usr/share/pkgconfig
-_path_prepend PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
+if [ -d /usr/share/pkgconfig ]; then
+    _path_prepend PKG_CONFIG_PATH /usr/share/pkgconfig
+fi
+if [ -d /usr/lib/x86_64-linux-gnu/pkgconfig ]; then
+    _path_prepend PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig
+fi
 
-_path_prepend LD_LIBRARY_PATH "$WASI_SDK_PATH/lib"
+if [ -n "${WASI_SDK_PATH:-}" ] && [ -d "$WASI_SDK_PATH/lib" ]; then
+    _path_prepend LD_LIBRARY_PATH "$WASI_SDK_PATH/lib"
+fi
 
 # CUDA stuff
-export CUDA_HOME=/usr/local/cuda-12.8
-export CUDA_PATH=/usr/local/cuda-12.8
-export PATH=/usr/local/cuda-12.8/bin:$PATH
-export CUDA_COMPUTE_CAP=120
+if [ -d /usr/local/cuda-12.8 ]; then
+    export CUDA_HOME=/usr/local/cuda-12.8
+    export CUDA_PATH=/usr/local/cuda-12.8
+    export PATH=/usr/local/cuda-12.8/bin:$PATH
+    export CUDA_COMPUTE_CAP=120
+fi
 
 # Clean up anything we might have duplicated
 _path_dedup PATH

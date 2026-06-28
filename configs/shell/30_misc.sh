@@ -1,8 +1,10 @@
 # misc.sh - meant to be sourced in .bash_profile/.zshrc
 
-# -- Homebrew (before dotbins because eza is not in dotbins on MacOS)
-if [ -f "/opt/homebrew/bin/brew" ]; then
-   eval "$(/opt/homebrew/bin/brew shellenv)"
+# -- Homebrew (before dotbins because eza is installed by Brew on macOS)
+if [ -x "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x "/usr/local/bin/brew" ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
 fi
 
 # -- Atuin daemon management
@@ -18,8 +20,12 @@ fi
 #fi
 
 # -- Dotbins
-[ -n "$ZSH_VERSION" ] && source "$HOME/.dotbins/shell/zsh.sh"
-[ -n "$BASH_VERSION" ] && source "$HOME/.dotbins/shell/bash.sh"
+if [ -n "$ZSH_VERSION" ] && [ -f "$HOME/.dotbins/shell/zsh.sh" ]; then
+    source "$HOME/.dotbins/shell/zsh.sh"
+fi
+if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.dotbins/shell/bash.sh" ]; then
+    source "$HOME/.dotbins/shell/bash.sh"
+fi
 if [ -x "$HOME/.local/bin/codex" ]; then
     export PATH="$HOME/.local/bin${PATH:+":$PATH"}"
     _path_dedup PATH

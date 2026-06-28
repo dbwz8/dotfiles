@@ -16,18 +16,8 @@ resolve_sudoku_source() {
         return 0
     fi
 
-    if [ -n "${SUDOKO_SOURCE:-}" ]; then
-        printf '%s\n' "$SUDOKO_SOURCE"
-        return 0
-    fi
-
     if [ -f "$HOME/git/languages/rust/Sudoku/Cargo.toml" ]; then
         printf '%s\n' "$HOME/git/languages/rust/Sudoku"
-        return 0
-    fi
-
-    if [ -f "$HOME/git/languages/rust/Sudoko/Cargo.toml" ]; then
-        printf '%s\n' "$HOME/git/languages/rust/Sudoko"
         return 0
     fi
 
@@ -68,7 +58,6 @@ cargo_package_name() {
 display_name_for_package() {
     case "$1" in
         sudoku) printf '%s\n' "Sudoku" ;;
-        sudoko) printf '%s\n' "Sudoko" ;;
         *) printf '%s\n' "$1" ;;
     esac
 }
@@ -146,7 +135,7 @@ fi
 
 package_name="$(cargo_package_name "$cargo_toml")"
 if [ -z "$package_name" ]; then
-    package_name="sudoko"
+    package_name="sudoku"
 fi
 
 printf '%s\n' "Installing Sudoku from $source_path..."

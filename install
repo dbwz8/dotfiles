@@ -54,6 +54,19 @@ should_install_linux_packages() {
     return 0
 }
 
+should_install_macos_packages() {
+    case "${DOTFILES_INSTALL_SYSTEM_PACKAGES:-auto}" in
+        1|true|TRUE|yes|YES)
+            return 0
+            ;;
+        0|false|FALSE|no|NO)
+            return 1
+            ;;
+    esac
+
+    [ "$(uname -s)" = "Darwin" ]
+}
+
 uv_bin() {
     if command -v uv >/dev/null 2>&1; then
         command -v uv
@@ -83,6 +96,12 @@ uv_bin() {
 }
 
 ensure_required_submodules
+
+if should_install_macos_packages; then
+    if [ -f "${DOTFILES}/scripts/install-macos-packages.sh" ]; then
+        bash "${DOTFILES}/scripts/install-macos-packages.sh"
+    fi
+fi
 
 DOTBOT_BIN="${BASEDIR}/submodules/dotbot/bin/dotbot"
 if [ -f "$DOTBOT_BIN" ] && command -v python3 >/dev/null 2>&1; then

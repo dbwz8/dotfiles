@@ -9,6 +9,9 @@
     ~/.condarc: configs/conda/condarc
     ~/.codex: configs/codex/codex
     ~/.config/atuin: configs/atuin
+    ~/.Brewfile:
+      if: '[ `uname` = Darwin ]'
+      path: configs/macos/Brewfile
     ~/.config/Code/User/keybindings.json:
       if: '[ `uname` = Linux ]'
       path: configs/vscode/Code/User/keybindings.json
@@ -41,6 +44,7 @@
     ~/.local/bin/nbviewer: scripts/nbviewer.sh
     ~/.local/bin/run: scripts/run.sh
     ~/.local/bin/install-codex: scripts/install-codex.sh
+    ~/.local/bin/install-macos-packages: scripts/install-macos-packages.sh
     ~/.local/bin/sync-dotfiles: scripts/sync-dotfiles.sh
     ~/.local/bin/sync-local-dotfiles: scripts/sync-local-dotfiles.sh
     ~/.local/bin/sync-uv-tools: scripts/sync-uv-tools.sh

@@ -4,7 +4,7 @@ _codex_configure_home() {
     _codex_host="$(hostname -s 2>/dev/null || hostname 2>/dev/null || sed -n '1p' /etc/hostname 2>/dev/null)"
 
     case "$_codex_host" in
-        weckerAA|weckerAA.*|weckeraa|weckeraa.*|weckerlap|weckerlap.*) ;;
+        weckerAA|weckerAA.*|weckeraa|weckeraa.*|weckerlap|weckerlap.*|wecker-macbook-air|wecker-macbook-air.*) ;;
         *)
             unset _codex_host
             return

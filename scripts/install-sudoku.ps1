@@ -29,13 +29,8 @@ function Resolve-SudokuSource {
         return $env:SUDOKU_SOURCE
     }
 
-    if ($env:SUDOKO_SOURCE) {
-        return $env:SUDOKO_SOURCE
-    }
-
     $candidates = @(
-        (Join-Path $HOME "git\languages\rust\Sudoku"),
-        (Join-Path $HOME "git\languages\rust\Sudoko")
+        (Join-Path $HOME "git\languages\rust\Sudoku")
     )
 
     foreach ($candidate in $candidates) {
@@ -63,7 +58,7 @@ function Get-CargoPackageName {
         }
     }
 
-    return "sudoko"
+    return "sudoku"
 }
 
 $SourcePath = Resolve-SudokuSource -RequestedPath $SourcePath
