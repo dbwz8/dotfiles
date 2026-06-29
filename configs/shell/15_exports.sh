@@ -56,14 +56,39 @@ _is_valid_github_token() {
 }
 
 _load_gh_token() {
-    if env -u GITHUB_TOKEN -u GH_TOKEN gh auth token >/dev/null 2>&1; then
-        env -u GITHUB_TOKEN -u GH_TOKEN gh auth token 2>/dev/null
-        return 0
+    if command -v gh >/dev/null 2>&1; then
+        _gh_token="$(env -u GITHUB_TOKEN -u GH_TOKEN gh auth token 2>/dev/null)"
+        if _is_valid_github_token "$_gh_token"; then
+            printf '%s\n' "$_gh_token"
+            unset _gh_token
+            return 0
+        fi
+
+        _gh_token="$(
+            env -u GITHUB_TOKEN -u GH_TOKEN gh auth status -t 2>/dev/null \
+                | sed -n 's/^[[:space:]-]*Token: //p' \
+                | head -n 1
+        )"
+        if _is_valid_github_token "$_gh_token"; then
+            printf '%s\n' "$_gh_token"
+            unset _gh_token
+            return 0
+        fi
+        unset _gh_token
     fi
 
-    env -u GITHUB_TOKEN -u GH_TOKEN gh auth status -t 2>/dev/null \
-        | sed -n 's/^[[:space:]-]*Token: //p' \
-        | head -n 1
+    _gh_hosts_file="${GH_CONFIG_DIR:-$HOME/.config/gh}/hosts.yml"
+    if [ -r "$_gh_hosts_file" ]; then
+        _gh_token="$(sed -n 's/^[[:space:]]*oauth_token:[[:space:]]*//p' "$_gh_hosts_file" | head -n 1)"
+        if _is_valid_github_token "$_gh_token"; then
+            printf '%s\n' "$_gh_token"
+            unset _gh_token _gh_hosts_file
+            return 0
+        fi
+    fi
+
+    unset _gh_token _gh_hosts_file
+    return 1
 }
 
 if ! _is_valid_github_token "${GITHUB_TOKEN:-}"; then
@@ -74,11 +99,19 @@ if ! _is_valid_github_token "${GH_TOKEN:-}"; then
     unset GH_TOKEN
 fi
 
+if ! _is_valid_github_token "${GITHUB_PAT_TOKEN:-}"; then
+    unset GITHUB_PAT_TOKEN
+fi
+
 if [ -z "${GITHUB_TOKEN:-}" ] && [ -n "${GH_TOKEN:-}" ]; then
     export GITHUB_TOKEN="${GH_TOKEN}"
 fi
 
-if [ -z "${GITHUB_TOKEN:-}" ] && command -v gh >/dev/null 2>&1; then
+if [ -z "${GITHUB_TOKEN:-}" ] && [ -n "${GITHUB_PAT_TOKEN:-}" ]; then
+    export GITHUB_TOKEN="${GITHUB_PAT_TOKEN}"
+fi
+
+if [ -z "${GITHUB_TOKEN:-}" ]; then
     _gh_token="$(_load_gh_token)"
     if _is_valid_github_token "$_gh_token"; then
         export GITHUB_TOKEN="$_gh_token"
@@ -88,6 +121,10 @@ fi
 
 if [ -z "${GH_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     export GH_TOKEN="${GITHUB_TOKEN}"
+fi
+
+if [ -z "${GITHUB_PAT_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+    export GITHUB_PAT_TOKEN="${GITHUB_TOKEN}"
 fi
 
 unset -f _is_valid_github_token _load_gh_token

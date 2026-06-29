@@ -35,8 +35,24 @@ sanitize_github_token_env() {
     ""|*[[:space:]]*) unset GH_TOKEN ;;
   esac
 
+  case "${GITHUB_PAT_TOKEN:-}" in
+    ""|*[[:space:]]*) unset GITHUB_PAT_TOKEN ;;
+  esac
+
   if [ -z "${GITHUB_TOKEN:-}" ] && [ -n "${GH_TOKEN:-}" ]; then
     export GITHUB_TOKEN="${GH_TOKEN}"
+  fi
+
+  if [ -z "${GITHUB_TOKEN:-}" ] && [ -n "${GITHUB_PAT_TOKEN:-}" ]; then
+    export GITHUB_TOKEN="${GITHUB_PAT_TOKEN}"
+  fi
+
+  if [ -z "${GH_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+    export GH_TOKEN="${GITHUB_TOKEN}"
+  fi
+
+  if [ -z "${GITHUB_PAT_TOKEN:-}" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
+    export GITHUB_PAT_TOKEN="${GITHUB_TOKEN}"
   fi
 }
 
