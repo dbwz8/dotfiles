@@ -8,4 +8,5 @@ window-padding-x = 6
 window-padding-y = 6
 mouse-hide-while-typing = true
 shell-integration = detect
+command = direct:/bin/zsh -lic zellij
 confirm-close-surface = false
