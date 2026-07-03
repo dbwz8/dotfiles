@@ -16,6 +16,15 @@ submit = ["ctrl-enter","ctrl-j"]
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
+[projects."/Users/wecker/git/dotfiles"]
+trust_level = "trusted"
+
+[projects."/Users/wecker/git"]
+trust_level = "trusted"
+
+[projects."/Users/wecker/git/languages"]
+trust_level = "trusted"
+
 [projects."/home/wecker/git/dotfiles"]
 trust_level = "trusted"
 

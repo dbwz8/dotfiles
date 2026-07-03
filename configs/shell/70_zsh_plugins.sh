@@ -14,6 +14,7 @@ if [[ ($- == *i*) && -n "$ZSH_VERSION" ]]; then
     if [ -f "$ZSH/oh-my-zsh.sh" ]; then
         source "$ZSH/oh-my-zsh.sh"
     fi
+    command -v eza >/dev/null && alias ls='eza'
     # Drop conflicting Oh My Zsh git alias; keep system `gcp` command available.
     (( $+aliases[gcp] )) && unalias gcp
 

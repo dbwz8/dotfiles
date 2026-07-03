@@ -26,6 +26,21 @@ dotbins_bin() {
   return 1
 }
 
+dotbins_sync_current() {
+  local dotbins_bin
+  dotbins_bin="$1"
+
+  if [ "$(uname -s)" = "Darwin" ]; then
+    # eza has no upstream macOS release asset; the Brewfile installs it instead.
+    "$dotbins_bin" sync --current \
+      delta duf dust fd gh git-lfs hyperfine rg tree-sitter yazi zellij \
+      bat direnv fzf lazygit micromamba starship zoxide atuin keychain uv
+    return
+  fi
+
+  "$dotbins_bin" sync --current
+}
+
 sanitize_github_token_env() {
   case "${GITHUB_TOKEN:-}" in
     ""|*[[:space:]]*) unset GITHUB_TOKEN ;;
@@ -60,7 +75,7 @@ sanitize_github_token_env
 
 if DOTBINS_BIN="$(dotbins_bin)"; then
   echo "🧰 Syncing dotbins tools..."
-  "$DOTBINS_BIN" sync --current
+  dotbins_sync_current "$DOTBINS_BIN"
 else
   echo "⚠️ dotbins is not installed; skipping tool sync."
 fi

@@ -321,7 +321,8 @@ web_client {
 // Choose the path to the default shell that zellij will use for opening new panes
 // Default: $SHELL
 // 
-default_shell "pwsh.exe"
+// Keep unset so macOS/Linux use $SHELL instead of a Windows-specific shell.
+// default_shell "fish"
  
 // Choose the path to override cwd that zellij will use for opening new panes
 // 

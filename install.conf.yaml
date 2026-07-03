@@ -7,7 +7,9 @@
     ~/.bash_profile: configs/bash/bash_profile
     ~/.bashrc: configs/bash/bashrc
     ~/.condarc: configs/conda/condarc
-    ~/.codex: configs/codex/codex
+    ~/.codex/config.toml: configs/codex/codex/config.toml
+    ~/.codex/AGENTS.md: configs/codex/codex/AGENTS.md
+    ~/.codex/skills/weekly-update: configs/codex/codex/skills/weekly-update
     ~/.config/atuin: configs/atuin
     ~/.Brewfile:
       if: '[ `uname` = Darwin ]'

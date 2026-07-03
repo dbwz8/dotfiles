@@ -7,6 +7,9 @@ $profileItem = if ($PSCommandPath) { Get-Item -LiteralPath $PSCommandPath -Force
 if (-not $env:HOME) {
     $env:HOME = $HOME
 }
+if (-not $env:SHELL) {
+    $env:SHELL = "pwsh.exe"
+}
 
 if (-not $env:DOTFILES) {
     $dotfilesCandidates = @()

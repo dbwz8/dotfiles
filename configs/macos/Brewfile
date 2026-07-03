@@ -1,7 +1,5 @@
 # Homebrew bundle for a fresh Apple Silicon macOS development machine.
 
-tap "homebrew/bundle"
-
 brew "bash"
 brew "cmake"
 brew "coreutils"

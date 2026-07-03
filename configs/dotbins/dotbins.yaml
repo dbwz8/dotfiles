@@ -60,8 +60,7 @@ tools:
   eza:
     repo: eza-community/eza
     asset_patterns:
-      macos:
-        arm64: null
+      macos: null
     shell_code:
       bash,zsh: |
         alias l="eza --long --all --git --icons=auto"

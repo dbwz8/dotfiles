@@ -95,6 +95,54 @@ uv_bin() {
     return 1
 }
 
+DOTFILES_BACKUP_ROOT=""
+
+dotfiles_backup_root() {
+    if [ -n "${DOTFILES_BACKUP_DIR:-}" ]; then
+        printf '%s\n' "$DOTFILES_BACKUP_DIR"
+        return 0
+    fi
+
+    if [ -z "$DOTFILES_BACKUP_ROOT" ]; then
+        DOTFILES_BACKUP_ROOT="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+    fi
+
+    printf '%s\n' "$DOTFILES_BACKUP_ROOT"
+}
+
+backup_link_conflict() {
+    local target backup_root rel dest suffix
+    target="$1"
+
+    if [ -L "$target" ] || [ ! -e "$target" ]; then
+        return 0
+    fi
+
+    backup_root="$(dotfiles_backup_root)"
+    rel="${target#"$HOME"/}"
+    if [ "$rel" = "$target" ]; then
+        rel="${target#/}"
+    fi
+    dest="$backup_root/$rel"
+    mkdir -p "$(dirname "$dest")"
+
+    suffix=1
+    while [ -e "$dest" ] || [ -L "$dest" ]; do
+        dest="$backup_root/$rel.$suffix"
+        suffix=$((suffix + 1))
+    done
+
+    printf '%s\n' "Backing up existing $target -> $dest"
+    mv "$target" "$dest"
+}
+
+prepare_dotbot_link_conflicts() {
+    backup_link_conflict "$HOME/.gitconfig"
+    backup_link_conflict "$HOME/.codex/config.toml"
+    backup_link_conflict "$HOME/.codex/AGENTS.md"
+    backup_link_conflict "$HOME/.codex/skills/weekly-update"
+}
+
 ensure_required_submodules
 
 if should_install_macos_packages; then
@@ -102,6 +150,8 @@ if should_install_macos_packages; then
         bash "${DOTFILES}/scripts/install-macos-packages.sh"
     fi
 fi
+
+prepare_dotbot_link_conflicts
 
 DOTBOT_BIN="${BASEDIR}/submodules/dotbot/bin/dotbot"
 if [ -f "$DOTBOT_BIN" ] && command -v python3 >/dev/null 2>&1; then
@@ -153,6 +203,21 @@ dotbins_bin() {
     return 1
 }
 
+dotbins_sync_current() {
+    local dotbins_bin
+    dotbins_bin="$1"
+
+    if [ "$(uname -s)" = "Darwin" ]; then
+        # eza has no upstream macOS release asset; the Brewfile installs it instead.
+        "$dotbins_bin" sync --current \
+            delta duf dust fd gh git-lfs hyperfine rg tree-sitter yazi zellij \
+            bat direnv fzf lazygit micromamba starship zoxide atuin keychain uv
+        return
+    fi
+
+    "$dotbins_bin" sync --current
+}
+
 sanitize_github_token_env() {
     case "${GITHUB_TOKEN:-}" in
         ""|*[[:space:]]*) unset GITHUB_TOKEN ;;
@@ -188,7 +253,7 @@ sanitize_github_token_env
 bash "${DOTFILES}/scripts/sync-uv-tools.sh"
 
 if DOTBINS_BIN="$(dotbins_bin)"; then
-    "${DOTBINS_BIN}" sync --current
+    dotbins_sync_current "$DOTBINS_BIN"
 else
     printf '%s\n' "⚠️  dotbins is not installed; skipping CLI tool sync." >&2
     printf '%s\n' "    Install uv and rerun ./install to provision tools like micromamba." >&2
