@@ -141,6 +141,7 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.codex/config.toml"
     backup_link_conflict "$HOME/.codex/AGENTS.md"
     backup_link_conflict "$HOME/.codex/skills/weekly-update"
+    backup_link_conflict "$HOME/.config/ghostty/config.ghostty"
 }
 
 ensure_required_submodules

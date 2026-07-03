@@ -28,6 +28,7 @@
       path: configs/icons/ulm.png
     ~/.config/dask/distributed.yaml: configs/dask/distributed.yaml
     ~/.config/git/attributes: configs/git/attributes
+    ~/.config/ghostty/config.ghostty: configs/ghostty/config.ghostty
     ~/.config/nvim:
       path: configs/nvim
       force: true

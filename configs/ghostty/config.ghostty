@@ -1,0 +1,11 @@
+clipboard-write = allow
+clipboard-read = allow
+copy-on-select = clipboard
+font-size = 13
+theme = GitHub Dark
+background = 000000
+window-padding-x = 6
+window-padding-y = 6
+mouse-hide-while-typing = true
+shell-integration = detect
+confirm-close-surface = false
