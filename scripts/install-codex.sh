@@ -16,6 +16,11 @@ if [ -x "$codex_bin" ]; then
     exit 0
 fi
 
+if command -v codex >/dev/null 2>&1; then
+    printf '%s\n' "Codex CLI already installed at $(command -v codex)."
+    exit 0
+fi
+
 if ! command -v curl >/dev/null 2>&1; then
     printf '%s\n' "curl is required to install Codex CLI." >&2
     exit 1

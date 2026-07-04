@@ -44,6 +44,12 @@ should_install_linux_packages() {
         return 1
     fi
 
+    if ! command -v sudo >/dev/null 2>&1 || ! sudo -n true >/dev/null 2>&1; then
+        printf '%s\n' "⚠️  sudo is unavailable or requires interaction; skipping privileged Linux package installation." >&2
+        printf '%s\n' "    Set DOTFILES_INSTALL_SYSTEM_PACKAGES=1 to force these apt-based install steps." >&2
+        return 1
+    fi
+
     if [ -n "${SLURM_CONF:-}" ] || [ -f /etc/slurm/slurm.conf ] || [ -d /etc/slurm/slurm.conf.d ] \
         || command -v slurmctld >/dev/null 2>&1 || command -v slurmdbd >/dev/null 2>&1; then
         printf '%s\n' "⚠️  Detected a Slurm-managed host; skipping privileged Linux package installation." >&2
@@ -220,14 +226,19 @@ if should_install_linux_packages; then
 fi
 
 if [ -f "${DOTFILES}/scripts/install-codex.sh" ]; then
-    bash "${DOTFILES}/scripts/install-codex.sh"
+    if ! bash "${DOTFILES}/scripts/install-codex.sh"; then
+        printf '%s\n' "⚠️  Codex CLI installation failed; continuing dotfiles install." >&2
+    fi
 fi
 
 if [ -f "${DOTFILES}/scripts/install-claude.sh" ]; then
-    bash "${DOTFILES}/scripts/install-claude.sh"
+    if ! bash "${DOTFILES}/scripts/install-claude.sh"; then
+        printf '%s\n' "⚠️  Claude Code installation failed; continuing dotfiles install." >&2
+    fi
 fi
 
-if [ -f "${DOTFILES}/scripts/install-sudoku.sh" ]; then
+if [ -f "${DOTFILES}/scripts/install-sudoku.sh" ] \
+    && { [ -n "${SUDOKU_SOURCE:-}" ] || [ -d "$HOME/git/languages/rust/Sudoku" ]; }; then
     if ! bash "${DOTFILES}/scripts/install-sudoku.sh"; then
         printf '%s\n' "⚠️  Sudoku installation failed; continuing dotfiles install." >&2
     fi
@@ -262,6 +273,58 @@ dotbins_sync_current() {
     "$dotbins_bin" sync --current
 }
 
+network_host_resolves() {
+    local host
+    host="$1"
+
+    if command -v getent >/dev/null 2>&1; then
+        getent hosts "$host" >/dev/null 2>&1
+        return $?
+    fi
+
+    if command -v dscacheutil >/dev/null 2>&1; then
+        dscacheutil -q host -a name "$host" >/dev/null 2>&1
+        return $?
+    fi
+
+    return 0
+}
+
+should_sync_network_tools() {
+    local host description
+    host="$1"
+    description="$2"
+
+    case "${DOTFILES_SYNC_TOOLS:-auto}" in
+        1|true|TRUE|yes|YES)
+            return 0
+            ;;
+        0|false|FALSE|no|NO)
+            return 1
+            ;;
+    esac
+
+    if network_host_resolves "$host"; then
+        return 0
+    fi
+
+    printf '%s\n' "⚠️  Cannot resolve $host; skipping $description." >&2
+    printf '%s\n' "    Set DOTFILES_SYNC_TOOLS=1 to force network tool sync." >&2
+    return 1
+}
+
+ensure_symlink() {
+    local source target
+    source="$1"
+    target="$2"
+
+    if [ -L "$target" ] && [ "$(readlink "$target")" = "$source" ]; then
+        return 0
+    fi
+
+    ln -sf "$source" "$target"
+}
+
 sanitize_github_token_env() {
     case "${GITHUB_TOKEN:-}" in
         ""|*[[:space:]]*) unset GITHUB_TOKEN ;;
@@ -294,10 +357,14 @@ sanitize_github_token_env() {
 
 sanitize_github_token_env
 
-bash "${DOTFILES}/scripts/sync-uv-tools.sh"
+if should_sync_network_tools "pypi.org" "uv tool sync" && ! bash "${DOTFILES}/scripts/sync-uv-tools.sh"; then
+    printf '%s\n' "⚠️  uv tool sync failed; continuing dotfiles install." >&2
+fi
 
 if DOTBINS_BIN="$(dotbins_bin)"; then
-    dotbins_sync_current "$DOTBINS_BIN"
+    if should_sync_network_tools "api.github.com" "dotbins sync" && ! dotbins_sync_current "$DOTBINS_BIN"; then
+        printf '%s\n' "⚠️  dotbins sync failed; continuing dotfiles install." >&2
+    fi
 else
     printf '%s\n' "⚠️  dotbins is not installed; skipping CLI tool sync." >&2
     printf '%s\n' "    Install uv and rerun ./install to provision tools like micromamba." >&2
@@ -306,14 +373,15 @@ fi
 mkdir -p "$HOME/.config/tmuxp"
 
 if [ -f "$DOTFILES/submodules/tmux/.tmux.conf" ]; then
-    ln -sf "$DOTFILES/submodules/tmux/.tmux.conf" "$HOME/.tmux.conf"
+    ensure_symlink "$DOTFILES/submodules/tmux/.tmux.conf" "$HOME/.tmux.conf"
 fi
 
 if [ -f "$DOTFILES/submodules/tmux/.tmux.conf.local" ]; then
-    ln -sf "$DOTFILES/submodules/tmux/.tmux.conf.local" "$HOME/.tmux.conf.local"
+    ensure_symlink "$DOTFILES/submodules/tmux/.tmux.conf.local" "$HOME/.tmux.conf.local"
 fi
 
 # symlink each YAML session file
 for f in "$DOTFILES"/tmux/sessions/*.yaml; do
-  ln -sf "$f" "$HOME/.config/tmuxp/$(basename "$f")"
+  [ -e "$f" ] || continue
+  ensure_symlink "$f" "$HOME/.config/tmuxp/$(basename "$f")"
 done
