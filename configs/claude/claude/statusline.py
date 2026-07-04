@@ -1,230 +1,171 @@
 #!/usr/bin/env python3
+"""Compact single-line Claude Code statusline.
+
+Shows: model, repo, git branch (+ dirty marker), a 10-char context-usage
+bar, session cost and elapsed session time. Uses muted 256-color ANSI
+codes and Nerd Font glyphs with Powerline-style separators. Set the
+environment variable CLAUDE_STATUSLINE_PLAIN=1 to fall back to a
+plain-ASCII rendering on terminals without a Nerd Font / UTF-8 locale.
+"""
 import json
+import os
 import subprocess
 import sys
-import os
-from dataclasses import dataclass
+from datetime import datetime, timezone
+
+raw = json.loads(sys.stdin.read())
+
+R = "\033[0m"
 
 
-@dataclass
-class Model:
-    id: str
-    display_name: str
+def c(code):
+    return f"\033[38;5;{code}m"
 
 
-@dataclass
-class Workspace:
-    current_dir: str
-    project_dir: str
+# Muted 256-color palette.
+GREY = c(245)      # separators / secondary text
+BLUE = c(67)       # model
+PURPLE = c(103)    # repo
+GREEN = c(108)     # branch / clean / low context usage
+RED = c(167)       # dirty marker / high context usage
+YELLOW = c(179)    # mid context usage
+TEAL = c(109)      # elapsed time
+TAN = c(180)       # cost
 
+# Decide whether it is safe to use Nerd Font glyphs / powerline chars.
+_lang = (os.environ.get("LANG", "") + os.environ.get("LC_ALL", "")).upper()
+NF = os.environ.get("CLAUDE_STATUSLINE_PLAIN", "") != "1" and (
+    "UTF-8" in _lang or "UTF8" in _lang
+)
 
-@dataclass
-class CurrentUsage:
-    input_tokens: int = 0
-    output_tokens: int = 0
-    cache_creation_input_tokens: int = 0
-    cache_read_input_tokens: int = 0
+SEPX = f" {GREY}{R} " if NF else f" {GREY}|{R} "  # TAIL_OK
 
+ICON_MODEL2 = " " if NF else ""     #  microchip
+ICON_REPO = " " if NF else ""      #  github/repo
+ICON_BRANCH = " " if NF else ""    #  code-fork / branch
+ICON_CTX = " " if NF else ""       #  dashboard / gauge
+ICON_COST = " " if NF else ""      #  usd
+ICON_TIME = " " if NF else ""      #  clock
+DOT = "" if NF else "*"            #  filled dot for dirty marker
 
-@dataclass
-class ContextWindow:
-    total_input_tokens: int = 0
-    total_output_tokens: int = 0
-    context_window_size: int = 0
-    current_usage: CurrentUsage | None = None
+# --- model -----------------------------------------------------------
+model_id = raw.get("model", {}).get("id", "")
+if "opus" in model_id:
+    model = "opus"
+elif "sonnet" in model_id:
+    model = "sonnet"
+elif "haiku" in model_id:
+    model = "haiku"
+else:
+    tail = model_id.split("-")
+    model = tail[-1] if tail and tail[-1] else raw.get("model", {}).get("display_name", "?")
 
+model_seg = f"{BLUE}{ICON_MODEL}{model}{R}"
 
-@dataclass
-class Cost:
-    total_cost_usd: float
-    total_duration_ms: int
-    total_api_duration_ms: int
-    total_lines_added: int
-    total_lines_removed: int
+# --- repo (truncated) --------------------------------------------------
+MAX_REPO_LEN = 20
+workspace = raw.get("workspace", {}) or {}
+repo_info = workspace.get("repo") or {}
+project = workspace.get("project_dir", "")
+repo_name = repo_info.get("name") or (os.path.basename(project.rstrip("/")) if project else "")
+if repo_name and len(repo_name) > MAX_REPO_LEN:
+    repo_name = repo_name[: MAX_REPO_LEN - 1] + "…"
 
+repo_seg = f"{PURPLE}{ICON_REPO}{repo_name}{R}" if repo_name else ""
 
-@dataclass
-class OutputStyle:
-    name: str
-
-
-@dataclass
-class StatusInput:
-    session_id: str
-    transcript_path: str
-    cwd: str
-    model: Model
-    workspace: Workspace
-    version: str
-    output_style: OutputStyle
-    cost: Cost
-    exceeds_200k_tokens: bool
-    context_window: ContextWindow | None = None
-
-
-def parse_input(raw: dict) -> StatusInput:
-    ctx_data = raw.get("context_window", {})
-    current_usage = None
-    if ctx_data.get("current_usage"):
-        current_usage = CurrentUsage(**ctx_data["current_usage"])
-
-    context_window = (
-        ContextWindow(
-            total_input_tokens=ctx_data.get("total_input_tokens", 0),
-            total_output_tokens=ctx_data.get("total_output_tokens", 0),
-            context_window_size=ctx_data.get("context_window_size", 0),
-            current_usage=current_usage,
-        )
-        if ctx_data
-        else None
-    )
-
-    return StatusInput(
-        session_id=raw["session_id"],
-        transcript_path=raw["transcript_path"],
-        cwd=raw["cwd"],
-        model=Model(**raw["model"]),
-        workspace=Workspace(**raw["workspace"]),
-        version=raw["version"],
-        output_style=OutputStyle(**raw["output_style"]),
-        cost=Cost(**raw["cost"]),
-        exceeds_200k_tokens=raw["exceeds_200k_tokens"],
-        context_window=context_window,
-    )
-
-
-# Save input to temp file for debugging
-raw = sys.stdin.read()
-with open("/tmp/statusline_input.json", "w") as f:
-    f.write(raw)
-data = parse_input(json.loads(raw))
-
-# Get git info
-repo_name = os.path.basename(data.workspace.project_dir)
+# --- git branch + dirty marker ----------------------------------------
 branch = ""
-git_root = data.workspace.project_dir  # fallback
-is_git_repo = False
-try:
-    result = subprocess.run(
-        ["git", "-C", data.workspace.project_dir, "rev-parse", "--show-toplevel"],
-        capture_output=True,
-        text=True,
-        timeout=1,
-    )
-    if result.returncode == 0:
-        is_git_repo = True
-        git_root = result.stdout.strip()
-        repo_name = os.path.basename(git_root)
+dirty = False
+if project:
+    try:
+        b = subprocess.run(
+            ["git", "--no-optional-locks", "-C", project, "branch", "--show-current"],
+            capture_output=True, text=True, timeout=1,
+        )
+        branch = b.stdout.strip() if b.returncode == 0 else ""
+        if not branch:
+            sha = subprocess.run(
+                ["git", "--no-optional-locks", "-C", project, "rev-parse", "--short", "HEAD"],
+                capture_output=True, text=True, timeout=1,
+            )
+            if sha.returncode == 0:
+                branch = sha.stdout.strip()
+        d = subprocess.run(
+            ["git", "--no-optional-locks", "-C", project, "status", "--porcelain"],
+            capture_output=True, text=True, timeout=1,
+        )
+        dirty = d.returncode == 0 and bool(d.stdout.strip())
+    except Exception:
+        pass
 
-    result = subprocess.run(
-        ["git", "-C", data.workspace.project_dir, "branch", "--show-current"],
-        capture_output=True,
-        text=True,
-        timeout=1,
-    )
-    if result.returncode == 0 and result.stdout.strip():
-        branch = "@" + result.stdout.strip()
+branch_seg = ""
+if branch:
+    marker = f" {RED}{DOT}{R}" if dirty else ""
+    branch_seg = f"{GREEN}{ICON_BRANCH}{branch}{R}{marker}"
+
+# --- context usage bar (10 chars) --------------------------------------
+BAR_LEN = 10
+ctx_seg = ""
+ctx = raw.get("context_window", {}) or {}
+pct = ctx.get("used_percentage")
+if pct is None:
+    win_size = ctx.get("context_window_size", 0) or 0
+    if win_size > 0:
+        usage = ctx.get("current_usage") or {}
+        if usage:
+            tokens = (
+                usage.get("input_tokens", 0)
+                + usage.get("cache_creation_input_tokens", 0)
+                + usage.get("cache_read_input_tokens", 0)
+            )
+        else:
+            tokens = ctx.get("total_input_tokens", 0) + ctx.get("total_output_tokens", 0)
+        pct = (tokens * 100 / win_size) if tokens > 0 else 0
+
+if pct is not None:
+    pct = max(0, min(100, pct))
+    filled = round(pct * BAR_LEN / 100)
+    bar = "█" * filled + "░" * (BAR_LEN - filled)
+    color = RED if pct >= 80 else YELLOW if pct >= 50 else GREEN
+    ctx_seg = f"{color}{ICON_CTX}{bar} {pct:.0f}%{R}"
+
+# --- session cost -------------------------------------------------------
+cost_seg = ""
+cost = (raw.get("cost", {}) or {}).get("total_cost_usd", 0) or 0
+if cost > 0:
+    cost_str = f"${cost:.2f}" if cost < 10 else f"${cost:.1f}"
+    cost_seg = f"{TAN}{ICON_COST}{cost_str}{R}"
+
+# --- elapsed session time -----------------------------------------------
+time_seg = ""
+transcript_path = raw.get("transcript_path", "")
+start_dt = None
+try:
+    with open(transcript_path, "r") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            entry = json.loads(line)
+            ts = entry.get("timestamp")
+            if ts:
+                start_dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            break
 except Exception:
     pass
-
-# Get hostname and OS icon
-hostname = os.uname().nodename.split(".")[0]
-if "macbook" in hostname.lower():
-    hostname = "macbook"
-
-# Detect OS
-os_icon = ""
-if sys.platform == "darwin":
-    os_icon = "\uf179"  # Apple
-elif sys.platform == "linux":
+if start_dt is None and transcript_path:
     try:
-        with open("/etc/os-release") as f:
-            os_release = f.read().lower()
-        if "nixos" in os_release:
-            os_icon = "\uf313"  # NixOS
-        elif "debian" in os_release:
-            os_icon = "\uf306"  # Debian
-        else:
-            os_icon = "\uf17c"  # Generic Linux
+        start_dt = datetime.fromtimestamp(os.path.getctime(transcript_path), tz=timezone.utc)
     except Exception:
-        os_icon = "\uf17c"  # Generic Linux
+        pass
 
-# Get start folder (where Claude was started, relative to git root)
-start_folder = ""
-if data.workspace.project_dir != git_root:
-    start_folder = os.path.relpath(data.workspace.project_dir, git_root)
+if start_dt is not None:
+    elapsed = datetime.now(timezone.utc) - start_dt
+    total_seconds = max(0, int(elapsed.total_seconds()))
+    h, rem = divmod(total_seconds, 3600)
+    m, s = divmod(rem, 60)
+    elapsed_str = f"{h}h{m:02d}m" if h else f"{m}m{s:02d}s"
+    time_seg = f"{TEAL}{ICON_TIME}{elapsed_str}{R}"
 
-# Colors
-CYAN = "\033[36m"
-GREEN = "\033[32m"
-YELLOW = "\033[33m"
-MAGENTA = "\033[35m"
-RESET = "\033[0m"
-
-# Icons (Nerd Font)
-ICON_GIT = "\uf1d3"
-ICON_SERVER = "\uf233"
-ICON_FOLDER = "\uf07b"
-ICON_CHART = "\uf080"
-ICON_COST = "\uf155"  # dollar sign
-ICON_GOOGLE = "\uf1a0"
-
-# Model icon
-if "opus" in data.model.id.lower():
-    model_icon = f"{MAGENTA}󰘨{RESET}"
-elif "sonnet" in data.model.id.lower():
-    model_icon = f"{CYAN}󰎈{RESET}"
-elif "haiku" in data.model.id.lower():
-    model_icon = f"{GREEN}󰯈{RESET}"
-else:
-    model_icon = ""
-
-# Check if using Vertex AI (Google)
-provider_info = ""
-if os.environ.get("CLAUDE_CODE_USE_VERTEX"):
-    provider_info = f"{YELLOW}{ICON_GOOGLE}{RESET}"
-
-model_info = f"{model_icon} {provider_info} " if (model_icon and provider_info) else f"{model_icon or provider_info} " if (model_icon or provider_info) else ""
-
-# Build folder info
-# start_folder: where Claude was started (relative to git root)
-# current_folder: where Claude cd'd to (relative to project_dir)
-folder_parts = []
-if start_folder:
-    folder_parts.append(start_folder)
-if data.workspace.current_dir != data.workspace.project_dir:
-    current_folder = os.path.relpath(
-        data.workspace.current_dir, data.workspace.project_dir
-    )
-    folder_parts.append(current_folder)
-
-folder_info = ""
-if folder_parts:
-    folder_info = f" {YELLOW}{ICON_FOLDER} {' → '.join(folder_parts)}{RESET}"
-
-# Calculate context usage
-context_info = ""
-if data.context_window and data.context_window.context_window_size > 0:
-    ctx = data.context_window
-    if ctx.current_usage:
-        tokens = (
-            ctx.current_usage.input_tokens
-            + ctx.current_usage.cache_creation_input_tokens
-            + ctx.current_usage.cache_read_input_tokens
-        )
-    else:
-        tokens = ctx.total_input_tokens + ctx.total_output_tokens
-
-    if tokens > 0:
-        pct = tokens * 100 // ctx.context_window_size
-        context_info = f" {MAGENTA}{ICON_CHART} {pct}%{RESET}"
-
-# Calculate cost
-cost_info = ""
-if data.cost.total_cost_usd > 0:
-    cost_info = f" {YELLOW}{ICON_COST}{data.cost.total_cost_usd:.2f}{RESET}"
-
-project_icon = ICON_GIT if is_git_repo else ICON_FOLDER
-print(
-    f"{model_info}{CYAN}{project_icon} {repo_name}{branch}{RESET}{folder_info} {GREEN}{os_icon} {hostname}{RESET}{context_info}{cost_info}"
-)
+segments = [s for s in (model_seg, repo_seg, branch_seg, ctx_seg, cost_seg, time_seg) if s]
+sys.stdout.write(SEP.join(segments))
