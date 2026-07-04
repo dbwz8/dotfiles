@@ -385,6 +385,24 @@ function Install-CodexConfigLinks {
         -TargetPath (Join-Path $codexHome "skills\weekly-update")
 }
 
+function Install-ClaudeConfigLinks {
+    $claudeSource = Join-Path $RepoRoot "configs\claude\claude"
+    $claudeHome = Join-Path $HOME ".claude"
+
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $claudeSource "settings.json") `
+        -TargetPath (Join-Path $claudeHome "settings.json")
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $claudeSource "statusline.py") `
+        -TargetPath (Join-Path $claudeHome "statusline.py")
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $claudeSource "hooks\block-git-rewrites.py") `
+        -TargetPath (Join-Path $claudeHome "hooks\block-git-rewrites.py")
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $claudeSource "setup-claude-vertex-auth.sh") `
+        -TargetPath (Join-Path $claudeHome "setup-claude-vertex-auth.sh")
+}
+
 function Install-VSCodeConfigLinks {
     $vscodeSource = Join-Path $RepoRoot "configs\vscode\Code\User"
     $vscodeTarget = Join-Path $HOME "AppData\Roaming\Code\User"
@@ -412,6 +430,7 @@ function Install-NeovimConfigLink {
 }
 
 Install-CodexConfigLinks
+Install-ClaudeConfigLinks
 Install-VSCodeConfigLinks
 Install-NeovimConfigLink
 
@@ -463,6 +482,8 @@ foreach ($profileTarget in $profileTargets) {
 & (Join-Path $RepoRoot "scripts\install-sudoku.ps1")
 
 & (Join-Path $RepoRoot "scripts\install-codex.ps1")
+
+& (Join-Path $RepoRoot "scripts\install-claude.ps1")
 
 & (Join-Path $RepoRoot "scripts\sync-uv-tools.ps1")
 

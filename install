@@ -136,11 +136,50 @@ backup_link_conflict() {
     mv "$target" "$dest"
 }
 
+
+migrate_legacy_codex_home_symlink() {
+    local codex_home codex_source resolved_home resolved_source backup_root backup_dir suffix
+    codex_home="$HOME/.codex"
+    codex_source="$BASEDIR/configs/codex/codex"
+
+    if [ ! -L "$codex_home" ] || [ ! -d "$codex_home" ] || [ ! -d "$codex_source" ]; then
+        return 0
+    fi
+
+    resolved_home="$(cd "$codex_home" && pwd -P)"
+    resolved_source="$(cd "$codex_source" && pwd -P)"
+
+    if [ "$resolved_home" != "$resolved_source" ]; then
+        return 0
+    fi
+
+    backup_root="$(dotfiles_backup_root)"
+    backup_dir="$backup_root/codex-home-state"
+    suffix=1
+    while [ -e "$backup_dir" ] || [ -L "$backup_dir" ]; do
+        backup_dir="$backup_root/codex-home-state.$suffix"
+        suffix=$((suffix + 1))
+    done
+
+    mkdir -p "$backup_dir"
+    printf '%s\n' "Migrating legacy $codex_home symlink to a real directory."
+    printf '%s\n' "Backing up current Codex home state -> $backup_dir"
+    cp -pR "$codex_home"/. "$backup_dir"/
+    rm "$codex_home"
+    mkdir -p "$codex_home"
+    cp -pR "$backup_dir"/. "$codex_home"/
+}
+
 prepare_dotbot_link_conflicts() {
+    migrate_legacy_codex_home_symlink
     backup_link_conflict "$HOME/.gitconfig"
     backup_link_conflict "$HOME/.codex/config.toml"
     backup_link_conflict "$HOME/.codex/AGENTS.md"
     backup_link_conflict "$HOME/.codex/skills/weekly-update"
+    backup_link_conflict "$HOME/.claude/settings.json"
+    backup_link_conflict "$HOME/.claude/statusline.py"
+    backup_link_conflict "$HOME/.claude/hooks/block-git-rewrites.py"
+    backup_link_conflict "$HOME/.claude/setup-claude-vertex-auth.sh"
     backup_link_conflict "$HOME/.config/ghostty/config.ghostty"
 }
 
@@ -182,6 +221,10 @@ fi
 
 if [ -f "${DOTFILES}/scripts/install-codex.sh" ]; then
     bash "${DOTFILES}/scripts/install-codex.sh"
+fi
+
+if [ -f "${DOTFILES}/scripts/install-claude.sh" ]; then
+    bash "${DOTFILES}/scripts/install-claude.sh"
 fi
 
 if [ -f "${DOTFILES}/scripts/install-sudoku.sh" ]; then

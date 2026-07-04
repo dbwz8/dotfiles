@@ -7,6 +7,10 @@
     ~/.bash_profile: configs/bash/bash_profile
     ~/.bashrc: configs/bash/bashrc
     ~/.condarc: configs/conda/condarc
+    ~/.claude/settings.json: configs/claude/claude/settings.json
+    ~/.claude/statusline.py: configs/claude/claude/statusline.py
+    ~/.claude/hooks/block-git-rewrites.py: configs/claude/claude/hooks/block-git-rewrites.py
+    ~/.claude/setup-claude-vertex-auth.sh: configs/claude/claude/setup-claude-vertex-auth.sh
     ~/.codex/config.toml: configs/codex/codex/config.toml
     ~/.codex/AGENTS.md: configs/codex/codex/AGENTS.md
     ~/.codex/skills/weekly-update: configs/codex/codex/skills/weekly-update
@@ -47,6 +51,7 @@
     ~/.local/bin/nbviewer: scripts/nbviewer.sh
     ~/.local/bin/run: scripts/run.sh
     ~/.local/bin/install-codex: scripts/install-codex.sh
+    ~/.local/bin/install-claude: scripts/install-claude.sh
     ~/.local/bin/install-macos-packages: scripts/install-macos-packages.sh
     ~/.local/bin/sync-dotfiles: scripts/sync-dotfiles.sh
     ~/.local/bin/sync-local-dotfiles: scripts/sync-local-dotfiles.sh
