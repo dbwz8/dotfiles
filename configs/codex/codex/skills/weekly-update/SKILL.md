@@ -96,7 +96,9 @@ Keep a compact source log while gathering: date ranges searched, Obsidian/Drive 
    - Add a dedicated `Popcorn (Arch Staff)` section immediately after the title separator and before Dave's TODOs.
    - Use it for Dave's 3-minute Arch Staff Meeting update on what his group has done since last week.
    - Follow the Arch Staff format: Accomplishments, Collaboration, and Radar.
-   - Keep it read-aloud concise: usually 2-4 bullets per subsection and no more than about 350 words total.
+   - Keep it speakable: use short prompt bullets grouped under Accomplishments, Collaboration, and Radar.
+   - Do not force all context into one sentence per category. Use 2-4 bullets per subsection, usually no more than 12 bullets and 150 words total.
+   - Prefer fragments Dave can speak from over polished prose. Each bullet should hold one thought and avoid semicolon or comma chains.
    - Make it team-level, not a full status dump. Pull the highest-signal items from Dave's activity, direct reports, open cross-team asks, calendar/Slack context, Jira/Confluence/Outline decisions, and technical tracker status.
    - When Arch Staff Meeting appears in the calendar, inspect the invite description and any attached/referenced notes. If Slack meeting notes or parking-lot examples are readily available, use at most 2 extra reads to calibrate style.
    - Do not include raw source citations in the Popcorn section; keep sources in the report footnote.
@@ -152,15 +154,15 @@ Keep a compact source log while gathering: date ranges searched, Obsidian/Drive 
 
 **Accomplishments**
 
-* [2-4 concise bullets on what Dave's group did since last week]
+* [short speak-from bullet on shipped or moved-forward work]
 
 **Collaboration**
 
-* [help needed, help offered, and cross-team alignment asks]
+* [short speak-from bullet on help needed, help offered, or cross-team alignment]
 
 **Radar**
 
-* [items others should know about: risks, deadlines, changes, upcoming constraints]
+* [short speak-from bullet on risks, deadlines, staffing, PTO, decisions, or constraints]
 
 ---
 
