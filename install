@@ -142,6 +142,15 @@ backup_link_conflict() {
     mv "$target" "$dest"
 }
 
+remove_legacy_qwen_link() {
+    local target
+    target="$1"
+
+    if [ -L "$target" ]; then
+        printf '%s\n' "Removing legacy Qwen wrapper link $target"
+        rm -f "$target"
+    fi
+}
 
 migrate_legacy_codex_home_symlink() {
     local codex_home codex_source resolved_home resolved_source backup_root backup_dir suffix
@@ -186,7 +195,12 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.claude/statusline.py"
     backup_link_conflict "$HOME/.claude/hooks/block-git-rewrites.py"
     backup_link_conflict "$HOME/.claude/setup-claude-vertex-auth.sh"
+    backup_link_conflict "$HOME/.qwen/settings.json"
     backup_link_conflict "$HOME/.config/ghostty/config.ghostty"
+    backup_link_conflict "$HOME/.local/bin/install-qwen-code"
+    backup_link_conflict "$HOME/.local/bin/qwen"
+    remove_legacy_qwen_link "$HOME/.local/bin/qwen-remote"
+    remove_legacy_qwen_link "$HOME/.local/bin/qwen-weckerAA"
 }
 
 ensure_required_submodules
@@ -234,6 +248,12 @@ fi
 if [ -f "${DOTFILES}/scripts/install-claude.sh" ]; then
     if ! bash "${DOTFILES}/scripts/install-claude.sh"; then
         printf '%s\n' "⚠️  Claude Code installation failed; continuing dotfiles install." >&2
+    fi
+fi
+
+if [ -f "${DOTFILES}/scripts/install-qwen-code.sh" ]; then
+    if ! bash "${DOTFILES}/scripts/install-qwen-code.sh"; then
+        printf '%s\n' "⚠️  Qwen Code installation failed; continuing dotfiles install." >&2
     fi
 fi
 

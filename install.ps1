@@ -183,6 +183,8 @@ function Ensure-UserPathEntry {
 }
 
 Ensure-UserPathEntry -PathEntry (Join-Path $HOME ".cargo\bin")
+$localAppData = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
+Ensure-UserPathEntry -PathEntry (Join-Path $localAppData "qwen-code\bin")
 
 $MinimumNeovimVersion = [version]"0.12.0"
 
@@ -403,6 +405,15 @@ function Install-ClaudeConfigLinks {
         -TargetPath (Join-Path $claudeHome "setup-claude-vertex-auth.sh")
 }
 
+function Install-QwenConfigLinks {
+    $qwenSource = Join-Path $RepoRoot "configs\qwen\qwen"
+    $qwenHome = Join-Path $HOME ".qwen"
+
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $qwenSource "settings.json") `
+        -TargetPath (Join-Path $qwenHome "settings.json")
+}
+
 function Install-VSCodeConfigLinks {
     $vscodeSource = Join-Path $RepoRoot "configs\vscode\Code\User"
     $vscodeTarget = Join-Path $HOME "AppData\Roaming\Code\User"
@@ -431,6 +442,7 @@ function Install-NeovimConfigLink {
 
 Install-CodexConfigLinks
 Install-ClaudeConfigLinks
+Install-QwenConfigLinks
 Install-VSCodeConfigLinks
 Install-NeovimConfigLink
 
@@ -484,6 +496,8 @@ foreach ($profileTarget in $profileTargets) {
 & (Join-Path $RepoRoot "scripts\install-codex.ps1")
 
 & (Join-Path $RepoRoot "scripts\install-claude.ps1")
+
+& (Join-Path $RepoRoot "scripts\install-qwen-code.ps1")
 
 & (Join-Path $RepoRoot "scripts\sync-uv-tools.ps1")
 
