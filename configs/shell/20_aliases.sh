@@ -26,6 +26,15 @@ if [[ $- == *i* ]]; then
     alias vim='nvim'
     alias wrap='tput smam'
 
+    aider() {
+        local aider_script="${DOTFILES:-$HOME/git/dotfiles}/scripts/aider.sh"
+        if [ -f "$aider_script" ]; then
+            "$aider_script" "$@"
+        else
+            command aider "$@"
+        fi
+    }
+
     zellij() {
         local zellij_tmp_base="${TMPDIR:-/tmp}/zellij-$(id -u)"
         local zellij_config_args=()

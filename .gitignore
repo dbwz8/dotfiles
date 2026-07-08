@@ -58,3 +58,4 @@ configs/codex/codex/*
 configs/codex/codex/skills/.system/
 
 /configs/codex/codex/cache/codex_apps_tools
+.aider*

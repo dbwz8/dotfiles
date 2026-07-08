@@ -71,9 +71,9 @@ $codexBin = Join-Path $localAppData "Programs\OpenAI\Codex\bin"
 if (Test-Path $codexBin) {
     $env:PATH = "$codexBin$([System.IO.Path]::PathSeparator)$env:PATH"
 }
-$qwenBin = Join-Path $localAppData "qwen-code\bin"
-if (Test-Path $qwenBin) {
-    $env:PATH = "$qwenBin$([System.IO.Path]::PathSeparator)$env:PATH"
+$localBin = Join-Path $HOME ".local\bin"
+if (Test-Path $localBin) {
+    $env:PATH = "$localBin$([System.IO.Path]::PathSeparator)$env:PATH"
 }
 
 $cargoBin = Join-Path $HOME ".cargo\bin"
@@ -159,8 +159,8 @@ if ($env:DOTFILES) {
 if (Get-Command python -ErrorAction SilentlyContinue) { Set-Alias py python }
 if (Get-Command claude -ErrorAction SilentlyContinue) { Set-Alias cl claude }
 if ($env:DOTFILES) {
-    $qwenScript = Join-Path $env:DOTFILES "scripts\qwen.ps1"
-    if (Test-Path $qwenScript) {
-        function qwen { & $qwenScript @args }
+    $aiderScript = Join-Path $env:DOTFILES "scripts\aider.ps1"
+    if (Test-Path $aiderScript) {
+        function aider { & $aiderScript @args }
     }
 }

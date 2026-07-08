@@ -1,0 +1,13 @@
+model: openai/qwen3-coder-next
+openai-api-base: http://127.0.0.1:18023/v1
+openai-api-key: local-vllm
+verbose: false
+show-diffs: false
+pretty: true
+stream: false
+# auto-commits: false
+# dark-mode: false
+# edit-format: diff
+# editor-edit-format: diff
+read:
+    - ~/.aider/CONVENTIONS.md

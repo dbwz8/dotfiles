@@ -1,0 +1,173 @@
+$ErrorActionPreference = "Stop"
+
+$serverMode = if ($env:AIDER_SERVER_MODE) { $env:AIDER_SERVER_MODE } else { "ssh" }
+$remoteHost = if ($env:AIDER_REMOTE_HOST) { $env:AIDER_REMOTE_HOST } else { "weckerAA" }
+$localBind = if ($env:AIDER_REMOTE_LOCAL_BIND) { $env:AIDER_REMOTE_LOCAL_BIND } else { "127.0.0.1" }
+$localPort = if ($env:AIDER_REMOTE_LOCAL_PORT) { [int]$env:AIDER_REMOTE_LOCAL_PORT } else { 18023 }
+$remoteBind = if ($env:AIDER_REMOTE_BIND_HOST) { $env:AIDER_REMOTE_BIND_HOST } else { "127.0.0.1" }
+$remotePort = if ($env:AIDER_REMOTE_PORT) { [int]$env:AIDER_REMOTE_PORT } else { 8023 }
+$localDirectPort = if ($env:AIDER_LOCAL_PORT) { [int]$env:AIDER_LOCAL_PORT } else { $remotePort }
+$model = if ($env:AIDER_MODEL) { $env:AIDER_MODEL } else { "qwen3-coder-next" }
+$apiKey = if ($env:AIDER_OPENAI_API_KEY) { $env:AIDER_OPENAI_API_KEY } else { "local-vllm" }
+$waitSeconds = if ($env:AIDER_REMOTE_TUNNEL_WAIT_SECONDS) { [int]$env:AIDER_REMOTE_TUNNEL_WAIT_SECONDS } else { 30 }
+
+function Test-SamePath {
+    param(
+        [string]$Left,
+        [string]$Right
+    )
+
+    if (-not $Left -or -not $Right) {
+        return $false
+    }
+
+    try {
+        return (Resolve-Path -LiteralPath $Left).Path -eq (Resolve-Path -LiteralPath $Right).Path
+    } catch {
+        return $false
+    }
+}
+
+function Resolve-AiderBinary {
+    if ($env:AIDER_BIN -and (Test-Path $env:AIDER_BIN)) {
+        return (Resolve-Path -LiteralPath $env:AIDER_BIN).Path
+    }
+
+    $candidates = @(
+        (Join-Path $HOME ".local\bin\aider.exe"),
+        (Join-Path $HOME ".local\bin\aider.cmd"),
+        (Join-Path $HOME ".local\bin\aider.ps1"),
+        (Join-Path $HOME ".local\bin\aider")
+    )
+
+    foreach ($candidate in $candidates) {
+        if ((Test-Path $candidate) -and -not (Test-SamePath $candidate $PSCommandPath)) {
+            return (Resolve-Path -LiteralPath $candidate).Path
+        }
+    }
+
+    $commands = Get-Command aider -CommandType Application -ErrorAction SilentlyContinue
+    foreach ($command in $commands) {
+        if ($command.Source -and -not (Test-SamePath $command.Source $PSCommandPath)) {
+            return $command.Source
+        }
+    }
+
+    return $null
+}
+
+function Get-QualifiedModel {
+    if ($model -like "*/*") {
+        return $model
+    }
+
+    return "openai/$model"
+}
+
+function Test-HasModelArg {
+    param([string[]]$Arguments)
+
+    foreach ($arg in $Arguments) {
+        if ($arg -eq "--model" -or $arg -like "--model=*" -or $arg -eq "-m") {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+$aiderArgs = New-Object System.Collections.Generic.List[string]
+foreach ($arg in $args) {
+    switch ($arg) {
+        "--local" {
+            $serverMode = "local"
+        }
+        "--remote" {
+            $serverMode = "ssh"
+            $remoteHost = if ($env:AIDER_REMOTE_HOST_REMOTE) { $env:AIDER_REMOTE_HOST_REMOTE } else { "weckerAA-remote" }
+        }
+        default {
+            [void]$aiderArgs.Add($arg)
+        }
+    }
+}
+
+$realAider = Resolve-AiderBinary
+if (-not $realAider) {
+    throw "Aider is not installed. Run scripts\sync-uv-tools.ps1 or rerun install.ps1."
+}
+
+$firstArg = if ($aiderArgs.Count -gt 0) { $aiderArgs[0] } else { "" }
+if ($firstArg -in @("-h", "--help", "--version")) {
+    & $realAider @aiderArgs
+    exit $LASTEXITCODE
+}
+
+switch ($serverMode) {
+    "local" {
+        $baseUrl = "http://127.0.0.1:${localDirectPort}/v1"
+    }
+    "ssh" {
+        $baseUrl = "http://${localBind}:${localPort}/v1"
+    }
+    default {
+        throw "Unknown Aider server mode: $serverMode"
+    }
+}
+
+function Test-AiderEndpoint {
+    try {
+        Invoke-RestMethod -Uri "$baseUrl/models" -TimeoutSec 2 | Out-Null
+        return $true
+    } catch {
+        return $false
+    }
+}
+
+if ($serverMode -eq "ssh") {
+    $ssh = Get-Command ssh.exe -ErrorAction SilentlyContinue
+    if (-not $ssh) {
+        $ssh = Get-Command ssh -ErrorAction SilentlyContinue
+    }
+    if (-not $ssh) {
+        throw "ssh is required to open the Aider tunnel to $remoteHost."
+    }
+}
+
+if ($serverMode -eq "ssh" -and -not (Test-AiderEndpoint)) {
+    Write-Host "Opening SSH tunnel to $remoteHost for Aider..."
+    $sshArgs = @(
+        "-N",
+        "-o", "ExitOnForwardFailure=yes",
+        "-L", "${localBind}:${localPort}:${remoteBind}:${remotePort}",
+        $remoteHost
+    )
+    Start-Process -FilePath $ssh.Source -ArgumentList $sshArgs | Out-Null
+
+    for ($i = 0; $i -lt $waitSeconds; $i++) {
+        if (Test-AiderEndpoint) {
+            break
+        }
+        Start-Sleep -Seconds 1
+    }
+}
+
+if (-not (Test-AiderEndpoint)) {
+    if ($serverMode -eq "ssh") {
+        throw "Aider model endpoint did not become ready at $baseUrl. Check SSH access to $remoteHost and the remote service on ${remoteBind}:${remotePort}."
+    }
+
+    throw "Aider model endpoint did not become ready at $baseUrl. Check the local service on 127.0.0.1:${localDirectPort}."
+}
+
+$env:OPENAI_API_KEY = $apiKey
+$env:OPENAI_API_BASE = $baseUrl
+$env:OPENAI_BASE_URL = $baseUrl
+
+$finalArgs = [string[]]$aiderArgs.ToArray()
+if (-not (Test-HasModelArg -Arguments $finalArgs)) {
+    $finalArgs = @("--model", (Get-QualifiedModel)) + $finalArgs
+}
+
+& $realAider @finalArgs
+exit $LASTEXITCODE

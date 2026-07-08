@@ -16,6 +16,7 @@ function Get-UvPath {
 
 $uv = Get-UvPath
 $tools = @(
+    "--force --python python3.12 --with pip aider-chat@latest",
     "agent-cli",
     "asciinema",
     "black",

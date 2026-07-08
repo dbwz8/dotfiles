@@ -34,6 +34,7 @@ UV_BIN="$(uv_bin)" || {
   exit 1
 }
 
+"$UV_BIN" tool install --force --python python3.12 --with pip aider-chat@latest
 "$UV_BIN" tool install agent-cli
 "$UV_BIN" tool install asciinema
 "$UV_BIN" tool install black

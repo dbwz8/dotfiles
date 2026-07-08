@@ -1,0 +1,11 @@
+{
+  "openai/qwen3-coder-next": {
+    "max_tokens": 65536,
+    "max_input_tokens": 61440,
+    "max_output_tokens": 2048,
+    "input_cost_per_token": 0,
+    "output_cost_per_token": 0,
+    "litellm_provider": "openai",
+    "mode": "chat"
+  }
+}
