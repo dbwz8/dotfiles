@@ -16,9 +16,9 @@
     ~/.codex/skills/weekly-update: configs/codex/codex/skills/weekly-update
     ~/.aider.conf.yml: configs/aider/aider.conf.yml
     ~/.aider.model.metadata.json: configs/aider/aider.model.metadata.json
-    ~/.aider/CONVENTIONS.md: configs/aider/CONVENTIONS.md
-    ~/.aider.model.metadata.json: configs/aider/aider.model.metadata.json
     ~/.aider.model.settings.yml: configs/aider/aider.model.settings.yml
+    ~/.aider/CONVENTIONS.md: configs/aider/CONVENTIONS.md
+    ~/.qwen/settings.json: configs/qwen/qwen/settings.json
     ~/.config/atuin: configs/atuin
     ~/.Brewfile:
       if: '[ `uname` = Darwin ]'
