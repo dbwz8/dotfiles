@@ -5,9 +5,12 @@ verbose: false
 show-diffs: false
 pretty: true
 stream: false
+subtree-only: true
 # auto-commits: false
 # dark-mode: false
 # edit-format: diff
 # editor-edit-format: diff
 read:
     - ~/.aider/CONVENTIONS.md
+
+
