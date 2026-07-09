@@ -10,7 +10,7 @@ subtree-only: true
 auto-commits: true
 dirty-commits: true
 # dark-mode: false
-# edit-format: diff
+edit-format: diff
 # editor-edit-format: diff
 read:
     - ~/.aider/CONVENTIONS.md

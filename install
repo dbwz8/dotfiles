@@ -197,6 +197,7 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.claude/setup-claude-vertex-auth.sh"
     backup_link_conflict "$HOME/.aider.conf.yml"
     backup_link_conflict "$HOME/.aider.model.metadata.json"
+    backup_link_conflict "$HOME/.aider.model.settings.yml"
     backup_link_conflict "$HOME/.aider/CONVENTIONS.md"
     backup_link_conflict "$HOME/.config/ghostty/config.ghostty"
     remove_legacy_managed_link "$HOME/.qwen/settings.json"

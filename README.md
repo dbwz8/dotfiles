@@ -447,10 +447,12 @@ On Windows, run `.\install.ps1`. The installer now bootstraps PowerShell 7 with 
 Codex is installed outside dotbins so Windows and WSL use OpenAI's standalone installers directly. `./install` runs `scripts/install-codex.sh` on Unix-like systems, including WSL, and adds `bubblewrap` to apt-based Linux setups for the Codex Linux sandbox. Set `DOTFILES_INSTALL_CODEX=0` before running the installer to skip Codex.
 
 Aider is installed as a `uv` tool by `scripts/sync-uv-tools.sh`. `./install`
-links `~/.aider.conf.yml` and `~/.aider.model.metadata.json`, then interactive
-shells route `aider` through `scripts/aider.sh` or `scripts/aider.ps1`, which
-opens an SSH tunnel to `weckerAA` by default and runs Aider against the remote
-`qwen3-coder-next` OpenAI-compatible service. Use `aider --local` for
+links `~/.aider.conf.yml`, `~/.aider.model.metadata.json`,
+`~/.aider.model.settings.yml`, and `~/.aider/CONVENTIONS.md`, then
+interactive shells route `aider` through `scripts/aider.sh` or
+`scripts/aider.ps1`, which opens an SSH tunnel to `weckerAA` by default and
+runs Aider against the remote `qwen3-coder-next` OpenAI-compatible service.
+Use `aider --local` for
 `127.0.0.1`, or `aider --remote` for `weckerAA-remote`. Set
 `AIDER_REMOTE_HOST` to override the default SSH target.
 

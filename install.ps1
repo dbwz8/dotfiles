@@ -414,6 +414,9 @@ function Install-AiderConfigLinks {
         -SourcePath (Join-Path $aiderSource "aider.model.metadata.json") `
         -TargetPath (Join-Path $HOME ".aider.model.metadata.json")
     Install-ManagedFileLink `
+        -SourcePath (Join-Path $aiderSource "aider.model.settings.yml") `
+        -TargetPath (Join-Path $HOME ".aider.model.settings.yml")
+    Install-ManagedFileLink `
         -SourcePath (Join-Path $aiderSource "CONVENTIONS.md") `
         -TargetPath (Join-Path $HOME ".aider\CONVENTIONS.md")
 }

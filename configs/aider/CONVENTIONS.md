@@ -20,6 +20,18 @@ For every task:
 6. Use search/replace edits instead of whole file changes (where possible).
 Never perform unrelated cleanup or refactoring.
 
+## Output Budget
+
+Default to small, incremental patches.
+
+Edit at most one source file per response unless I explicitly ask for a broad multi-file patch.
+
+When creating new files, create only one new file per response, then stop and briefly state the next file you would create.
+
+Keep SEARCH/REPLACE blocks minimal. Do not include unchanged file content just to provide context.
+
+If a requested implementation would require more than about 200 lines of generated code, implement the first coherent slice and stop.
+
 ## Aider File Access
 
 In Aider, only files explicitly added to the chat can be edited.

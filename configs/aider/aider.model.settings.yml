@@ -11,5 +11,9 @@
     When asking for missing files, output no SEARCH/REPLACE blocks and no code fences.
     Never propose edits to files that are only named in the repo map, summaries, or docs.
     If the needed files are in the chat, make the requested code changes directly.
+    Keep edits incremental: edit at most one source file per response unless the user explicitly asks for a broad multi-file patch.
+    When creating new files, create only one new file per response and then stop with a brief note about the next file.
+    Keep SEARCH/REPLACE blocks minimal; never include unchanged file content just to be complete.
+    If the requested change would require more than about 200 lines of generated code, do the first coherent slice and stop.
   extra_params:
     max_tokens: 8192
