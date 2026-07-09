@@ -18,3 +18,6 @@ vim.opt.runtimepath:prepend(config_dir)
 dofile(kickstart_init)
 
 require 'custom.plugins'
+
+-- Restore the built-in Space behavior after kickstart uses it as the leader key.
+vim.keymap.set({ 'n', 'x', 'o' }, '<Space>', 'l', { desc = 'Move cursor right', nowait = true, silent = true })
