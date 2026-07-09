@@ -4,11 +4,11 @@ openai-api-key: local-vllm
 verbose: false
 show-diffs: false
 pretty: true
-stream: false
+stream: true
 suggest-shell-commands: false
 subtree-only: true
-auto-commits: false
-dirty-commits: false
+auto-commits: true
+dirty-commits: true
 # dark-mode: false
 # edit-format: diff
 # editor-edit-format: diff

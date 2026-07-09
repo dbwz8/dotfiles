@@ -17,8 +17,7 @@ For every task:
 3. Make one logical change.
 4. Verify the change if possible.
 5. Stop unless additional work is clearly required.
-6. Do NOT commit to git unless the user explicitly asks you to do it.
-
+6. Use search/replace edits instead of whole file changes (where possible).
 Never perform unrelated cleanup or refactoring.
 
 ## Aider File Access
@@ -69,6 +68,8 @@ Never attempt to eliminate every compiler error in one pass.
 
 When more than one reasonable implementation exists, stop before making changes.
 
+If you are less than 95% confident which implementation is intended, ask instead of editing.
+
 Output exactly this format:
 
 DECISION REQUIRED
@@ -90,6 +91,22 @@ Recommendation: <one sentence>
 Then stop.
 
 Do not edit any files until I respond.
+
+---
+
+# Logical Loops
+
+If you find yourself repeating the same reasoning, proposing the same fix again, or cycling between choices without new evidence:
+
+Stop.
+
+State the loop in one sentence.
+
+Summarize the evidence already checked.
+
+Ask one specific question or request one specific command output.
+
+Do not continue editing until I respond.
 
 ---
 
