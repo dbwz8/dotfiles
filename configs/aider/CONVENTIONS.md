@@ -17,8 +17,19 @@ For every task:
 3. Make one logical change.
 4. Verify the change if possible.
 5. Stop unless additional work is clearly required.
+6. Do NOT commit to git unless the user explicitly asks you to do it.
 
 Never perform unrelated cleanup or refactoring.
+
+## Aider File Access
+
+In Aider, only files explicitly added to the chat can be edited.
+
+If an implementation request only includes a plan, docs, summaries, or other context files, stop and ask for the exact source/build files that need edits.
+
+Do not output `<tool_call>`, function calls, or shell commands to inspect missing files. Ask me to add the missing files instead.
+
+Do not output SEARCH/REPLACE blocks for missing files, empty files, summaries, or repo-map entries.
 
 ---
 
@@ -164,3 +175,24 @@ No guessing.
 
 When uncertain, ask instead of inventing.
 
+---
+
+# Specifics for Rust coding
+
+You are fixing Rust compilation errors only.
+
+Rules:
+- Do not refactor.
+- Do not change public behavior.
+- Fix only the first root-cause compiler error.
+- Before editing, explain what the compiler is saying in one paragraph.
+- After editing, run `cargo check`.
+- If new errors appear, fix only the next root-cause error.
+- If you are unsure, stop and ask me instead of guessing.
+
+Prefer simple, boring fixes:
+- Add missing imports.
+- Adjust ownership with references before cloning.
+- Use explicit types when inference fails.
+- Avoid lifetime gymnastics unless absolutely necessary.
+- Do not introduce async, traits, generics, or macros as a “fix”.
