@@ -1,0 +1,4 @@
+- name: openai/qwen3-coder-next
+  edit_format: whole
+  extra_params:
+    max_tokens: 8192
