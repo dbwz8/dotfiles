@@ -49,12 +49,10 @@
   "privacy": {
     "usageStatisticsEnabled": false
   },
-  "$version": 4,
-  "permissions": {
-    "allow": [
-      "Bash(cargo check)",
-      "Bash(cargo test)",
-      "Bash(timeout *)"
+  "tools": {
+    "disabled": [
+      "write_file"
     ]
-  }
+  },
+  "$version": 4
 }
