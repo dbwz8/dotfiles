@@ -43,8 +43,18 @@
   "context": {
     "autoCompactThreshold": 0.85
   },
+  "memory": {
+    "enableAutoSkill": false
+  },
   "privacy": {
     "usageStatisticsEnabled": false
   },
-  "$version": 4
+  "$version": 4,
+  "permissions": {
+    "allow": [
+      "Bash(cargo check)",
+      "Bash(cargo test)",
+      "Bash(timeout *)"
+    ]
+  }
 }
