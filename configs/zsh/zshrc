@@ -35,3 +35,6 @@ export PATH="$WASMTIME_HOME/bin:$PATH"
 # >>> Codex installer >>>
 export PATH="/home/wecker/.local/bin:$PATH"
 # <<< Codex installer <<<
+
+# Added by Qwen Code standalone installer
+export PATH="/home/wecker/.local/bin:$PATH"
