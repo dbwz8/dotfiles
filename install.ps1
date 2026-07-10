@@ -184,6 +184,8 @@ function Ensure-UserPathEntry {
 
 Ensure-UserPathEntry -PathEntry (Join-Path $HOME ".cargo\bin")
 Ensure-UserPathEntry -PathEntry (Join-Path $HOME ".local\bin")
+$localAppData = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
+Ensure-UserPathEntry -PathEntry (Join-Path $localAppData "qwen-code\bin")
 
 $MinimumNeovimVersion = [version]"0.12.0"
 
@@ -421,6 +423,15 @@ function Install-AiderConfigLinks {
         -TargetPath (Join-Path $HOME ".aider\CONVENTIONS.md")
 }
 
+function Install-QwenConfigLinks {
+    $qwenSource = Join-Path $RepoRoot "configs\qwen\qwen"
+    $qwenHome = Join-Path $HOME ".qwen"
+
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $qwenSource "settings.json") `
+        -TargetPath (Join-Path $qwenHome "settings.json")
+}
+
 function Remove-LegacyManagedLink {
     param([Parameter(Mandatory = $true)][string]$TargetPath)
 
@@ -464,7 +475,7 @@ function Install-NeovimConfigLink {
 Install-CodexConfigLinks
 Install-ClaudeConfigLinks
 Install-AiderConfigLinks
-Remove-LegacyManagedLink -TargetPath (Join-Path $HOME ".qwen\settings.json")
+Install-QwenConfigLinks
 Remove-LegacyManagedLink -TargetPath (Join-Path $HOME ".local\bin\install-qwen-code")
 Remove-LegacyManagedLink -TargetPath (Join-Path $HOME ".local\bin\qwen")
 Install-VSCodeConfigLinks
@@ -520,6 +531,8 @@ foreach ($profileTarget in $profileTargets) {
 & (Join-Path $RepoRoot "scripts\install-codex.ps1")
 
 & (Join-Path $RepoRoot "scripts\install-claude.ps1")
+
+& (Join-Path $RepoRoot "scripts\install-qwen-code.ps1")
 
 & (Join-Path $RepoRoot "scripts\sync-uv-tools.ps1")
 

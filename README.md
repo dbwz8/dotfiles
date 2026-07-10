@@ -446,6 +446,15 @@ On Windows, run `.\install.ps1`. The installer now bootstraps PowerShell 7 with 
 
 Codex is installed outside dotbins so Windows and WSL use OpenAI's standalone installers directly. `./install` runs `scripts/install-codex.sh` on Unix-like systems, including WSL, and adds `bubblewrap` to apt-based Linux setups for the Codex Linux sandbox. Set `DOTFILES_INSTALL_CODEX=0` before running the installer to skip Codex.
 
+Qwen Code is installed and configured the same way. `./install` runs
+`scripts/install-qwen-code.sh`, and `.\install.ps1` runs
+`scripts\install-qwen-code.ps1`. The installer links `~/.qwen/settings.json`
+and provides `qwen`, which opens an SSH tunnel to `weckerAA` by default and
+runs the local Qwen Code CLI against the remote `qwen3-coder-next`
+OpenAI-compatible service. Use `qwen --local` for `127.0.0.1`, or
+`qwen --remote` for `weckerAA-remote`. Set `DOTFILES_INSTALL_QWEN_CODE=0` to
+skip installation or `QWEN_REMOTE_HOST` to override the default SSH target.
+
 Aider is installed as a `uv` tool by `scripts/sync-uv-tools.sh`. `./install`
 links `~/.aider.conf.yml`, `~/.aider.model.metadata.json`,
 `~/.aider.model.settings.yml`, and `~/.aider/CONVENTIONS.md`, then

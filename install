@@ -200,9 +200,9 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.aider.model.settings.yml"
     backup_link_conflict "$HOME/.aider/CONVENTIONS.md"
     backup_link_conflict "$HOME/.config/ghostty/config.ghostty"
-    remove_legacy_managed_link "$HOME/.qwen/settings.json"
-    remove_legacy_managed_link "$HOME/.local/bin/install-qwen-code"
-    remove_legacy_managed_link "$HOME/.local/bin/qwen"
+    backup_link_conflict "$HOME/.qwen/settings.json"
+    backup_link_conflict "$HOME/.local/bin/install-qwen-code"
+    backup_link_conflict "$HOME/.local/bin/qwen"
     remove_legacy_managed_link "$HOME/.local/bin/qwen-remote"
     remove_legacy_managed_link "$HOME/.local/bin/qwen-weckerAA"
 }
@@ -252,6 +252,12 @@ fi
 if [ -f "${DOTFILES}/scripts/install-claude.sh" ]; then
     if ! bash "${DOTFILES}/scripts/install-claude.sh"; then
         printf '%s\n' "⚠️  Claude Code installation failed; continuing dotfiles install." >&2
+    fi
+fi
+
+if [ -f "${DOTFILES}/scripts/install-qwen-code.sh" ]; then
+    if ! bash "${DOTFILES}/scripts/install-qwen-code.sh"; then
+        printf '%s\n' "⚠️  Qwen Code installation failed; continuing dotfiles install." >&2
     fi
 fi
 
