@@ -201,6 +201,7 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.aider/CONVENTIONS.md"
     backup_link_conflict "$HOME/.config/ghostty/config.ghostty"
     backup_link_conflict "$HOME/.qwen/settings.json"
+    backup_link_conflict "$HOME/.qwen/QWEN.md"
     backup_link_conflict "$HOME/.local/bin/install-qwen-code"
     backup_link_conflict "$HOME/.local/bin/qwen"
     remove_legacy_managed_link "$HOME/.local/bin/qwen-remote"

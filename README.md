@@ -448,7 +448,7 @@ Codex is installed outside dotbins so Windows and WSL use OpenAI's standalone in
 
 Qwen Code is installed and configured the same way. `./install` runs
 `scripts/install-qwen-code.sh`, and `.\install.ps1` runs
-`scripts\install-qwen-code.ps1`. The installer links `~/.qwen/settings.json`
+`scripts\install-qwen-code.ps1`. The installer links `~/.qwen/settings.json` and `~/.qwen/QWEN.md`
 and provides `qwen`, which opens an SSH tunnel to `weckerAA` by default and
 runs the local Qwen Code CLI against the remote `qwen3-coder-next`
 OpenAI-compatible service. Use `qwen --local` for `127.0.0.1`, or

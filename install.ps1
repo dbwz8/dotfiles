@@ -430,6 +430,9 @@ function Install-QwenConfigLinks {
     Install-ManagedFileLink `
         -SourcePath (Join-Path $qwenSource "settings.json") `
         -TargetPath (Join-Path $qwenHome "settings.json")
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $qwenSource "QWEN.md") `
+        -TargetPath (Join-Path $qwenHome "QWEN.md")
 }
 
 function Remove-LegacyManagedLink {

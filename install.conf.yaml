@@ -19,6 +19,7 @@
     ~/.aider.model.settings.yml: configs/aider/aider.model.settings.yml
     ~/.aider/CONVENTIONS.md: configs/aider/CONVENTIONS.md
     ~/.qwen/settings.json: configs/qwen/qwen/settings.json
+    ~/.qwen/QWEN.md: configs/qwen/qwen/QWEN.md
     ~/.config/atuin: configs/atuin
     ~/.Brewfile:
       if: '[ `uname` = Darwin ]'
