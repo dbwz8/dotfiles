@@ -89,7 +89,7 @@ function Test-HasLoadArg {
 }
 
 function New-AiderAutoAddFile {
-    if ($env:AIDER_AUTO_ADD -eq "0") {
+    if ($env:AIDER_AUTO_ADD -ne "1") {
         return $null
     }
 

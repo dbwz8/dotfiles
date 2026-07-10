@@ -70,7 +70,7 @@ has_load_arg() {
 }
 
 write_auto_add_file() {
-    if [[ "${AIDER_AUTO_ADD:-1}" = "0" ]]; then
+    if [[ "${AIDER_AUTO_ADD:-0}" != "1" ]]; then
         return 1
     fi
 
