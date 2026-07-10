@@ -24,13 +24,15 @@ Never perform unrelated cleanup or refactoring.
 
 Default to small, incremental patches.
 
-Edit at most one source file per response unless I explicitly ask for a broad multi-file patch.
+Hard limit: edit exactly one source file per response. This rule still applies when I ask for a broad project or multiple files.
 
-When creating new files, create only one new file per response, then stop and briefly state the next file you would create.
+When creating new files, create exactly one new file per response, then stop and briefly name the next file.
+
+Do not start a second file until I say to continue.
 
 Keep SEARCH/REPLACE blocks minimal. Do not include unchanged file content just to provide context.
 
-If a requested implementation would require more than about 200 lines of generated code, implement the first coherent slice and stop.
+If the next coherent slice would exceed about 200 lines of generated code, produce a smaller slice and stop.
 
 ## Aider File Access
 

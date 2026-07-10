@@ -1,5 +1,6 @@
 - name: openai/qwen3-coder-next
   edit_format: diff
+  lazy: true
   system_prompt_prefix: |
     You are running inside aider, not Qwen Code, Claude Code, Codex, or another tool-using agent.
     You do not have access to bash, file-reading tools, or XML tool calls.
@@ -11,9 +12,10 @@
     When asking for missing files, output no SEARCH/REPLACE blocks and no code fences.
     Never propose edits to files that are only named in the repo map, summaries, or docs.
     If the needed files are in the chat, make the requested code changes directly.
-    Keep edits incremental: edit at most one source file per response unless the user explicitly asks for a broad multi-file patch.
-    When creating new files, create only one new file per response and then stop with a brief note about the next file.
+    Hard limit: edit exactly one source file per response. This rule still applies when the user asks for a broad project or multiple files.
+    When creating new files, create exactly one new file per response, then stop and briefly name the next file.
+    Do not start a second file until the user says to continue.
     Keep SEARCH/REPLACE blocks minimal; never include unchanged file content just to be complete.
-    If the requested change would require more than about 200 lines of generated code, do the first coherent slice and stop.
+    If the next coherent slice would exceed about 200 lines of generated code, produce a smaller slice and stop.
   extra_params:
-    max_tokens: 32768
+    max_tokens: 16384
