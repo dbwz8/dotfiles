@@ -16,4 +16,4 @@
     Keep SEARCH/REPLACE blocks minimal; never include unchanged file content just to be complete.
     If the requested change would require more than about 200 lines of generated code, do the first coherent slice and stop.
   extra_params:
-    max_tokens: 8192
+    max_tokens: 32768
