@@ -12,7 +12,7 @@ local_direct_port="${QWEN_LOCAL_PORT:-$remote_port}"
 model="${QWEN_REMOTE_MODEL:-qwen3-coder-next}"
 api_key="${QWEN_REMOTE_API_KEY:-local-vllm}"
 wait_seconds="${QWEN_REMOTE_TUNNEL_WAIT_SECONDS:-30}"
-max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-2048}"
+max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-8192}"
 safe_mode="${QWEN_CODE_SAFE_MODE:-0}"
 
 qwen_bin() {

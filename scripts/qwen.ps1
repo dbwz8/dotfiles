@@ -10,7 +10,7 @@ $localDirectPort = if ($env:QWEN_LOCAL_PORT) { [int]$env:QWEN_LOCAL_PORT } else 
 $model = if ($env:QWEN_REMOTE_MODEL) { $env:QWEN_REMOTE_MODEL } else { "qwen3-coder-next" }
 $apiKey = if ($env:QWEN_REMOTE_API_KEY) { $env:QWEN_REMOTE_API_KEY } else { "local-vllm" }
 $waitSeconds = if ($env:QWEN_REMOTE_TUNNEL_WAIT_SECONDS) { [int]$env:QWEN_REMOTE_TUNNEL_WAIT_SECONDS } else { 30 }
-$maxOutputTokens = if ($env:QWEN_CODE_MAX_OUTPUT_TOKENS) { $env:QWEN_CODE_MAX_OUTPUT_TOKENS } else { "2048" }
+$maxOutputTokens = if ($env:QWEN_CODE_MAX_OUTPUT_TOKENS) { $env:QWEN_CODE_MAX_OUTPUT_TOKENS } else { "8192" }
 $safeMode = if ($env:QWEN_CODE_SAFE_MODE) { $env:QWEN_CODE_SAFE_MODE } else { "0" }
 
 function Test-SamePath {

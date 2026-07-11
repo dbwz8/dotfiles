@@ -10,7 +10,7 @@
         "generationConfig": {
           "contextWindowSize": 131072,
           "samplingParams": {
-            "max_tokens": 2048,
+            "max_tokens": 8192,
             "temperature": 0.2,
             "top_p": 0.8
           }
@@ -24,7 +24,7 @@
   "generationConfig": {
     "contextWindowSize": 131072,
     "samplingParams": {
-      "max_tokens": 2048,
+      "max_tokens": 8192,
       "temperature": 0.2,
       "top_p": 0.8
     }
