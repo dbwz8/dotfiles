@@ -49,10 +49,5 @@
   "privacy": {
     "usageStatisticsEnabled": false
   },
-  "tools": {
-    "disabled": [
-      "write_file"
-    ]
-  },
   "$version": 4
 }

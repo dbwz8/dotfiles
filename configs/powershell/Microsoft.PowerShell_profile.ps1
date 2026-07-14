@@ -80,6 +80,31 @@ if (Test-Path $localBin) {
     $env:PATH = "$localBin$([System.IO.Path]::PathSeparator)$env:PATH"
 }
 
+$managedGoRoot = if ($env:DOTFILES_GO_INSTALL_ROOT) { $env:DOTFILES_GO_INSTALL_ROOT } else { Join-Path $HOME ".local\go" }
+$goRoot = if (Test-Path (Join-Path $managedGoRoot "bin")) { $managedGoRoot } elseif ($env:GOROOT) { $env:GOROOT } else { $managedGoRoot }
+$env:GOROOT = $goRoot
+$goBin = Join-Path $goRoot "bin"
+$goPath = if ($env:GOPATH) { $env:GOPATH } else { Join-Path $HOME "go" }
+if (-not $env:GOPATH) {
+    $env:GOPATH = $goPath
+}
+$goBinInstall = if ($env:GOBIN) { $env:GOBIN } else { Join-Path $goPath "bin" }
+if (-not $env:GOBIN) {
+    $env:GOBIN = $goBinInstall
+}
+if (-not $env:GOMODCACHE) {
+    $env:GOMODCACHE = Join-Path $goPath "pkg\mod"
+}
+if (-not $env:GOCACHE) {
+    $env:GOCACHE = Join-Path $HOME ".cache\go-build"
+}
+if (-not (($env:PATH -split [System.IO.Path]::PathSeparator) -contains $goBinInstall)) {
+    $env:PATH = "$goBinInstall$([System.IO.Path]::PathSeparator)$env:PATH"
+}
+if (-not (($env:PATH -split [System.IO.Path]::PathSeparator) -contains $goBin)) {
+    $env:PATH = "$goBin$([System.IO.Path]::PathSeparator)$env:PATH"
+}
+
 $cargoBin = Join-Path $HOME ".cargo\bin"
 if (-not (($env:PATH -split [System.IO.Path]::PathSeparator) -contains $cargoBin)) {
     $env:PATH = "$cargoBin$([System.IO.Path]::PathSeparator)$env:PATH"

@@ -58,6 +58,7 @@
     ~/.local/bin/run: scripts/run.sh
     ~/.local/bin/install-codex: scripts/install-codex.sh
     ~/.local/bin/install-claude: scripts/install-claude.sh
+    ~/.local/bin/install-go: scripts/install-go.sh
     ~/.local/bin/install-qwen-code: scripts/install-qwen-code.sh
     ~/.local/bin/install-macos-packages: scripts/install-macos-packages.sh
     ~/.local/bin/qwen: scripts/qwen.sh

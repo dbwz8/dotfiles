@@ -262,6 +262,13 @@ if [ -f "${DOTFILES}/scripts/install-qwen-code.sh" ]; then
     fi
 fi
 
+if [ -f "${DOTFILES}/scripts/install-go.sh" ]; then
+    if ! bash "${DOTFILES}/scripts/install-go.sh"; then
+        printf '%s\n' "Go installation failed; aborting dotfiles install." >&2
+        exit 1
+    fi
+fi
+
 if [ -f "${DOTFILES}/scripts/install-sudoku.sh" ] \
     && { [ -n "${SUDOKU_SOURCE:-}" ] || [ -d "$HOME/git/languages/rust/Sudoku" ]; }; then
     if ! bash "${DOTFILES}/scripts/install-sudoku.sh"; then

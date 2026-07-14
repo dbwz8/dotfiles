@@ -537,6 +537,8 @@ foreach ($profileTarget in $profileTargets) {
 
 & (Join-Path $RepoRoot "scripts\install-qwen-code.ps1")
 
+& (Join-Path $RepoRoot "scripts\install-go.ps1")
+
 & (Join-Path $RepoRoot "scripts\sync-uv-tools.ps1")
 
 $dotbins = $null

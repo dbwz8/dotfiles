@@ -17,6 +17,14 @@ if [ -n "${WSL_DISTRO_NAME:-}" ] && [ -d /usr/lib/wsl/lib ]; then
     _path_prepend "/usr/lib/wsl/lib"
 fi
 
+export GOROOT="${GOROOT:-${DOTFILES_GO_INSTALL_ROOT:-/usr/local/go}}"
+export GOPATH="${GOPATH:-$HOME/go}"
+export GOBIN="${GOBIN:-$GOPATH/bin}"
+export GOMODCACHE="${GOMODCACHE:-$GOPATH/pkg/mod}"
+export GOCACHE="${GOCACHE:-$HOME/.cache/go-build}"
+_path_prepend "$GOBIN"
+_path_prepend "$GOROOT/bin"
+
 _default_runtime_dir="/run/user/$(id -u)"
 if [ -d "$_default_runtime_dir" ]; then
     export XDG_RUNTIME_DIR="$_default_runtime_dir"
