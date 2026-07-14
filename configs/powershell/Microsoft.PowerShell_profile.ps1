@@ -114,6 +114,12 @@ if (Test-Path (Join-Path $HOME ".lmstudio\bin\lms.exe")) {
     $env:PATH += ";$HOME\.lmstudio\bin"
 }
 
+$dotfilesLocale = if ($env:DOTFILES_LOCALE) { $env:DOTFILES_LOCALE } else { "en_US.UTF-8" }
+$env:DOTFILES_LOCALE = $dotfilesLocale
+$env:LANG = $dotfilesLocale
+$env:LC_ALL = $dotfilesLocale
+$env:LC_CTYPE = $dotfilesLocale
+
 $gitFind = Get-Command find.exe -All -ErrorAction SilentlyContinue |
     Where-Object { $_.Source -like "*\Git\usr\bin\find.exe" } |
     Select-Object -First 1

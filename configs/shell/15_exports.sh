@@ -45,13 +45,10 @@ export DIRENV_LOG_FORMAT=
 export DISABLE_AUTO_TITLE='true'
 export CYPRESS=$CYPRESS_BASE/src
 export PROTOS=$CYPRESS_BASE/third_party/scp-api-python
-if locale -a 2>/dev/null | grep -qi '^en_US\.utf-?8$'; then
-    export LC_ALL=en_US.UTF-8
-    export LANG=en_US.UTF-8
-elif locale -a 2>/dev/null | grep -qi '^c\.utf8$'; then
-    export LC_ALL=C.UTF-8
-    export LANG=C.UTF-8
-fi
+export DOTFILES_LOCALE="${DOTFILES_LOCALE:-en_US.UTF-8}"
+export LANG="$DOTFILES_LOCALE"
+export LC_ALL="$DOTFILES_LOCALE"
+export LC_CTYPE="$DOTFILES_LOCALE"
 export EDITOR="nvim"
 export VISUAL="nvim"
 export GIT_EDITOR="nvim"
