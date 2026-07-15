@@ -452,8 +452,10 @@ Qwen Code is installed and configured the same way. `./install` runs
 and provides `qwen`, which opens an SSH tunnel to `weckerAA` by default and
 runs the local Qwen Code CLI against the remote `qwen3-coder-next`
 OpenAI-compatible service. Use `qwen --local` for `127.0.0.1`, or
-`qwen --remote` for `weckerAA-remote`. Set `DOTFILES_INSTALL_QWEN_CODE=0` to
-skip installation or `QWEN_REMOTE_HOST` to override the default SSH target.
+`qwen --remote` for the SSH-over-Cloudflare path through `ssh.dbwz8.com`.
+Set `DOTFILES_INSTALL_QWEN_CODE=0` to skip installation, `QWEN_REMOTE_HOST` to
+override the default SSH target, or `QWEN_REMOTE_HOST_REMOTE` to override the
+remote SSH target.
 
 Aider is installed as a `uv` tool by `scripts/sync-uv-tools.sh`. `./install`
 links `~/.aider.conf.yml`, `~/.aider.model.metadata.json`,
