@@ -23,7 +23,7 @@
         "description": "QwQ-32B served from weckerAA through the qwen SSH tunnel.",
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
-          "contextWindowSize": 32768,
+          "contextWindowSize": 131072,
           "samplingParams": {
             "max_tokens": 8192,
             "temperature": 0.6,
