@@ -1,0 +1,23 @@
+# Devstral Small 2 is served locally by llama.cpp. The vibe wrapper supplies
+# the active endpoint, using either this host or an SSH tunnel.
+active_model = "devstral-local"
+default_agent = "default"
+enable_telemetry = false
+enable_update_checks = true
+
+[[providers]]
+name = "devstral-local"
+api_base = "http://127.0.0.1:18024/v1"
+api_key_env_var = "VIBE_LOCAL_API_KEY"
+api_style = "openai"
+backend = "generic"
+
+[[models]]
+name = "devstral-small-2-24b"
+provider = "devstral-local"
+alias = "devstral-local"
+temperature = 0.15
+input_price = 0.0
+output_price = 0.0
+thinking = "off"
+auto_compact_threshold = 56000

@@ -446,23 +446,20 @@ On Windows, run `.\install.ps1`. The installer now bootstraps PowerShell 7 with 
 
 Codex is installed outside dotbins so Windows and WSL use OpenAI's standalone installers directly. `./install` runs `scripts/install-codex.sh` on Unix-like systems, including WSL, and adds `bubblewrap` to apt-based Linux setups for the Codex Linux sandbox. Set `DOTFILES_INSTALL_CODEX=0` before running the installer to skip Codex.
 
-Qwen Code is installed and configured the same way. `./install` runs
-`scripts/install-qwen-code.sh`, and `.\install.ps1` runs
-`scripts\install-qwen-code.ps1`. The installer links `~/.qwen/settings.json` and `~/.qwen/QWEN.md`
-and provides `qwen`, which opens an SSH tunnel to `weckerAA` by default and
-runs the local Qwen Code CLI against the remote `qwen3-coder-next`
-OpenAI-compatible service. Use `qwen --local` for `127.0.0.1`, or
-`qwen --remote` for the SSH-over-Cloudflare path through `ssh.dbwz8.com`.
-Use `qwen --coding` (or simply `qwen`) for Qwen Coder Next, and
-`qwen --thinking` for QwQ-32B; the server automatically loads the requested
-model and keeps only one resident on the GPU. The shared Qwen config sets
-`tools.approvalMode` to `auto-edit` so implementation requests write file
-edits directly instead of returning code snippets. The `--thinking` wrapper
-also appends a QwQ-specific system instruction that code-generation requests
-must be applied to files with Qwen Code edit tools before answering.
-Set `DOTFILES_INSTALL_QWEN_CODE=0` to skip installation, `QWEN_REMOTE_HOST` to
-override the default SSH target, or `QWEN_REMOTE_HOST_REMOTE` to override the
-remote SSH target.
+Qwen Code remains available as an optional CLI and its configuration is linked by
+`./install`. Its wrapper is retained for legacy Qwen services; use `qwen --local`
+for a local endpoint or `qwen --remote` for the SSH-over-Cloudflare path.
+
+Mistral Vibe CLI is the primary local coding client. `scripts/sync-uv-tools.sh`
+installs `mistral-vibe`, and `./install` links `~/.vibe/config.toml` plus the
+`vibe` wrapper. `vibe` opens an SSH tunnel to `weckerAA` by default and uses the
+remote Devstral Small 2 OpenAI-compatible endpoint. Use `vibe --local` on the
+server itself, or `vibe --remote` through the remote SSH host. The profile uses
+Devstral Small 2 24B at temperature 0.15 and compacts before its 64k server
+context is exhausted. Vibe asks before edits by default; use
+`vibe --agent accept-edits` to approve file edits automatically for a session.
+Set `VIBE_REMOTE_HOST` or `VIBE_REMOTE_HOST_REMOTE` to override the respective
+SSH target.
 
 Aider is installed as a `uv` tool by `scripts/sync-uv-tools.sh`. `./install`
 links `~/.aider.conf.yml`, `~/.aider.model.metadata.json`,

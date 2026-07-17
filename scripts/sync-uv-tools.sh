@@ -45,6 +45,7 @@ UV_BIN="$(uv_bin)" || {
 "$UV_BIN" tool install dotbot
 "$UV_BIN" tool install fileup
 "$UV_BIN" tool install llm --with llm-gemini --with llm-anthropic --with llm-ollama
+"$UV_BIN" tool install mistral-vibe
 "$UV_BIN" tool install markdown-code-runner
 "$UV_BIN" tool install mypy
 "$UV_BIN" tool install pre-commit --with pre-commit-uv

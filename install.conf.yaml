@@ -42,6 +42,7 @@
     ~/.config/nvim:
       path: configs/nvim
       force: true
+    ~/.vibe/config.toml: configs/vibe/vibe/config.toml
     ~/.config/starship.toml: configs/starship/starship.toml
     ~/.config/zellij: configs/zellij
     ~/.direnvrc: configs/direnv/direnvrc
@@ -62,6 +63,7 @@
     ~/.local/bin/install-qwen-code: scripts/install-qwen-code.sh
     ~/.local/bin/install-macos-packages: scripts/install-macos-packages.sh
     ~/.local/bin/qwen: scripts/qwen.sh
+    ~/.local/bin/vibe: scripts/vibe.sh
     ~/.local/bin/sync-dotfiles: scripts/sync-dotfiles.sh
     ~/.local/bin/sync-local-dotfiles: scripts/sync-local-dotfiles.sh
     ~/.local/bin/sync-uv-tools: scripts/sync-uv-tools.sh
