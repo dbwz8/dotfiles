@@ -52,7 +52,7 @@ while (($#)); do
             model="${QWEN_CODER_MODEL:-qwen3-coder-next}"
             shift
             ;;
-        --debugging)
+        --thinking)
             model="${QWEN_DEBUG_MODEL:-qwq-32b}"
             shift
             ;;
