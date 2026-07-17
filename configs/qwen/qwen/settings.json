@@ -15,6 +15,21 @@
             "top_p": 0.8
           }
         }
+      },
+      {
+        "id": "qwq-32b",
+        "name": "weckerAA QwQ-32B Debug",
+        "baseUrl": "http://127.0.0.1:18023/v1",
+        "description": "QwQ-32B served from weckerAA through the qwen SSH tunnel.",
+        "envKey": "OPENAI_API_KEY",
+        "generationConfig": {
+          "contextWindowSize": 32768,
+          "samplingParams": {
+            "max_tokens": 8192,
+            "temperature": 0.6,
+            "top_p": 0.95
+          }
+        }
       }
     ]
   },

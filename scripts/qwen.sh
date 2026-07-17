@@ -48,6 +48,14 @@ real_qwen="$(qwen_bin)" || {
 parsed_args=()
 while (($#)); do
     case "$1" in
+        --coding)
+            model="${QWEN_CODER_MODEL:-qwen3-coder-next}"
+            shift
+            ;;
+        --debugging)
+            model="${QWEN_DEBUG_MODEL:-qwq-32b}"
+            shift
+            ;;
         --local)
             server_mode="local"
             shift
@@ -157,4 +165,4 @@ if should_add_safe_mode "$@"; then
     set -- --safe-mode "$@"
 fi
 
-exec "$real_qwen" "$@"
+exec "$real_qwen" --model "$model" "$@"
