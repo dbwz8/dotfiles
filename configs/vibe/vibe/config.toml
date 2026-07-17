@@ -1,9 +1,58 @@
-# Devstral Small 2 is served locally by llama.cpp. The vibe wrapper supplies
-# the active endpoint, using either this host or an SSH tunnel.
 active_model = "devstral-local"
-default_agent = "default"
+default_agent = "accept-edits"
 enable_telemetry = false
 enable_update_checks = true
+applied_migrations = [
+    "bash_read_only_defaults_v1",
+]
+
+[tools.read_file]
+permission = "always"
+max_read_bytes = 16000
+
+[tools.grep]
+permission = "always"
+max_output_bytes = 16000
+
+[tools.write_file]
+permission = "always"
+allowlist = [
+    "/tmp/*",
+]
+
+[tools.edit]
+permission = "always"
+
+[tools.bash]
+permission = "ask"
+allowlist = [
+    "./sudoku",
+    "cargo build",
+    "cargo check",
+    "cargo test",
+    "cd",
+    "find",
+    "git diff",
+    "git status",
+    "go build ./...",
+    "go run",
+    "go test",
+    "go test ./...",
+    "go vet ./...",
+    "gofmt",
+    "grep",
+    "head",
+    "ls",
+    "mkdir",
+    "sed",
+    "wc",
+]
+denylist = [
+    "rm -rf",
+    "git reset --hard",
+    "git clean -fd",
+    "git push --force",
+]
 
 [[providers]]
 name = "devstral-local"
