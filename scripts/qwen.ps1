@@ -12,6 +12,13 @@ $apiKey = if ($env:QWEN_REMOTE_API_KEY) { $env:QWEN_REMOTE_API_KEY } else { "loc
 $waitSeconds = if ($env:QWEN_REMOTE_TUNNEL_WAIT_SECONDS) { [int]$env:QWEN_REMOTE_TUNNEL_WAIT_SECONDS } else { 30 }
 $maxOutputTokens = if ($env:QWEN_CODE_MAX_OUTPUT_TOKENS) { $env:QWEN_CODE_MAX_OUTPUT_TOKENS } else { "8192" }
 $safeMode = if ($env:QWEN_CODE_SAFE_MODE) { $env:QWEN_CODE_SAFE_MODE } else { "0" }
+$thinkingMode = $false
+$hasSystemPromptOverride = $false
+$thinkingAppendSystemPrompt = if ($env:QWEN_THINKING_APPEND_SYSTEM_PROMPT) {
+    $env:QWEN_THINKING_APPEND_SYSTEM_PROMPT
+} else {
+    "When asked to implement, fix, refactor, add, or write code, modify the working tree with Qwen Code edit/write_file tools before answering. Do not put code blocks, patches, or replacement file contents in the final answer unless the user explicitly asks for snippets. If you cannot edit files, say so explicitly instead of showing code."
+}
 
 function Test-SamePath {
     param(
@@ -90,7 +97,29 @@ function Test-ShouldAddSafeMode {
 
 $qwenArgs = New-Object System.Collections.Generic.List[string]
 foreach ($arg in $args) {
+    if ($arg -eq "--system-prompt" -or
+        $arg -eq "--append-system-prompt" -or
+        $arg -like "--system-prompt=*" -or
+        $arg -like "--append-system-prompt=*") {
+        $hasSystemPromptOverride = $true
+        [void]$qwenArgs.Add($arg)
+        continue
+    }
+
     switch ($arg) {
+        "--coding" {
+            $model = if ($env:QWEN_CODER_MODEL) { $env:QWEN_CODER_MODEL } else { "qwen3-coder-next" }
+        }
+        "--thinking" {
+            $thinkingMode = $true
+            $model = if ($env:QWEN_THINKING_MODEL) {
+                $env:QWEN_THINKING_MODEL
+            } elseif ($env:QWEN_DEBUG_MODEL) {
+                $env:QWEN_DEBUG_MODEL
+            } else {
+                "qwq-32b"
+            }
+        }
         "--local" {
             $serverMode = "local"
         }
@@ -179,9 +208,12 @@ $env:QWEN_MODEL = $model
 $env:QWEN_CODE_MAX_OUTPUT_TOKENS = $maxOutputTokens
 
 $finalArgs = [string[]]$qwenArgs.ToArray()
+if ($thinkingMode -and -not $hasSystemPromptOverride) {
+    $finalArgs = @("--append-system-prompt", $thinkingAppendSystemPrompt) + $finalArgs
+}
 if (Test-ShouldAddSafeMode -Arguments $finalArgs) {
     $finalArgs = @("--safe-mode") + $finalArgs
 }
 
-& $realQwen @finalArgs
+& $realQwen --model $model @finalArgs
 exit $LASTEXITCODE

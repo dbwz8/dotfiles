@@ -14,6 +14,9 @@ api_key="${QWEN_REMOTE_API_KEY:-local-vllm}"
 wait_seconds="${QWEN_REMOTE_TUNNEL_WAIT_SECONDS:-30}"
 max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-8192}"
 safe_mode="${QWEN_CODE_SAFE_MODE:-0}"
+thinking_mode=0
+has_system_prompt_override=0
+thinking_append_system_prompt="${QWEN_THINKING_APPEND_SYSTEM_PROMPT:-When asked to implement, fix, refactor, add, or write code, modify the working tree with Qwen Code edit/write_file tools before answering. Do not put code blocks, patches, or replacement file contents in the final answer unless the user explicitly asks for snippets. If you cannot edit files, say so explicitly instead of showing code.}"
 
 qwen_bin() {
     if [[ -n "${QWEN_CODE_BIN:-}" && -x "$QWEN_CODE_BIN" ]]; then
@@ -53,7 +56,22 @@ while (($#)); do
             shift
             ;;
         --thinking)
-            model="${QWEN_DEBUG_MODEL:-qwq-32b}"
+            model="${QWEN_THINKING_MODEL:-${QWEN_DEBUG_MODEL:-qwq-32b}}"
+            thinking_mode=1
+            shift
+            ;;
+        --system-prompt|--append-system-prompt)
+            has_system_prompt_override=1
+            parsed_args+=("$1")
+            shift
+            if (($#)); then
+                parsed_args+=("$1")
+                shift
+            fi
+            ;;
+        --system-prompt=*|--append-system-prompt=*)
+            has_system_prompt_override=1
+            parsed_args+=("$1")
             shift
             ;;
         --local)
@@ -160,6 +178,10 @@ export OPENAI_BASE_URL="${base_url}"
 export OPENAI_MODEL="${model}"
 export QWEN_MODEL="${model}"
 export QWEN_CODE_MAX_OUTPUT_TOKENS="${max_output_tokens}"
+
+if [[ "$thinking_mode" = "1" && "$has_system_prompt_override" = "0" ]]; then
+    set -- --append-system-prompt "$thinking_append_system_prompt" "$@"
+fi
 
 if should_add_safe_mode "$@"; then
     set -- --safe-mode "$@"

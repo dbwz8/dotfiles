@@ -455,7 +455,11 @@ OpenAI-compatible service. Use `qwen --local` for `127.0.0.1`, or
 `qwen --remote` for the SSH-over-Cloudflare path through `ssh.dbwz8.com`.
 Use `qwen --coding` (or simply `qwen`) for Qwen Coder Next, and
 `qwen --thinking` for QwQ-32B; the server automatically loads the requested
-model and keeps only one resident on the GPU.
+model and keeps only one resident on the GPU. The shared Qwen config sets
+`tools.approvalMode` to `auto-edit` so implementation requests write file
+edits directly instead of returning code snippets. The `--thinking` wrapper
+also appends a QwQ-specific system instruction that code-generation requests
+must be applied to files with Qwen Code edit tools before answering.
 Set `DOTFILES_INSTALL_QWEN_CODE=0` to skip installation, `QWEN_REMOTE_HOST` to
 override the default SSH target, or `QWEN_REMOTE_HOST_REMOTE` to override the
 remote SSH target.
