@@ -27,13 +27,22 @@ permission = "always"
 permission = "ask"
 allowlist = [
     "./sudoku",
+    "/home/wecker/git/languages/go/sudoku/test_format.sh",
     "cargo build",
     "cargo check",
     "cargo test",
+    "cat",
     "cd",
+    "chmod",
+    "echo",
     "find",
+    "find . -name \"*.go\" -exec grep -l \"type GameState\" {} \\;",
+    "find . -name \"*.go\" -exec grep -l \"type MovePreview struct\" {} \\;",
     "git diff",
+    "git log",
+    "git show",
     "git status",
+    "go build",
     "go build ./...",
     "go run",
     "go test",
@@ -45,7 +54,10 @@ allowlist = [
     "ls",
     "mkdir",
     "sed",
+    "tail",
+    "timeout",
     "wc",
+    "xargs",
 ]
 denylist = [
     "rm -rf",
