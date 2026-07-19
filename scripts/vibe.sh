@@ -31,6 +31,7 @@ proxy_script="${VIBE_PROXY_SCRIPT:-${script_dir}/vibe-openai-proxy.js}"
 proxy_log="${VIBE_PROXY_LOG:-$HOME/.vibe/logs/openai-proxy.log}"
 api_key="${VIBE_LOCAL_API_KEY:-local-vllm}"
 wait_seconds="${VIBE_REMOTE_TUNNEL_WAIT_SECONDS:-30}"
+max_output_tokens="${VIBE_MAX_OUTPUT_TOKENS:-4096}"
 
 vibe_bin() {
   if [[ -n "${VIBE_BIN:-}" && -x "$VIBE_BIN" ]]; then
@@ -140,7 +141,7 @@ proxy_health() {
 proxy_ok() {
   local health
   health="$(proxy_health)"
-  [[ "$health" == *"\"upstream_base\":\"${upstream_base_url}\""* ]]
+  [[ "$health" == *"\"upstream_base\":\"${upstream_base_url}\""* && "$health" == *"\"max_output_tokens\":${max_output_tokens}"* ]]
 }
 
 ensure_proxy() {
@@ -153,7 +154,7 @@ ensure_proxy() {
   fi
 
   if [[ -n "$(proxy_health)" ]]; then
-    printf 'Vibe OpenAI proxy is already running on %s:%s with a different upstream.\n' "$proxy_bind" "$proxy_port" >&2
+    printf 'Vibe OpenAI proxy is already running on %s:%s with a different upstream or generation limit.\n' "$proxy_bind" "$proxy_port" >&2
     printf 'Set VIBE_PROXY_PORT to another port or stop the existing proxy.\n' >&2
     exit 1
   fi
@@ -169,6 +170,7 @@ ensure_proxy() {
     --bind "$proxy_bind" \
     --port "$proxy_port" \
     --upstream-base "$upstream_base_url" \
+    --max-output-tokens "$max_output_tokens" \
     >>"$proxy_log" 2>&1 &
 
   elapsed=0

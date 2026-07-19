@@ -20,6 +20,7 @@ function parseArgs(argv) {
     port: 18025,
     upstreamBase: "",
     timeout: 720_000,
+    maxOutputTokens: 4096,
     selfTest: false,
   };
 
@@ -38,6 +39,9 @@ function parseArgs(argv) {
       case "--timeout":
         args.timeout = Number(argv[++index]) * 1000;
         break;
+      case "--max-output-tokens":
+        args.maxOutputTokens = Number(argv[++index]);
+        break;
       case "--self-test":
         args.selfTest = true;
         break;
@@ -51,6 +55,10 @@ function parseArgs(argv) {
     }
   }
 
+  if (!Number.isInteger(args.maxOutputTokens) || args.maxOutputTokens < 1) {
+    throw new Error("--max-output-tokens must be a positive integer");
+  }
+
   return args;
 }
 
@@ -62,6 +70,7 @@ Options:
   --port PORT             Port to bind (default: 18025)
   --upstream-base URL     Upstream OpenAI base URL, usually http://host:port/v1
   --timeout SECONDS       Upstream timeout (default: 720)
+  --max-output-tokens N   Maximum completion tokens per request (default: 4096)
   --self-test             Run normalization tests and exit
 `);
 }
@@ -134,7 +143,7 @@ function normalizeMessages(messages) {
   return normalized;
 }
 
-function normalizePayload(body) {
+function normalizePayload(body, maxOutputTokens) {
   if (!body.length) return body;
 
   let payload;
@@ -152,8 +161,18 @@ function normalizePayload(body) {
     return body;
   }
 
+  const requestedMaxTokens = payload.max_tokens;
+  const maxTokens =
+    Number.isInteger(requestedMaxTokens) && requestedMaxTokens > 0
+      ? Math.min(requestedMaxTokens, maxOutputTokens)
+      : maxOutputTokens;
+
   return Buffer.from(
-    JSON.stringify({ ...payload, messages: normalizeMessages(payload.messages) }),
+    JSON.stringify({
+      ...payload,
+      messages: normalizeMessages(payload.messages),
+      max_tokens: maxTokens,
+    }),
     "utf8",
   );
 }
@@ -173,7 +192,9 @@ function selfTest() {
       { role: "user", content: "compact now" },
     ],
   };
-  const normalized = JSON.parse(normalizePayload(Buffer.from(JSON.stringify(payload))));
+  const normalized = JSON.parse(
+    normalizePayload(Buffer.from(JSON.stringify(payload)), 4096),
+  );
   const roles = normalized.messages.map((message) => message.role);
   const expected = ["system", "user", "assistant", "tool", "assistant", "user"];
   if (JSON.stringify(roles) !== JSON.stringify(expected)) {
@@ -181,6 +202,19 @@ function selfTest() {
   }
   if (normalized.messages[1].content !== "compacted\n\nnext") {
     throw new Error("Consecutive user messages were not merged");
+  }
+  if (normalized.max_tokens !== 4096) {
+    throw new Error("Missing default completion-token limit");
+  }
+
+  const capped = JSON.parse(
+    normalizePayload(
+      Buffer.from(JSON.stringify({ messages: [], max_tokens: 8192 })),
+      4096,
+    ),
+  );
+  if (capped.max_tokens !== 4096) {
+    throw new Error("Completion-token limit was not enforced");
   }
 }
 
@@ -236,6 +270,7 @@ async function handleRequest(req, res, args) {
     const body = JSON.stringify({
       status: "ok",
       upstream_base: args.upstreamBase.replace(/\/$/, ""),
+      max_output_tokens: args.maxOutputTokens,
     });
     res.writeHead(200, {
       "content-type": "application/json",
@@ -248,7 +283,7 @@ async function handleRequest(req, res, args) {
   let body = await readBody(req);
   const path = new URL(req.url, "http://proxy.local").pathname;
   if (req.method === "POST" && path.endsWith("/chat/completions")) {
-    body = normalizePayload(body);
+    body = normalizePayload(body, args.maxOutputTokens);
   }
 
   const target = targetUrl(req.url, args.upstreamBase);
