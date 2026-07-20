@@ -145,7 +145,7 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
         Invoke-Expression (& { (direnv hook pwsh | Out-String) })
     }
     if (Get-Command atuin -ErrorAction SilentlyContinue) {
-        Invoke-Expression (& { (atuin init powershell | Out-String) })
+        Invoke-Expression (& { (atuin init powershell --disable-up-arrow | Out-String) })
     }
 }
 if (Get-Command duf -ErrorAction SilentlyContinue) { Set-Alias du duf.exe }
