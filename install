@@ -5,6 +5,30 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${BASEDIR}"
 DOTFILES="${DOTFILES:-$BASEDIR}"
 
+is_wsl() {
+    [ -n "${WSL_DISTRO_NAME:-}" ] && return 0
+    [ -r /proc/sys/kernel/osrelease ] && grep -qiE '(microsoft|wsl)' /proc/sys/kernel/osrelease
+}
+
+is_windows_mount_path() {
+    case "$1" in
+        /mnt/[[:alpha:]]|/mnt/[[:alpha:]]/*) return 0 ;;
+    esac
+
+    return 1
+}
+
+require_native_wsl_checkout() {
+    if ! is_wsl || ! is_windows_mount_path "$BASEDIR"; then
+        return 0
+    fi
+
+    printf '%s\n' "Refusing to install WSL dotfiles from Windows-mounted path: $BASEDIR" >&2
+    printf '%s\n' "This would make WSL home-directory links point into /mnt/c." >&2
+    printf '%s\n' "Clone the repository into the WSL filesystem (for example, $HOME/git/dotfiles) and run its ./install." >&2
+    return 1
+}
+
 ensure_required_submodules() {
     local missing=()
 
@@ -208,6 +232,7 @@ prepare_dotbot_link_conflicts() {
     remove_legacy_managed_link "$HOME/.local/bin/qwen-weckerAA"
 }
 
+require_native_wsl_checkout || exit 1
 ensure_required_submodules
 
 if should_install_macos_packages; then

@@ -84,6 +84,18 @@ git submodule update --init --recursive --remote --jobs 8
 ./install
 ```
 
+#### WSL
+
+Clone and install from the WSL filesystem, not `/mnt/c`. The installer refuses
+Windows-mounted checkouts so WSL home-directory links never target the Windows
+drive.
+
+```bash
+git clone --recurse-submodules git@github.com:basnijholt/dotfiles.git ~/git/dotfiles
+cd ~/git/dotfiles
+./install
+```
+
 ### Trying with Docker
 
 > [!NOTE]
