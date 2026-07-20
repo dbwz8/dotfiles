@@ -5,6 +5,8 @@ enable_update_checks = true
 applied_migrations = [
     "bash_read_only_defaults_v1",
 ]
+ask_confirmation_on_exit = false
+theme = "textual-dark"
 
 [tools.read_file]
 permission = "always"
@@ -80,5 +82,5 @@ alias = "devstral-local"
 temperature = 0.15
 input_price = 0.0
 output_price = 0.0
-thinking = "off"
+thinking = "max"
 auto_compact_threshold = 56000
