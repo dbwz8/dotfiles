@@ -6,12 +6,5 @@
 - link:
     ~/.config/atuin: configs/atuin
     ~/.config/git/attributes: configs/git/attributes
-    ~/AppData/Local/nvim:
-      path: configs/nvim
-      force: true
     ~/.config/starship.toml: configs/starship/starship.toml
-    ~/.config/zellij: configs/zellij
-    ~/.dotbins/dotbins.yaml: configs/dotbins/dotbins.yaml
-    ~/.gitconfig-personal: configs/git/gitconfig-personal
-    ~/.gitconfig: configs/git/gitconfig
     ~/.mambarc: configs/mamba/mambarc

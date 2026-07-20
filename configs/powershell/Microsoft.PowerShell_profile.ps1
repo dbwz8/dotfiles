@@ -67,13 +67,9 @@ if (Test-Path $dotbinsNeovimBin) {
 }
 
 $localAppData = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
-$codexBin = Join-Path $localAppData "Programs\OpenAI\Codex\bin"
+$codexBin = if ($env:CODEX_INSTALL_DIR) { $env:CODEX_INSTALL_DIR } else { Join-Path $localAppData "Programs\OpenAI\Codex\bin" }
 if (Test-Path $codexBin) {
     $env:PATH = "$codexBin$([System.IO.Path]::PathSeparator)$env:PATH"
-}
-$qwenBin = Join-Path $localAppData "qwen-code\bin"
-if (Test-Path $qwenBin) {
-    $env:PATH = "$qwenBin$([System.IO.Path]::PathSeparator)$env:PATH"
 }
 $localBin = Join-Path $HOME ".local\bin"
 if (Test-Path $localBin) {
@@ -194,12 +190,34 @@ if ($env:DOTFILES) {
 if (Get-Command python -ErrorAction SilentlyContinue) { Set-Alias py python }
 if (Get-Command claude -ErrorAction SilentlyContinue) { Set-Alias cl claude }
 if ($env:DOTFILES) {
+    $codexScript = Join-Path $env:DOTFILES "scripts\install-codex.ps1"
+    if (Test-Path $codexScript) {
+        function codex {
+            if ($args.Count -eq 1 -and $args[0] -eq "update") {
+                $pwsh = Get-Command pwsh.exe -ErrorAction SilentlyContinue
+                if (-not $pwsh) {
+                    throw "pwsh.exe is required for Codex updates. Run install.ps1 to install PowerShell 7."
+                }
+                & $pwsh.Source -NoProfile -ExecutionPolicy Bypass -File $codexScript -Update
+                return
+            }
+
+            $codexCommand = $null
+            foreach ($name in @("codex.exe", "codex.cmd", "codex.ps1")) {
+                $candidate = Join-Path $codexBin $name
+                if (Test-Path $candidate) {
+                    $codexCommand = $candidate
+                    break
+                }
+            }
+            if (-not $codexCommand) {
+                throw "Codex CLI is not installed in $codexBin."
+            }
+            & $codexCommand @args
+        }
+    }
     $aiderScript = Join-Path $env:DOTFILES "scripts\aider.ps1"
     if (Test-Path $aiderScript) {
         function aider { & $aiderScript @args }
-    }
-    $qwenScript = Join-Path $env:DOTFILES "scripts\qwen.ps1"
-    if (Test-Path $qwenScript) {
-        function qwen { & $qwenScript @args }
     }
 }

@@ -158,7 +158,7 @@ function Ensure-Pwsh {
     return $pwshPath
 }
 
-Ensure-Pwsh | Out-Null
+$PwshPath = Ensure-Pwsh
 
 function Ensure-UserPathEntry {
     param([Parameter(Mandatory = $true)][string]$PathEntry)
@@ -184,8 +184,6 @@ function Ensure-UserPathEntry {
 
 Ensure-UserPathEntry -PathEntry (Join-Path $HOME ".cargo\bin")
 Ensure-UserPathEntry -PathEntry (Join-Path $HOME ".local\bin")
-$localAppData = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
-Ensure-UserPathEntry -PathEntry (Join-Path $localAppData "qwen-code\bin")
 
 $MinimumNeovimVersion = [version]"0.12.0"
 
@@ -423,29 +421,30 @@ function Install-AiderConfigLinks {
         -TargetPath (Join-Path $HOME ".aider\CONVENTIONS.md")
 }
 
-function Install-QwenConfigLinks {
-    $qwenSource = Join-Path $RepoRoot "configs\qwen\qwen"
-    $qwenHome = Join-Path $HOME ".qwen"
 
-    Install-ManagedFileLink `
-        -SourcePath (Join-Path $qwenSource "settings.json") `
-        -TargetPath (Join-Path $qwenHome "settings.json")
-    Install-ManagedFileLink `
-        -SourcePath (Join-Path $qwenSource "QWEN.md") `
-        -TargetPath (Join-Path $qwenHome "QWEN.md")
-}
+function Install-GitConfigLinks {
+    $gitSource = Join-Path $RepoRoot "configs\git"
 
-function Remove-LegacyManagedLink {
-    param([Parameter(Mandatory = $true)][string]$TargetPath)
+    foreach ($fileName in @("gitconfig-personal", "gitconfig")) {
+        $sourcePath = Join-Path $gitSource $fileName
+        $targetPath = Join-Path $HOME ".${fileName}"
 
-    if (-not (Test-Path -LiteralPath $TargetPath)) {
-        return
-    }
+        if (Test-Path -LiteralPath $targetPath) {
+            $targetItem = Get-Item -LiteralPath $targetPath -Force
+            if ($targetItem.PSIsContainer) {
+                throw "Cannot replace directory with managed Git config link: $targetPath"
+            }
 
-    $targetItem = Get-Item -LiteralPath $TargetPath -Force
-    if ($targetItem.LinkType -or ($targetItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {
-        Write-Host "Removing legacy managed link $TargetPath"
-        Remove-Item -LiteralPath $TargetPath -Force
+            $isLink = $targetItem.LinkType -or ($targetItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint)
+            $sameContent = (Get-FileHash -LiteralPath $sourcePath -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath $targetPath -Algorithm SHA256).Hash
+            if (-not $isLink -and -not $sameContent) {
+                $backupPath = "$targetPath.dotfiles-backup.$(Get-Date -Format "yyyyMMdd-HHmmss")"
+                Move-Item -LiteralPath $targetPath -Destination $backupPath
+                Write-Host "Backed up existing Git config $targetPath to $backupPath"
+            }
+        }
+
+        Install-ManagedFileLink -SourcePath $sourcePath -TargetPath $targetPath
     }
 }
 
@@ -478,9 +477,7 @@ function Install-NeovimConfigLink {
 Install-CodexConfigLinks
 Install-ClaudeConfigLinks
 Install-AiderConfigLinks
-Install-QwenConfigLinks
-Remove-LegacyManagedLink -TargetPath (Join-Path $HOME ".local\bin\install-qwen-code")
-Remove-LegacyManagedLink -TargetPath (Join-Path $HOME ".local\bin\qwen")
+Install-GitConfigLinks
 Install-VSCodeConfigLinks
 Install-NeovimConfigLink
 
@@ -531,11 +528,10 @@ foreach ($profileTarget in $profileTargets) {
 
 & (Join-Path $RepoRoot "scripts\install-sudoku.ps1")
 
-& (Join-Path $RepoRoot "scripts\install-codex.ps1")
+& $PwshPath -NoProfile -ExecutionPolicy Bypass -File (Join-Path $RepoRoot "scripts\install-codex.ps1")
 
 & (Join-Path $RepoRoot "scripts\install-claude.ps1")
 
-& (Join-Path $RepoRoot "scripts\install-qwen-code.ps1")
 
 & (Join-Path $RepoRoot "scripts\install-go.ps1")
 

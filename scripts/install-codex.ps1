@@ -1,3 +1,7 @@
+param(
+    [switch]$Update
+)
+
 $ErrorActionPreference = "Stop"
 
 if ($env:DOTFILES_INSTALL_CODEX -match "^(0|false|FALSE|no|NO)$") {
@@ -18,13 +22,14 @@ $installDir = if ($env:CODEX_INSTALL_DIR) { $env:CODEX_INSTALL_DIR } else { Join
 $codexCandidates = @("codex.exe", "codex.cmd", "codex.ps1") | ForEach-Object { Join-Path $installDir $_ }
 $installedCodex = $codexCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 
-if ($installedCodex) {
+if ($installedCodex -and -not $Update) {
     Add-PathPrefix $installDir
     Write-Host "Codex CLI already installed at $installedCodex."
     exit 0
 }
 
-Write-Host "Installing Codex CLI with the OpenAI standalone installer..."
+$installAction = if ($installedCodex) { "Updating" } else { "Installing" }
+Write-Host "$installAction Codex CLI with the OpenAI standalone installer..."
 $previousNonInteractive = $env:CODEX_NON_INTERACTIVE
 $env:CODEX_NON_INTERACTIVE = "1"
 
@@ -41,7 +46,8 @@ try {
 $installedCodex = $codexCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 if ($installedCodex) {
     Add-PathPrefix $installDir
-    Write-Host "Codex CLI installed at $installedCodex."
+    $installedAction = if ($Update) { "updated" } else { "installed" }
+    Write-Host "Codex CLI $installedAction at $installedCodex."
     exit 0
 }
 
