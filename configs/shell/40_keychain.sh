@@ -14,11 +14,11 @@ if command -v keychain &> /dev/null && [[ -f ~/.ssh/id_ed25519 ]]; then
     # --eval: Output shell commands (export SSH_AUTH_SOCK=...; export SSH_AGENT_PID=...)
     # --quiet: Suppress informational messages.
     # id_ed25519: The specific key to load into the agent (will use SSH_ASKPASS).
-    if [ -t 0 ]; then
-        # Interactive terminal - allow prompting
+    if [ -t 0 ] && [ -z "${WSL_DISTRO_NAME:-}" ]; then
+        # Interactive terminal outside WSL - allow prompting
         eval $(keychain --eval --quiet id_ed25519) || true
     else
-        # Non-interactive (like during login) - don't prompt
+        # Non-interactive sessions and WSL - don't prompt
         eval $(keychain --eval --quiet --noask id_ed25519)
     fi
 

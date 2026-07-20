@@ -1,5 +1,11 @@
 # zmodload zsh/zprof # Uncomment for profiling
 
+# PowerShell can give WSL an interactive stdin while piping stdout. Restore
+# stdout to the controlling terminal so Zsh can render its prompt normally.
+if [[ -n "${WSL_DISTRO_NAME:-}" && -o interactive && -t 0 && ! -t 1 && -w /dev/tty ]]; then
+    exec 1>/dev/tty
+fi
+
 source "$HOME/.config/dotfiles-shell/main.sh"
 
 # zprof # Uncomment for profiling
