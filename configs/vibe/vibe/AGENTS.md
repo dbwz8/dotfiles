@@ -1,0 +1,1 @@
+When making changes, work in small, self-contained pieces. Avoid large or multi-file changes in a single response that could exceed the 4096-token output limit; complete and verify each piece before continuing.

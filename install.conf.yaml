@@ -43,6 +43,7 @@
       path: configs/nvim
       force: true
     ~/.vibe/config.toml: configs/vibe/vibe/config.toml
+    ~/.vibe/AGENTS.md: configs/vibe/vibe/AGENTS.md
     ~/.config/starship.toml: configs/starship/starship.toml
     ~/.config/zellij: configs/zellij
     ~/.direnvrc: configs/direnv/direnvrc

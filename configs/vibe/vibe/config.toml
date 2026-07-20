@@ -55,6 +55,7 @@ allowlist = [
     "head",
     "ls",
     "mkdir",
+    "rm",
     "sed",
     "tail",
     "timeout",
