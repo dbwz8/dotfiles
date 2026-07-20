@@ -1,0 +1,10 @@
+# Keep executable scripts and configuration portable across Unix-like systems.
+*.sh text eol=lf
+*.zsh text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+/install text eol=lf
+/bin/** text eol=lf
+/configs/** text=auto eol=lf
+/scripts/** text eol=lf
+/.github/** text eol=lf
