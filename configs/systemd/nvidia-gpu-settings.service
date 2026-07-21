@@ -1,0 +1,13 @@
+[Unit]
+Description=Configure NVIDIA GPU persistence mode and power limit
+After=systemd-modules-load.service nvidia-persistenced.service
+Wants=nvidia-persistenced.service
+ConditionPathExists=/usr/bin/nvidia-smi
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nvidia-smi -i 0 -pm 1
+ExecStart=/usr/bin/nvidia-smi -i 0 -pl 400
+
+[Install]
+WantedBy=multi-user.target

@@ -269,6 +269,12 @@ if should_install_linux_packages; then
     fi
 fi
 
+if [ -f "${DOTFILES}/scripts/setup-nvidia-gpu-settings.sh" ]; then
+    if ! bash "${DOTFILES}/scripts/setup-nvidia-gpu-settings.sh"; then
+        printf '%s\n' "⚠️  NVIDIA GPU settings setup failed; continuing dotfiles install." >&2
+    fi
+fi
+
 if [ -f "${DOTFILES}/scripts/install-codex.sh" ]; then
     if ! bash "${DOTFILES}/scripts/install-codex.sh"; then
         printf '%s\n' "⚠️  Codex CLI installation failed; continuing dotfiles install." >&2
