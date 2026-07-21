@@ -115,6 +115,9 @@ trust_level = "trusted"
 [projects."/home/wecker/git/tinyAA/projects/chatDBW"]
 trust_level = "trusted"
 
+[projects."/mnt/c/Users/wecker/git/dotfiles"]
+trust_level = "trusted"
+
 [mcp_servers.ionq-mcp-gateway]
 url = "https://prod-mcp-gateway.ionq.co/mcp"
 

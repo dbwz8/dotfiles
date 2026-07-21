@@ -420,10 +420,6 @@ sanitize_github_token_env() {
 
 sanitize_github_token_env
 
-if should_sync_network_tools "pypi.org" "uv tool sync" && ! bash "${DOTFILES}/scripts/sync-uv-tools.sh"; then
-    printf '%s\n' "⚠️  uv tool sync failed; continuing dotfiles install." >&2
-fi
-
 if DOTBINS_BIN="$(dotbins_bin)"; then
     if should_sync_network_tools "api.github.com" "dotbins sync" && ! dotbins_sync_current "$DOTBINS_BIN"; then
         printf '%s\n' "⚠️  dotbins sync failed; continuing dotfiles install." >&2
@@ -431,6 +427,10 @@ if DOTBINS_BIN="$(dotbins_bin)"; then
 else
     printf '%s\n' "⚠️  dotbins is not installed; skipping CLI tool sync." >&2
     printf '%s\n' "    Install uv and rerun ./install to provision tools like micromamba." >&2
+fi
+
+if should_sync_network_tools "pypi.org" "uv tool sync" && ! bash "${DOTFILES}/scripts/sync-uv-tools.sh"; then
+    printf '%s\n' "⚠️  uv tool sync failed; continuing dotfiles install." >&2
 fi
 
 mkdir -p "$HOME/.config/tmuxp"
