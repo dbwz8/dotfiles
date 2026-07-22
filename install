@@ -223,6 +223,7 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.aider.model.metadata.json"
     backup_link_conflict "$HOME/.aider.model.settings.yml"
     backup_link_conflict "$HOME/.aider/CONVENTIONS.md"
+    backup_link_conflict "$HOME/.vibe/config.toml"
     backup_link_conflict "$HOME/.config/ghostty/config.ghostty"
     backup_link_conflict "$HOME/.qwen/settings.json"
     backup_link_conflict "$HOME/.qwen/QWEN.md"

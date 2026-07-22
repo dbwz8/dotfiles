@@ -17,6 +17,8 @@ resolve_script_path() {
 
 script_path="$(resolve_script_path)"
 script_dir="$(cd -P "$(dirname "$script_path")" && pwd)"
+vibe_config_source="$(cd -P "${script_dir}/../configs/vibe/vibe" && pwd)/config.toml"
+vibe_config_target="$HOME/.vibe/config.toml"
 server_mode="${VIBE_SERVER_MODE:-ssh}"
 remote_host="${VIBE_REMOTE_HOST:-weckerAA}"
 local_bind="${VIBE_REMOTE_LOCAL_BIND:-127.0.0.1}"
@@ -32,6 +34,33 @@ proxy_log="${VIBE_PROXY_LOG:-$HOME/.vibe/logs/openai-proxy.log}"
 api_key="${VIBE_LOCAL_API_KEY:-local-vllm}"
 wait_seconds="${VIBE_REMOTE_TUNNEL_WAIT_SECONDS:-30}"
 max_output_tokens="${VIBE_MAX_OUTPUT_TOKENS:-8192}"
+
+ensure_managed_config_link() {
+  local backup_root backup_path suffix
+
+  if [[ -L "$vibe_config_target" && "$vibe_config_target" -ef "$vibe_config_source" ]]; then
+    return 0
+  fi
+
+  if [[ -e "$vibe_config_target" || -L "$vibe_config_target" ]]; then
+    backup_root="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+    backup_path="$backup_root/.vibe/config.toml"
+    suffix=1
+    while [[ -e "$backup_path" || -L "$backup_path" ]]; do
+      backup_path="$backup_root/.vibe/config.toml.$suffix"
+      suffix=$((suffix + 1))
+    done
+    mkdir -p "$(dirname "$backup_path")"
+    printf 'Backing up unmanaged Vibe config %s -> %s\n' "$vibe_config_target" "$backup_path" >&2
+    mv "$vibe_config_target" "$backup_path"
+  fi
+
+  mkdir -p "$(dirname "$vibe_config_target")"
+  rm -f "$vibe_config_target"
+  ln -s "$vibe_config_source" "$vibe_config_target"
+}
+
+ensure_managed_config_link
 
 vibe_bin() {
   if [[ -n "${VIBE_BIN:-}" && -x "$VIBE_BIN" ]]; then
@@ -100,6 +129,8 @@ while (($#)); do
     --remote)
       server_mode="ssh"
       remote_host="${VIBE_REMOTE_HOST_REMOTE:-weckerAA-remote}"
+      local_port="${VIBE_REMOTE_LOCAL_PORT_REMOTE:-${VIBE_REMOTE_LOCAL_PORT:-18026}}"
+      proxy_port="${VIBE_PROXY_PORT_REMOTE:-${VIBE_PROXY_PORT:-18027}}"
       shift
       ;;
     *)
