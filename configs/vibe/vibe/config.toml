@@ -1,5 +1,6 @@
 active_model = "devstral-local"
 default_agent = "accept-edits"
+disabled_tools = ["edit", "write_file"]
 enable_telemetry = false
 enable_update_checks = true
 applied_migrations = [
@@ -10,23 +11,15 @@ theme = "textual-dark"
 
 [tools.read_file]
 permission = "always"
-max_read_bytes = 16000
+max_read_bytes = 4096
 
 [tools.grep]
 permission = "always"
-max_output_bytes = 16000
-
-[tools.write_file]
-permission = "always"
-allowlist = [
-    "/tmp/*",
-]
-
-[tools.edit]
-permission = "always"
+max_output_bytes = 4096
 
 [tools.bash]
 permission = "ask"
+max_output_bytes = 4096
 allowlist = [
     "./klondike",
     "./sudoku",
@@ -34,7 +27,6 @@ allowlist = [
     "cargo build",
     "cargo check",
     "cargo test",
-    "cat",
     "cd",
     "chmod",
     "echo",
@@ -53,13 +45,10 @@ allowlist = [
     "go vet ./...",
     "gofmt",
     "grep",
-    "head",
     "ls",
     "mkdir",
     "mv",
     "rm",
-    "sed",
-    "tail",
     "timeout",
     "wc",
     "xargs",
