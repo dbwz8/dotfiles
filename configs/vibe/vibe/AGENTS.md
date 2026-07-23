@@ -1,3 +1,9 @@
+# Critical Instructions
+
+These instructions remain in force for the entire session, including after
+context compaction.
+Re-read this file after any compaction
+
 You need to make small edits since we run out of output tokens.
 Implement stubs of routines first and then fill in each routine one at a time as you write code.
 All implemented techniques need comprehensive testing.
