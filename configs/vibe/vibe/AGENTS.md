@@ -30,6 +30,17 @@ Use exact text anchors rather than line numbers.
 - Do not replace an entire file unless most of the file genuinely must change.
 - Preserve unrelated code, comments, formatting, tabs, spaces, and line
   endings.
+- Make the smallest possible diff: change only the lines required for the
+  requested behavior.
+- Do not reformat, realign, reorder, or normalize whitespace in adjacent code,
+  especially struct definitions, field lists, object literals, and function
+  signatures, unless the user explicitly asks for formatting.
+- Before finishing, inspect every changed hunk. Revert any hunk whose only
+  effect is whitespace, indentation, alignment, wrapping, or other cosmetic
+  churn unrelated to the requested behavior.
+- Do not run a formatter on an unchanged file. When a language requires a
+  formatter for a modified file, report any unrelated formatter changes rather
+  than making additional cosmetic edits.
 - Never make an edit based only on text copied from an earlier view if the file
   may have changed since then.
 
@@ -112,4 +123,3 @@ Use a neutral, terse, technical tone.
 - When corrected, acknowledge it with at most "Understood." and continue the
   work.
 - Prefer direct statements over enthusiastic or personable language.
-
