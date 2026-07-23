@@ -1,82 +1,94 @@
 # Critical Instructions
 
 These instructions remain in force for the entire session, including after
-context compaction.
-Re-read this file after any compaction
+context compaction. Re-read this file after any compaction.
 
-You need to make small edits since we run out of output tokens.
-Implement stubs of routines first and then fill in each routine one at a time as you write code.
-All implemented techniques need comprehensive testing.
-Please make sure these tests are maintained and adhered to.
+Work in small, verified steps. Make one logical change at a time, inspect the
+result, and test it before moving on. When implementing a larger feature,
+create the smallest useful skeleton first, then fill it in incrementally.
 
-## Bounded file access and editing policy
+Preserve existing behavior unless the task explicitly requires changing it.
+Add or update tests for behavior that is added, fixed, or intentionally changed.
 
-- Locate code with `grep` before reading. Do not read an entire file.
-- Every `read_file` call must specify both `offset` and `limit`; read at most
-  120 lines or 4 KiB per call.
-- The `edit` and `write_file` tools are disabled.
-- Prefer `apply_patch` or a unified diff for normal source changes.
-- Include enough unchanged context to identify the correct location.
-- Do not replace an entire file unless most of it must change.
-- Preserve formatting on unchanged lines. For newly added Go source, follow the mandatory column-1 policy below and let gofmt apply indentation.
-- After editing, run the appropriate formatter and focused tests.
-- Use a short Python script when the edit is mechanical and repeated, especially across multiple files.
+## Bounded file access
 
-## Go editing: mandatory whitespace policy
+- Locate relevant code with `grep` or `rg` before reading it.
+- Do not read an entire large file when a small region is sufficient.
+- Every `read_file` call must specify both `offset` and `limit`.
+- Read at most 120 lines or 4 KiB per call unless a larger read is explicitly
+  necessary.
+- Re-read the exact target region immediately before editing it.
+- Do not rely on remembered line numbers after any file has changed.
 
-For `.go` files, `gofmt` is solely responsible for indentation.
+## Editing policy
 
-When adding or replacing Go source code:
+Use exact text anchors rather than line numbers.
 
-* Write every added Go source line starting in column 1.
+- Do not use line-number-addressed `sed` commands to modify files.
+- Do not use `apply_patch` or manually constructed unified diffs unless the
+  user explicitly requests them.
+- Do not replace an entire file unless most of the file genuinely must change.
+- Preserve unrelated code, comments, formatting, tabs, spaces, and line
+  endings.
+- Never make an edit based only on text copied from an earlier view if the file
+  may have changed since then.
 
-* Do not emit leading tabs.
+For a small targeted edit, use the native exact search/replace operation when
+it is available and reliable.
 
-* Do not emit leading spaces for indentation.
+Otherwise, use a short Python script that:
 
-* Do not manually align fields, parameters, expressions, comments, or composite literals.
+1. reads the target file,
+2. defines the exact old text and replacement text,
+3. verifies that the old text occurs exactly once,
+4. makes only that replacement,
+5. writes the file only after all checks pass.
 
-* Preserve syntactic nesting with braces, parentheses, and brackets, not whitespace.
+A Python edit must fail without writing if the expected text is missing or
+occurs more than once. Do not use broad regular expressions when an exact
+anchor will work.
 
-* Immediately after each patch, run:
+For mechanical changes across multiple files, first identify and report the
+complete set of target files. Use a Python script with explicit checks, then
+inspect the resulting diff.
+
+After each edit:
+
+- Inspect `git diff --check`.
+- Inspect the relevant portion of `git diff`.
+- If the edit is wrong, stop and correct it before making another edit.
+- Run the appropriate formatter and focused tests.
+
+## Go source policy
+
+For `.go` files, `gofmt` is the authority on formatting.
+
+- Write syntactically valid Go and avoid manual alignment.
+- Preserve tabs and indentation on unchanged lines.
+- Do not convert Go indentation tabs to spaces.
+- Do not perform repository-wide whitespace cleanup unless explicitly asked.
+- After modifying Go source, immediately run:
 
   ```sh
   gofmt -w <each-modified-go-file>
   ```
 
-* Inspect and test the formatted file rather than manually repairing its whitespace.
+- Inspect the formatted diff rather than manually repairing indentation.
+- Run focused Go tests after each logical change.
+- At the end of the task, run the broadest practical test command for the
+  affected package or module.
 
-* Existing unchanged lines used as patch context may retain their original indentation.
+Whitespace inside string literals, generated data, fixtures, and embedded
+content is data and must not be changed unless the task requires it.
 
-* These rules apply only to added or replacement lines. Do not strip whitespace from unchanged source lines.
+## Failure handling
 
-* Do not omit indentation inside raw string literals or other content where whitespace is data.
-
-This is a token-conservation requirement, not a style preference. A patch that manually indents newly added Go source violates these instructions even if the indentation is correct.
-
-### Required example
-
-Write this:
-
-```go
-func example() {
-if condition {
-doSomething()
-}
-}
-```
-
-Then run `gofmt`.
-
-Do not write this manually:
-
-```go
-func example() {
-	if condition {
-		doSomething()
-	}
-}
-```
+- Do not repeatedly retry the same failed edit command.
+- After an edit failure, re-read the target region and determine why it failed.
+- If an exact anchor no longer matches, do not weaken the match blindly.
+- Report ambiguity when more than one replacement location is plausible.
+- Do not continue with later edits when an earlier required edit or test failed.
+- Never claim that an edit or test succeeded without checking its result.
 
 ## Communication style
 
@@ -91,13 +103,13 @@ Use a neutral, terse, technical tone.
   - "Absolutely"
   - "Certainly"
   - "I'd be happy to"
-- Do not agree with the user's diagnosis until you have examined the
-  relevant evidence.
-- Begin by performing the requested work or stating the specific action
-  you are taking.
-- Status updates must be factual and brief.
+- Do not agree with the user's diagnosis until you have examined the relevant
+  evidence.
+- Begin by performing the requested work or stating the specific action being
+  taken.
+- Keep status updates factual and brief.
 - Do not restate the prompt unless clarification is necessary.
-- When corrected, acknowledge it with at most "Understood." and then
-  continue the work.
+- When corrected, acknowledge it with at most "Understood." and continue the
+  work.
 - Prefer direct statements over enthusiastic or personable language.
 
