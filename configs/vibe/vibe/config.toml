@@ -75,4 +75,4 @@ temperature = 0.15
 input_price = 0.0
 output_price = 0.0
 thinking = "max"
-auto_compact_threshold = 40000
+auto_compact_threshold = 80000
