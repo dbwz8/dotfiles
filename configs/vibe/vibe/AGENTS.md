@@ -23,7 +23,10 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
 ## Editing Go source
 
 - Never edit Go files using line-number-based `sed` commands.
-- Never make several Go edits before validating the first one.
+- Scope each Go edit pass to one file and one complete syntactic unit: a
+  function, method, declaration, import block, or cohesive adjacent block.
+  Do not make one patch span unrelated functions or manually rebalance a large
+  nesting hierarchy.
 - Prefer `ast-grep` for structural search and replacement.
 - If `ast-grep` cannot express the change, use a Python script that:
   - searches for an exact, unique anchor;
@@ -34,12 +37,15 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
 - Do not insert or delete isolated braces.
 - Read the complete enclosing function before changing its control flow.
 - Before editing a file, preserve its current contents in a temporary file.
-- Immediately after each individual edit, run:
+- Do not spend time hand-formatting or reindenting Go during an edit. Preserve
+  the surrounding indentation as-is and let `gofmt` format the completed file.
+- After all intended edits to one Go file are complete, run this before editing
+  another Go file:
 
-      gofmt -w <changed-files>
+      gofmt -w <changed-file>
 
 - If `gofmt` fails:
-  - do not make another edit;
+  - do not edit another file;
   - inspect the first reported syntax error;
   - either correct the current edit or restore the saved file.
 - Once formatting succeeds, run:
@@ -47,6 +53,8 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
       go test ./...
 
 - Do not stack additional changes on top of a file that does not parse.
+- If a formatted file needs another edit, re-read the complete enclosing
+  syntactic unit and start a new small edit pass.
 
 ## Failure handling
 
