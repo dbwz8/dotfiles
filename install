@@ -214,6 +214,7 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.gitconfig"
     backup_link_conflict "$HOME/.codex/config.toml"
     backup_link_conflict "$HOME/.codex/AGENTS.md"
+    backup_link_conflict "$HOME/.codex/skills/schedule"
     backup_link_conflict "$HOME/.codex/skills/weekly-update"
     backup_link_conflict "$HOME/.claude/settings.json"
     backup_link_conflict "$HOME/.claude/statusline.py"
@@ -329,7 +330,7 @@ dotbins_sync_current() {
     if [ "$(uname -s)" = "Darwin" ]; then
         # eza has no upstream macOS release asset; the Brewfile installs it instead.
         "$dotbins_bin" sync --current \
-            delta duf dust fd gh git-lfs hyperfine rg tree-sitter yazi zellij \
+            ast-grep delta duf dust fd gh git-lfs hyperfine rg tree-sitter yazi zellij \
             bat direnv fzf lazygit micromamba starship zoxide atuin keychain uv
         return
     fi

@@ -20,77 +20,33 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
 - Re-read the exact target region immediately before editing it.
 - Do not rely on remembered line numbers after any file has changed.
 
-## Editing policy
+## Editing Go source
 
-Use exact text anchors rather than line numbers.
+- Never edit Go files using line-number-based `sed` commands.
+- Never make several Go edits before validating the first one.
+- Prefer `ast-grep` for structural search and replacement.
+- If `ast-grep` cannot express the change, use a Python script that:
+  - searches for an exact, unique anchor;
+  - refuses to edit unless exactly one match is found;
+  - replaces a complete syntactic unit such as a function, method, statement,
+    declaration, or import block.
+- Use `apply_patch` only for small changes with substantial unchanged context.
+- Do not insert or delete isolated braces.
+- Read the complete enclosing function before changing its control flow.
+- Before editing a file, preserve its current contents in a temporary file.
+- Immediately after each individual edit, run:
 
-- Do not use line-number-addressed `sed` commands to modify files.
-- Do not use `apply_patch` or manually constructed unified diffs unless the
-  user explicitly requests them.
-- Do not replace an entire file unless most of the file genuinely must change.
-- Preserve unrelated code, comments, formatting, tabs, spaces, and line
-  endings.
-- Make the smallest possible diff: change only the lines required for the
-  requested behavior.
-- Do not reformat, realign, reorder, or normalize whitespace in adjacent code,
-  especially struct definitions, field lists, object literals, and function
-  signatures, unless the user explicitly asks for formatting.
-- Before finishing, inspect every changed hunk. Revert any hunk whose only
-  effect is whitespace, indentation, alignment, wrapping, or other cosmetic
-  churn unrelated to the requested behavior.
-- Do not run a formatter on an unchanged file. When a language requires a
-  formatter for a modified file, report any unrelated formatter changes rather
-  than making additional cosmetic edits.
-- Never make an edit based only on text copied from an earlier view if the file
-  may have changed since then.
+      gofmt -w <changed-files>
 
-For a small targeted edit, use the native exact search/replace operation when
-it is available and reliable.
+- If `gofmt` fails:
+  - do not make another edit;
+  - inspect the first reported syntax error;
+  - either correct the current edit or restore the saved file.
+- Once formatting succeeds, run:
 
-Otherwise, use a short Python script that:
+      go test ./...
 
-1. reads the target file,
-2. defines the exact old text and replacement text,
-3. verifies that the old text occurs exactly once,
-4. makes only that replacement,
-5. writes the file only after all checks pass.
-
-A Python edit must fail without writing if the expected text is missing or
-occurs more than once. Do not use broad regular expressions when an exact
-anchor will work.
-
-For mechanical changes across multiple files, first identify and report the
-complete set of target files. Use a Python script with explicit checks, then
-inspect the resulting diff.
-
-After each edit:
-
-- Inspect `git diff --check`.
-- Inspect the relevant portion of `git diff`.
-- If the edit is wrong, stop and correct it before making another edit.
-- Run the appropriate formatter and focused tests.
-
-## Go source policy
-
-For `.go` files, `gofmt` is the authority on formatting.
-
-- Write syntactically valid Go and avoid manual alignment.
-- Preserve tabs and indentation on unchanged lines.
-- Do not convert Go indentation tabs to spaces.
-- Do not perform repository-wide whitespace cleanup unless explicitly asked.
-- After modifying Go source, immediately run:
-
-  ```sh
-  gofmt -w <each-modified-go-file>
-  ```
-
-- Inspect the formatted diff rather than manually repairing indentation.
-- Run focused Go tests after each logical change.
-- At the end of the task, run the broadest practical test command for the
-  affected package or module.
-
-Whitespace inside string literals, generated data, fixtures, and embedded
-content is data and must not be changed unless the task requires it.
+- Do not stack additional changes on top of a file that does not parse.
 
 ## Failure handling
 

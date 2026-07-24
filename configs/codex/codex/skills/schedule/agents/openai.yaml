@@ -1,0 +1,4 @@
+interface:
+  display_name: "Performance Modeling Schedule"
+  short_description: "Create team allocation schedule Sheets"
+  default_prompt: "Use $schedule to create this period’s Performance Modeling team allocation schedule."

@@ -382,6 +382,9 @@ function Install-CodexConfigLinks {
         -SourcePath (Join-Path $codexSource "AGENTS.md") `
         -TargetPath (Join-Path $codexHome "AGENTS.md")
     Install-ManagedDirectoryLink `
+        -SourcePath (Join-Path $codexSource "skills\schedule") `
+        -TargetPath (Join-Path $codexHome "skills\schedule")
+    Install-ManagedDirectoryLink `
         -SourcePath (Join-Path $codexSource "skills\weekly-update") `
         -TargetPath (Join-Path $codexHome "skills\weekly-update")
 }
@@ -550,6 +553,7 @@ if ($dotbinsCommand) {
 
 if ($dotbins) {
     $tools = @(
+        "ast-grep",
         "delta",
         "duf",
         "dust",
