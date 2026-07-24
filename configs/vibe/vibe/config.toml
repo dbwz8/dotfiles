@@ -3,7 +3,7 @@ default_agent = "accept-edits"
 disabled_tools = [
     "edit",
     "write_file",
-    "search_replace",
+    "edit",
 ]
 enable_telemetry = false
 enable_update_checks = true
@@ -54,7 +54,9 @@ allowlist = [
     "grep",
     "head",
     "ls",
+    "mv",
     "tail",
+    "uv run python",
     "vibe-apply-patch",
     "wc",
 ]

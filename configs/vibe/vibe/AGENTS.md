@@ -33,7 +33,8 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
   accepts one file and at most 120 changed lines, so split larger work into
   separate edit passes. Never invoke an unqualified `apply_patch` command.
 - Only when neither structural rewrite nor the scoped patch can express the
-  change, use an `uv run python` script that:
+  change, invoke the fallback exactly as `uv run python <script>`; never use
+  `python` or `python3` directly. The script must:
     - searches for an exact, unique anchor;
     - refuses to edit unless exactly one match is found;
     - replaces a complete syntactic unit such as a function, method, statement,
