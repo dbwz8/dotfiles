@@ -63,10 +63,19 @@ ensure_managed_config_link() {
 ensure_managed_config_link
 
 restore_managed_config_link() {
-  local exit_status=$?
+  local exit_status=$? temporary_config
 
   trap - EXIT
-  ensure_managed_config_link
+  if [[ -f "$vibe_config_target" && ! -L "$vibe_config_target" ]]; then
+    temporary_config="$(mktemp "${vibe_config_source}.tmp.XXXXXX")"
+    printf 'Persisting Vibe config %s -> %s\n' "$vibe_config_target" "$vibe_config_source" >&2
+    cp -p "$vibe_config_target" "$temporary_config"
+    mv "$temporary_config" "$vibe_config_source"
+    rm -f "$vibe_config_target"
+    ln -s "$vibe_config_source" "$vibe_config_target"
+  else
+    ensure_managed_config_link
+  fi
   exit "$exit_status"
 }
 
