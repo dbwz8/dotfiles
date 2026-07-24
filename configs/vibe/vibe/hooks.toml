@@ -1,8 +1,17 @@
 [[hooks]]
-name = "user-enforce-no-sed-8f31"
+name = "user-require-ast-grep-8f31"
 type = "pre_tool"
 match = "bash"
-command = "python3 /home/wecker/.vibe/hooks/block_sed.py"
+command = "python3 /home/wecker/git/dotfiles/configs/vibe/vibe/hooks/require_ast_grep.py"
 timeout = 10.0
 strict = true
-description = "Hard-block execution of sed, including under auto-approve."
+description = "Require a successful ast-grep search before sanctioned edit paths."
+
+[[hooks]]
+name = "user-record-ast-grep-8f31"
+type = "post_tool"
+match = "bash"
+command = "python3 /home/wecker/git/dotfiles/configs/vibe/vibe/hooks/require_ast_grep.py"
+timeout = 10.0
+strict = false
+description = "Record successful ast-grep Bash calls for the current Vibe session."

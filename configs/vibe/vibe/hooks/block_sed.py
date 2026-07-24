@@ -12,7 +12,7 @@ import os
 import re
 import shlex
 import sys
-from typing import Any, Iterable
+from typing import Any, Collection, Iterable
 
 
 BLOCKED_COMMANDS = {"sed"}
@@ -61,8 +61,8 @@ def command_name(token: str) -> str:
     return os.path.basename(token.rstrip("/"))
 
 
-def is_blocked_command(token: str) -> bool:
-    return command_name(token) in BLOCKED_COMMANDS
+def is_blocked_command(token: str, blocked_commands: Collection[str] = BLOCKED_COMMANDS) -> bool:
+    return command_name(token) in blocked_commands
 
 
 def lex_shell(command: str) -> list[str]:
@@ -177,7 +177,9 @@ def shell_command_strings(tokens: list[str], start: int, end: int) -> Iterable[s
         index += 1
 
 
-def find_exec_target(tokens: list[str], start: int, end: int) -> bool:
+def find_exec_target(
+    tokens: list[str], start: int, end: int, blocked_commands: Collection[str] = BLOCKED_COMMANDS
+) -> bool:
     """Check find -exec/-execdir command positions without scanning arguments."""
     index = start + 1
     while index < end:
@@ -187,13 +189,15 @@ def find_exec_target(tokens: list[str], start: int, end: int) -> bool:
         exec_end = index + 1
         while exec_end < end and tokens[exec_end] not in {";", "+"}:
             exec_end += 1
-        if command_invokes_blocked(tokens, index + 1, exec_end):
+        if command_invokes_blocked(tokens, index + 1, exec_end, blocked_commands):
             return True
         index = exec_end + 1
     return False
 
 
-def command_invokes_blocked(tokens: list[str], start: int, end: int) -> bool:
+def command_invokes_blocked(
+    tokens: list[str], start: int, end: int, blocked_commands: Collection[str] = BLOCKED_COMMANDS
+) -> bool:
     """Check one shell command position, unwrapping common command wrappers."""
     index = skip_prefixes(tokens, start, end)
     while index is not None and index < end:
@@ -201,14 +205,17 @@ def command_invokes_blocked(tokens: list[str], start: int, end: int) -> bool:
         executable_name = command_name(executable)
         if executable == "$" or executable.startswith("$") or executable.startswith("`"):
             raise ShellSyntaxError("dynamic command names cannot be safely evaluated")
-        if is_blocked_command(executable):
+        if is_blocked_command(executable, blocked_commands):
             return True
         if executable_name in _SHELLS:
-            if any(command_contains_blocked(command) for command in shell_command_strings(tokens, index, end)):
+            if any(
+                command_contains_blocked(command, blocked_commands)
+                for command in shell_command_strings(tokens, index, end)
+            ):
                 return True
             return False
         if executable_name == "find":
-            return find_exec_target(tokens, index, end)
+            return find_exec_target(tokens, index, end, blocked_commands)
         if executable_name == "command":
             index = command_option_target(tokens, index, end)
             continue
@@ -219,7 +226,7 @@ def command_invokes_blocked(tokens: list[str], start: int, end: int) -> bool:
             index = sudo_target(tokens, index, end)
             continue
         if executable_name == "eval":
-            return command_contains_blocked(" ".join(tokens[index + 1 : end]))
+            return command_contains_blocked(" ".join(tokens[index + 1 : end]), blocked_commands)
         return False
     return False
 
@@ -289,14 +296,16 @@ def extract_subcommands(command: str) -> Iterable[str]:
         index += 1
 
 
-def command_contains_blocked(command: str) -> bool:
+def command_contains_blocked(command: str, blocked_commands: Collection[str] = BLOCKED_COMMANDS) -> bool:
     for subcommand in extract_subcommands(command):
-        if command_contains_blocked(subcommand):
+        if command_contains_blocked(subcommand, blocked_commands):
             return True
-    return command_contains_blocked_tokens(lex_shell(command))
+    return command_contains_blocked_tokens(lex_shell(command), blocked_commands)
 
 
-def command_contains_blocked_tokens(tokens: list[str]) -> bool:
+def command_contains_blocked_tokens(
+    tokens: list[str], blocked_commands: Collection[str] = BLOCKED_COMMANDS
+) -> bool:
     index = 0
     at_command_start = True
     while index < len(tokens):
@@ -307,7 +316,7 @@ def command_contains_blocked_tokens(tokens: list[str]) -> bool:
             continue
         if at_command_start:
             end = command_end(tokens, index)
-            if command_invokes_blocked(tokens, index, end):
+            if command_invokes_blocked(tokens, index, end, blocked_commands):
                 return True
             at_command_start = False
         index += 1

@@ -20,6 +20,12 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
 - Re-read the exact target region immediately before editing it.
 - Do not rely on remembered line numbers after any file has changed.
 
+## Command execution
+
+- When the user supplies a shell command as the request, execute that exact
+  command through the `bash` tool. Do not respond "Task completed" or claim a
+  result unless the Bash tool call actually ran and returned that result.
+
 ## Editing Go source
 
 - Never edit Go files using line-number-based `sed` commands.
@@ -29,6 +35,11 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
   nesting hierarchy.
 - Before every Go edit, run `ast-grep` to identify the exact target node.
   Use an `ast-grep` rewrite only when it selects one intended node.
+- A user-level hook denies `vibe-apply-patch` and direct `uv run python
+  <script>` edit fallbacks until a successful `ast-grep` Bash call completes in
+  this session. Run the search in a separate Bash call and wait for its result;
+  a failed search, or a search combined with an edit in one command, does not
+  satisfy the policy. Python test modules remain allowed.
 - Otherwise, apply a standard unified diff through `vibe-apply-patch`. It
   accepts one file and at most 120 changed lines, so split larger work into
   separate edit passes. Never invoke an unqualified `apply_patch` command.
