@@ -34,9 +34,7 @@ allowlist = [
     "cargo build",
     "cargo check",
     "cargo test",
-    "cat",
     "cd",
-    "echo",
     "find",
     "find . -name \"*.go\" -exec grep -l \"type GameState\" {} \\;",
     "find . -name \"*.go\" -exec grep -l \"type MovePreview struct\" {} \\;",
@@ -57,6 +55,7 @@ allowlist = [
     "head",
     "ls",
     "tail",
+    "vibe-apply-patch",
     "wc",
 ]
 denylist = [
@@ -69,6 +68,10 @@ denylist = [
     "awk",
     "ed",
     "patch",
+    "python",
+    "python3",
+    "pip",
+    "pip3",
 ]
 
 [[providers]]

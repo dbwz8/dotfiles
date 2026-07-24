@@ -66,6 +66,7 @@
     ~/.local/bin/install-macos-packages: scripts/install-macos-packages.sh
     ~/.local/bin/qwen: scripts/qwen.sh
     ~/.local/bin/vibe: scripts/vibe.sh
+    ~/.local/bin/vibe-apply-patch: scripts/vibe-apply-patch.sh
     ~/.local/bin/sync-dotfiles: scripts/sync-dotfiles.sh
     ~/.local/bin/sync-local-dotfiles: scripts/sync-local-dotfiles.sh
     ~/.local/bin/sync-uv-tools: scripts/sync-uv-tools.sh

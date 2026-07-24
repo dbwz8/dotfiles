@@ -27,13 +27,19 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
   function, method, declaration, import block, or cohesive adjacent block.
   Do not make one patch span unrelated functions or manually rebalance a large
   nesting hierarchy.
-- Prefer `ast-grep` for structural search and replacement.
-- If `ast-grep` cannot express the change, use a Python script that:
-  - searches for an exact, unique anchor;
-  - refuses to edit unless exactly one match is found;
-  - replaces a complete syntactic unit such as a function, method, statement,
+- Before every Go edit, run `ast-grep` to identify the exact target node.
+  Use an `ast-grep` rewrite only when it selects one intended node.
+- Otherwise, apply a standard unified diff through `vibe-apply-patch`. It
+  accepts one file and at most 120 changed lines, so split larger work into
+  separate edit passes. Never invoke an unqualified `apply_patch` command.
+- Only when neither structural rewrite nor the scoped patch can express the
+  change, use an `uv run python` script that:
+    - searches for an exact, unique anchor;
+    - refuses to edit unless exactly one match is found;
+    - replaces a complete syntactic unit such as a function, method, statement,
     declaration, or import block.
-- Use `apply_patch` only for small changes with substantial unchanged context.
+- Do not use shell redirection, `cat`, `echo`, or direct Python to write Go
+  source.
 - Do not insert or delete isolated braces.
 - Read the complete enclosing function before changing its control flow.
 - Before editing a file, preserve its current contents in a temporary file.
