@@ -1,0 +1,8 @@
+[[hooks]]
+name = "user-enforce-no-sed-8f31"
+type = "pre_tool"
+match = "bash"
+command = "python3 /home/wecker/.vibe/hooks/block_sed.py"
+timeout = 10.0
+strict = true
+description = "Hard-block execution of sed, including under auto-approve."

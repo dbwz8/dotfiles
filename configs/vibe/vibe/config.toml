@@ -1,6 +1,6 @@
 active_model = "devstral-local"
 default_agent = "accept-edits"
-disabled_tools = ["edit", "write_file"]
+disabled_tools = ["edit", "write_file", "search_replace"]
 enable_telemetry = false
 enable_update_checks = true
 applied_migrations = [
@@ -24,6 +24,7 @@ allowlist = [
     "./klondike",
     "./sudoku",
     "/home/wecker/git/languages/go/sudoku/test_format.sh",
+    "ast-grep",
     "cargo build",
     "cargo check",
     "cargo test",
@@ -39,6 +40,7 @@ allowlist = [
     "git status",
     "go build",
     "go build ./...",
+    "go diff *",
     "go run",
     "go test",
     "go test ./...",
@@ -58,6 +60,12 @@ denylist = [
     "git reset --hard",
     "git clean -fd",
     "git push --force",
+    "sed",
+    "perl",
+    "awk",
+    "ed",
+    "patch",
+    "apply_patch",
 ]
 
 [[providers]]

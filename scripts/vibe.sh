@@ -62,6 +62,16 @@ ensure_managed_config_link() {
 
 ensure_managed_config_link
 
+restore_managed_config_link() {
+  local exit_status=$?
+
+  trap - EXIT
+  ensure_managed_config_link
+  exit "$exit_status"
+}
+
+trap restore_managed_config_link EXIT
+
 vibe_bin() {
   if [[ -n "${VIBE_BIN:-}" && -x "$VIBE_BIN" ]]; then
     printf '%s\n' "$VIBE_BIN"
@@ -143,7 +153,8 @@ set -- "${parsed_args[@]}"
 
 case "${1:-}" in
   -h|--help|-V|--version|--setup|--check-upgrade)
-    exec "$real_vibe" "$@"
+    "$real_vibe" "$@"
+    exit $?
     ;;
 esac
 
@@ -259,4 +270,4 @@ export VIBE_LOCAL_API_KEY="$api_key"
 export VIBE_ACTIVE_MODEL="devstral-local"
 export VIBE_PROVIDERS="[{\"name\":\"devstral-local\",\"api_base\":\"${provider_base_url}\",\"api_key_env_var\":\"VIBE_LOCAL_API_KEY\",\"api_style\":\"openai\",\"backend\":\"generic\"}]"
 
-exec "$real_vibe" "$@"
+"$real_vibe" "$@"
