@@ -38,6 +38,11 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
 - Prefer the native `edit` tool for a small, exact replacement. When a unified
   diff is clearer, invoke `vibe-apply-patch` yourself; it accepts one file and
   at most 120 changed lines. Do not hand an available edit back to the user.
+- Before a native `edit` of an existing Go file, run
+  `vibe-expand-go-indent <file.go>`. It expands only leading indentation tabs
+  to spaces so exact edit matching is reliable; immediately run `gofmt -w
+  <file.go>` after the edit. Do not use this preparatory command before
+  `vibe-apply-patch`, whose diff must match the original whitespace.
 - Do not use shell redirection, `cat`, `tee`, or `sed` to write Go source.
 - Do not insert or delete isolated braces.
 - Read the complete enclosing function before changing its control flow.

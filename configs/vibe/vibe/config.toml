@@ -55,6 +55,7 @@ allowlist = [
     "mv",
     "tail",
     "uv run python",
+    "vibe-expand-go-indent",
     "vibe-apply-patch",
     "wc",
 ]

@@ -241,6 +241,7 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.qwen/QWEN.md"
     backup_link_conflict "$HOME/.local/bin/install-qwen-code"
     backup_link_conflict "$HOME/.local/bin/qwen"
+    backup_link_conflict "$HOME/.local/bin/vibe-expand-go-indent"
     backup_link_conflict "$HOME/.local/bin/vibe-apply-patch"
     remove_legacy_managed_link "$HOME/.local/bin/qwen-remote"
     remove_legacy_managed_link "$HOME/.local/bin/qwen-weckerAA"
