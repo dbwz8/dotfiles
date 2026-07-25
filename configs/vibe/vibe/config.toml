@@ -1,9 +1,7 @@
 active_model = "devstral-local"
 default_agent = "accept-edits"
 disabled_tools = [
-    "edit",
     "write_file",
-    "edit",
 ]
 enable_telemetry = false
 enable_update_checks = true

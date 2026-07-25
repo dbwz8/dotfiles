@@ -19,13 +19,19 @@ git apply --check "$patch_file" || exit $?
 
 file_count=0
 changed_lines=0
+changed_file=""
 while IFS=$'\t' read -r added removed file_name; do
   [[ "$added" =~ ^[0-9]+$ && "$removed" =~ ^[0-9]+$ ]] || fail 'Binary patches are not supported.'
   file_count=$((file_count + 1))
   changed_lines=$((changed_lines + added + removed))
+  changed_file="$file_name"
 done < <(git apply --numstat "$patch_file")
 
 [[ "$file_count" -eq 1 ]] || fail 'vibe-apply-patch accepts exactly one changed file.'
 [[ "$changed_lines" -le "$max_changed_lines" ]] || fail "Patch changes ${changed_lines} lines; limit is ${max_changed_lines}."
 
 git apply --whitespace=nowarn "$patch_file"
+
+if [[ "$changed_file" == *.go ]]; then
+  gofmt -w -- "$changed_file"
+fi

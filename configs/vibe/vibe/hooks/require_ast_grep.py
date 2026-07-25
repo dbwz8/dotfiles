@@ -185,6 +185,11 @@ def directly_accesses_go_source(command: str) -> bool:
 
 
 def main() -> int:
+    # This policy is retained for possible future use, but is deliberately
+    # inactive by default.  A strict pre-tool workflow gate made normal coding
+    # tasks brittle instead of safer.
+    if os.environ.get("VIBE_ENABLE_REQUIRE_AST_GREP_HOOK") != "1":
+        return 0
     payload: Any = None
     try:
         payload = json.loads(sys.stdin.read())

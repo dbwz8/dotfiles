@@ -33,58 +33,27 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
   function, method, declaration, import block, or cohesive adjacent block.
   Do not make one patch span unrelated functions or manually rebalance a large
   nesting hierarchy.
-- Before every Go edit, run `ast-grep` to identify the exact target node.
-  Use an `ast-grep` rewrite only when it selects one intended node.
-- A user-level hook denies `vibe-apply-patch` and direct `uv run python
-  <script>` edit fallbacks until a successful `ast-grep` Bash call completes in
-  this session. Run the search in a separate Bash call and wait for its result;
-  a failed search, or a search combined with an edit in one command, does not
-  satisfy the policy. Python test modules remain allowed.
-- Otherwise, apply a standard unified diff through `vibe-apply-patch`. It
-  accepts one file and at most 120 changed lines, so split larger work into
-  separate edit passes. Never invoke an unqualified `apply_patch` command.
-  Invoke the wrapper yourself; do not ask the user to apply a change manually
-  when it is available. Its permitted form is:
-
-      vibe-apply-patch <<'PATCH'
-      diff --git a/path/to/file.go b/path/to/file.go
-      --- a/path/to/file.go
-      +++ b/path/to/file.go
-      @@ ... @@
-      PATCH
-
-  The wrapper's heredoc is allowed. Do not try `ed`, `sed`, `cat`, `tee`, or
-  shell redirection against Go source before giving the wrapper a scoped diff.
-- Only when neither structural rewrite nor the scoped patch can express the
-  change, invoke the fallback exactly as `uv run python <script>`; never use
-  `python` or `python3` directly. The script must:
-    - searches for an exact, unique anchor;
-    - refuses to edit unless exactly one match is found;
-    - replaces a complete syntactic unit such as a function, method, statement,
-    declaration, or import block.
-- Do not use shell redirection, `cat`, `echo`, or direct Python to write Go
-  source.
+- Prefer `ast-grep` for structural searches and rewrites. It is a preferred
+  discovery tool, not a prerequisite for every small edit.
+- Prefer the native `edit` tool for a small, exact replacement. When a unified
+  diff is clearer, invoke `vibe-apply-patch` yourself; it accepts one file and
+  at most 120 changed lines. Do not hand an available edit back to the user.
+- Do not use shell redirection, `cat`, `tee`, or `sed` to write Go source.
 - Do not insert or delete isolated braces.
 - Read the complete enclosing function before changing its control flow.
-- Before editing a file, preserve its current contents in a temporary file.
 - Do not spend time hand-formatting or reindenting Go during an edit. Preserve
   the surrounding indentation as-is and let `gofmt` format the completed file.
-- After all intended edits to one Go file are complete, run this before editing
-  another Go file:
+- The patch wrapper runs `gofmt` automatically for a changed Go file. After a
+  native edit, run this before editing another Go file:
 
       gofmt -w <changed-file>
 
-- If `gofmt` fails:
-  - do not edit another file;
-  - inspect the first reported syntax error;
-  - either correct the current edit or restore the saved file.
-- Once formatting succeeds, run:
+- Once formatting succeeds, run the relevant Go test, or use this when no
+  narrower test is available:
 
       go test ./...
 
-- Do not stack additional changes on top of a file that does not parse.
-- If a formatted file needs another edit, re-read the complete enclosing
-  syntactic unit and start a new small edit pass.
+- If an edit or formatting step fails, re-read the target region before retrying.
 
 ## Failure handling
 

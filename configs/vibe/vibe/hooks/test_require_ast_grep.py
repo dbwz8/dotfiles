@@ -46,9 +46,13 @@ class RequireAstGrepTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temporary_directory.cleanup()
 
-    def run_guard(self, raw_payload: str) -> tuple[int, str, str]:
+    def run_guard(self, raw_payload: str, *, enabled: bool = True) -> tuple[int, str, str]:
         environment = dict(os.environ)
         environment["VIBE_AST_GREP_STATE_DIR"] = str(self.state_dir)
+        if enabled:
+            environment["VIBE_ENABLE_REQUIRE_AST_GREP_HOOK"] = "1"
+        else:
+            environment.pop("VIBE_ENABLE_REQUIRE_AST_GREP_HOOK", None)
         result = subprocess.run(
             [sys.executable, str(GUARD)],
             input=raw_payload,
@@ -220,6 +224,11 @@ class RequireAstGrepTests(unittest.TestCase):
 
     def test_non_bash_payload_is_ignored(self) -> None:
         self.assert_decision(payload("vibe-apply-patch < change.diff", tool_name="read_file"), None)
+
+    def test_policy_is_inactive_without_explicit_enablement(self) -> None:
+        code, stdout, stderr = self.run_guard(json.dumps(payload("cat > game/game.go <<'EOF'\npackage game\nEOF")), enabled=False)
+        self.assertEqual(code, 0, stderr)
+        self.assertEqual(stdout, "", stderr)
 
 
 if __name__ == "__main__":

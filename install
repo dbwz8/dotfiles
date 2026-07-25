@@ -176,6 +176,17 @@ remove_legacy_managed_link() {
     fi
 }
 
+remove_legacy_vibe_hooks_link() {
+    local target source
+    target="$HOME/.vibe/hooks.toml"
+    source="$DOTFILES/configs/vibe/vibe/hooks.toml"
+
+    if [ -L "$target" ] && [ "$target" -ef "$source" ]; then
+        printf '%s\n' "Removing legacy managed link $target"
+        rm -f "$target"
+    fi
+}
+
 migrate_legacy_codex_home_symlink() {
     local codex_home codex_source resolved_home resolved_source backup_root backup_dir suffix
     codex_home="$HOME/.codex"
@@ -225,7 +236,6 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.aider.model.settings.yml"
     backup_link_conflict "$HOME/.aider/CONVENTIONS.md"
     backup_link_conflict "$HOME/.vibe/config.toml"
-    backup_link_conflict "$HOME/.vibe/hooks.toml"
     backup_link_conflict "$HOME/.config/ghostty/config.ghostty"
     backup_link_conflict "$HOME/.qwen/settings.json"
     backup_link_conflict "$HOME/.qwen/QWEN.md"
@@ -234,6 +244,7 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.local/bin/vibe-apply-patch"
     remove_legacy_managed_link "$HOME/.local/bin/qwen-remote"
     remove_legacy_managed_link "$HOME/.local/bin/qwen-weckerAA"
+    remove_legacy_vibe_hooks_link
 }
 
 require_native_wsl_checkout || exit 1
