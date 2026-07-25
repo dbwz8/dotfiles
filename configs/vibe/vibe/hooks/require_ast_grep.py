@@ -19,12 +19,14 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from block_sed import ShellSyntaxError, command_contains_blocked
+from block_sed import ShellSyntaxError, command_contains_blocked, lex_shell
 
 
 AST_GREP_COMMANDS = {"ast-grep"}
 PATCH_COMMANDS = {"vibe-apply-patch"}
 UV_COMMANDS = {"uv"}
+DIRECT_GO_SOURCE_COMMANDS = {"cat", "cp", "install", "mv", "tee"}
+WRITE_REDIRECTIONS = {">", ">>", ">&"}
 AST_GREP_SEARCH_TOKEN = re.compile(r"(?<!\S)(?:-p|--pattern|--rewrite|scan|outline)(?!\S)")
 PYTHON_TEST_MODULE = re.compile(
     r"(?<!\S)uv\s+run\s+python\s+-m\s+(?:unittest|pytest)(?!\S)"
@@ -34,6 +36,17 @@ DENIAL_REASON = (
     "Run a successful ast-grep search for the exact target node before editing. "
     "This session has not completed ast-grep yet; then retry the scoped patch or Python "
     "edit script."
+)
+
+DIRECT_GO_SOURCE_REASON = (
+    "Direct Bash access to Go source through cat, shell redirection, or file-copy commands "
+    "is prohibited. Use ast-grep to locate or rewrite a Go node, or use vibe-apply-patch "
+    "after a successful ast-grep search."
+)
+
+DIRECT_PATCH_REASON = (
+    "vibe-apply-patch must receive one scoped, in-line unified diff through its direct "
+    "heredoc form. Do not stage a patch in /tmp or combine it with other commands."
 )
 
 
@@ -122,6 +135,55 @@ def requires_prior_search(command: str) -> bool:
     return PYTHON_TEST_MODULE.search(command) is None
 
 
+def direct_patch_heredoc_header(command: str) -> str | None:
+    """Return a single sanctioned patch heredoc's header, if present.
+
+    The shell-aware tokenizer intentionally fails closed on ambiguous input.
+    A patch here-document body can validly contain quotes, braces, and diff
+    syntax that are not a standalone shell command.  It is therefore exempted
+    only when the entire Bash call is the documented direct patch form, with an
+    optional `cd <directory> &&` prefix and no command after its delimiter.
+    """
+    if "\n" not in command:
+        return None
+    lines = command.splitlines()
+    header = lines[0]
+    tokens = lex_shell(header)
+    index = 0
+    if len(tokens) >= 3 and tokens[:1] == ["cd"] and tokens[2] == "&&":
+        index = 3
+    if len(tokens) != index + 3 or tokens[index : index + 2] != ["vibe-apply-patch", "<<"]:
+        return None
+    delimiter = tokens[index + 2]
+    if not delimiter:
+        return None
+    for line_index, line in enumerate(lines[1:], start=1):
+        if line == delimiter:
+            return header if line_index == len(lines) - 1 else None
+    return None
+
+
+def directly_accesses_go_source(command: str) -> bool:
+    """Reject whole-file reads and generic shell writes of Go source.
+
+    `lex_shell` preserves command positions and redirection tokens, so a
+    filename or quoted prose that merely contains `.go` does not match.  The
+    command-invocation check also handles wrappers such as `command`, `env`,
+    `sudo`, and `bash -c`.
+    """
+    tokens = lex_shell(command)
+    if not any(token.endswith(".go") for token in tokens):
+        return False
+    if command_contains_blocked(command, DIRECT_GO_SOURCE_COMMANDS):
+        return True
+    return any(
+        token in WRITE_REDIRECTIONS
+        and index + 1 < len(tokens)
+        and tokens[index + 1].endswith(".go")
+        for index, token in enumerate(tokens)
+    )
+
+
 def main() -> int:
     payload: Any = None
     try:
@@ -134,7 +196,19 @@ def main() -> int:
             if tool_status == "success" and invokes_ast_grep_search(command):
                 record_successful_search(session_id)
             return 0
-        if requires_prior_search(command) and not has_successful_search(session_id):
+        # Do not pass a valid, direct patch heredoc body through the generic
+        # shell tokenizer.  Its body is diff data, not a standalone shell
+        # command.  Any other invocation is denied, including the previous
+        # `cat > /tmp/patch` then `vibe-apply-patch` workaround.
+        patch_header = direct_patch_heredoc_header(command)
+        if "vibe-apply-patch" in command and patch_header is None:
+            deny(DIRECT_PATCH_REASON)
+            return 0
+        analysis_command = patch_header or command
+        if directly_accesses_go_source(analysis_command):
+            deny(DIRECT_GO_SOURCE_REASON)
+            return 0
+        if requires_prior_search(analysis_command) and not has_successful_search(session_id):
             deny(DENIAL_REASON)
         return 0
     except (json.JSONDecodeError, OSError, ShellSyntaxError, ValueError) as error:

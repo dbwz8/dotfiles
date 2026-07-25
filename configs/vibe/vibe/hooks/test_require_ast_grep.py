@@ -72,6 +72,21 @@ class RequireAstGrepTests(unittest.TestCase):
     def mark_search(self, command: str = "ast-grep run --lang go -p 'func $NAME($$$) { $$$ }' file.go") -> None:
         self.assert_decision(payload(command, event="post_tool"), None)
 
+    @staticmethod
+    def direct_patch() -> str:
+        return "\n".join(
+            [
+                "cd game && vibe-apply-patch <<'PATCH'",
+                "diff --git a/score_vector.go b/score_vector.go",
+                "--- a/score_vector.go",
+                "+++ b/score_vector.go",
+                "@@ -1,1 +1,2 @@",
+                " package game",
+                "+// ScoreVector supports strategy scoring.",
+                "PATCH",
+            ]
+        )
+
     def test_edit_paths_are_denied_before_successful_search(self) -> None:
         for command in [
             "vibe-apply-patch < change.diff",
@@ -93,10 +108,66 @@ class RequireAstGrepTests(unittest.TestCase):
             with self.subTest(command=command):
                 self.assert_decision(payload(command), None)
 
+    def test_direct_go_source_access_is_always_denied(self) -> None:
+        commands = [
+            "cat game/game.go",
+            "cat > game/game.go <<'EOF'\npackage game\nEOF",
+            "printf 'package game\\n' > game/game.go",
+            "printf 'package game\\n' | tee game/game.go",
+            "cp replacement.go game/game.go",
+            "mv replacement.go game/game.go",
+        ]
+        for command in commands:
+            with self.subTest(command=command):
+                self.assert_decision(payload(command), "deny")
+                self.mark_search()
+                self.assert_decision(payload(command), "deny")
+
+    def test_multiline_heredoc_gives_direct_go_source_denial(self) -> None:
+        command = "cat > game/game.go <<'EOF'\npackage game\nfunc f() {}\nEOF"
+        code, stdout, stderr = self.run_guard(json.dumps(payload(command)))
+        self.assertEqual(code, 0, stderr)
+        self.assertIn("Direct Bash access to Go source", json.loads(stdout)["reason"])
+
+    def test_non_go_cat_and_gofmt_remain_allowed(self) -> None:
+        self.assert_decision(payload("cat README.md"), None)
+        self.assert_decision(payload("cat notes.go.txt"), None)
+        self.assert_decision(payload("gofmt -w game/game.go"), None)
+
     def test_successful_search_allows_edit_paths_in_that_session(self) -> None:
         self.mark_search()
-        self.assert_decision(payload("vibe-apply-patch < change.diff"), None)
+        self.assert_decision(payload(self.direct_patch()), None)
         self.assert_decision(payload("uv run python /tmp/exact_replace.py"), None)
+
+    def test_multiline_vibe_patch_heredoc_is_gated_then_allowed(self) -> None:
+        command = self.direct_patch()
+        self.assert_decision(payload(command), "deny")
+        self.mark_search()
+        self.assert_decision(payload(command), None)
+
+    def test_patch_staging_and_chaining_are_denied(self) -> None:
+        staged_patch = "\n".join(
+            [
+                "cat > /tmp/score.patch <<'PATCH'",
+                "diff --git a/game/game.go b/game/game.go",
+                "--- a/game/game.go",
+                "+++ b/game/game.go",
+                "PATCH",
+                "vibe-apply-patch <<'PATCH'",
+                "diff --git a/game/game.go b/game/game.go",
+                "--- a/game/game.go",
+                "+++ b/game/game.go",
+                "PATCH",
+            ]
+        )
+        trailing_command = self.direct_patch() + "\nprintf 'not allowed after patch\\n'"
+        for command in ["vibe-apply-patch < /tmp/score.patch", staged_patch, trailing_command]:
+            with self.subTest(command=command):
+                self.assert_decision(payload(command), "deny")
+                self.mark_search()
+                code, stdout, stderr = self.run_guard(json.dumps(payload(command)))
+                self.assertEqual(code, 0, stderr)
+                self.assertIn("must receive one scoped, in-line unified diff", json.loads(stdout)["reason"])
 
     def test_failed_search_does_not_unlock_edit_paths(self) -> None:
         self.assert_decision(
@@ -115,11 +186,10 @@ class RequireAstGrepTests(unittest.TestCase):
 
     def test_nested_shell_ast_grep_unlocks_session(self) -> None:
         self.mark_search("bash -c \"ast-grep run --lang go -p '$X' file.go\"")
-        self.assert_decision(payload("vibe-apply-patch < change.diff"), None)
+        self.assert_decision(payload(self.direct_patch()), None)
 
     def test_read_and_format_commands_remain_allowed_without_search(self) -> None:
         for command in [
-            "cat file.go",
             "grep -n 'func' file.go",
             "gofmt -w file.go",
             "go test ./...",

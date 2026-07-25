@@ -43,6 +43,18 @@ Add or update tests for behavior that is added, fixed, or intentionally changed.
 - Otherwise, apply a standard unified diff through `vibe-apply-patch`. It
   accepts one file and at most 120 changed lines, so split larger work into
   separate edit passes. Never invoke an unqualified `apply_patch` command.
+  Invoke the wrapper yourself; do not ask the user to apply a change manually
+  when it is available. Its permitted form is:
+
+      vibe-apply-patch <<'PATCH'
+      diff --git a/path/to/file.go b/path/to/file.go
+      --- a/path/to/file.go
+      +++ b/path/to/file.go
+      @@ ... @@
+      PATCH
+
+  The wrapper's heredoc is allowed. Do not try `ed`, `sed`, `cat`, `tee`, or
+  shell redirection against Go source before giving the wrapper a scoped diff.
 - Only when neither structural rewrite nor the scoped patch can express the
   change, invoke the fallback exactly as `uv run python <script>`; never use
   `python` or `python3` directly. The script must:
