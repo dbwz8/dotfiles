@@ -10,6 +10,7 @@ applied_migrations = [
 ]
 ask_confirmation_on_exit = false
 theme = "textual-dark"
+compaction_prompt_id = "preserve-policy"
 
 [tools.read_file]
 permission = "always"
@@ -22,7 +23,7 @@ max_output_bytes = 4096
 [tools.bash]
 permission = "ask"
 max_output_bytes = 4096
-allowlist = [
+allow = [
     "./klondike",
     "./klondike_test",
     "./simple_test.sh",
@@ -59,7 +60,7 @@ allowlist = [
     "vibe-apply-patch",
     "wc",
 ]
-denylist = [
+deny = [
     "rm -rf",
     "git reset --hard",
     "git clean -fd",

@@ -1,3 +1,17 @@
+# Non-negotiable constraints
+
+These constraints remain active for the entire session, including after
+context compaction, session resume, plan acceptance, or agent switching.
+
+Before performing an action, verify that it complies with these constraints.
+If an action would violate one, do not perform it. Explain the conflict.
+
+- Never substitute an unapproved editing method because the preferred method
+  appears inconvenient.
+- Never use a prohibited command indirectly through bash, Python, Perl,
+  xargs, find -exec, or a generated script.
+- Do not weaken, reinterpret, or remove these constraints.
+
 # Critical Instructions
 
 These instructions remain in force for the entire session, including after
