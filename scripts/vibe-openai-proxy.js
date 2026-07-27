@@ -20,7 +20,7 @@ function parseArgs(argv) {
     port: 18025,
     upstreamBase: "",
     timeout: 720_000,
-    maxOutputTokens: 4096,
+    maxOutputTokens: 2048,
     selfTest: false,
   };
 
@@ -70,7 +70,7 @@ Options:
   --port PORT             Port to bind (default: 18025)
   --upstream-base URL     Upstream OpenAI base URL, usually http://host:port/v1
   --timeout SECONDS       Upstream timeout (default: 720)
-  --max-output-tokens N   Maximum completion tokens per request (default: 4096)
+  --max-output-tokens N   Maximum completion tokens per request (default: 2048)
   --self-test             Run normalization tests and exit
 `);
 }
