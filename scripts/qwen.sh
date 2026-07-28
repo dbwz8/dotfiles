@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-script_path="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+resolve_script_path() {
+    local source="${BASH_SOURCE[0]}"
+    local dir
+
+    while [[ -L "${source}" ]]; do
+        dir="$(cd -P "$(dirname "${source}")" && pwd)"
+        source="$(readlink "${source}")"
+        [[ "${source}" != /* ]] && source="${dir}/${source}"
+    done
+
+    dir="$(cd -P "$(dirname "${source}")" && pwd)"
+    printf '%s/%s\n' "${dir}" "$(basename "${source}")"
+}
+
+script_path="$(resolve_script_path)"
+script_dir="$(cd -P "$(dirname "${script_path}")" && pwd)"
+qwen_config_source="$(cd -P "${script_dir}/../configs/qwen/qwen" && pwd)/settings.json"
+qwen_config_target="${HOME}/.qwen/settings.json"
 server_mode="${QWEN_SERVER_MODE:-ssh}"
 remote_host="${QWEN_REMOTE_HOST:-weckerAA}"
 local_bind="${QWEN_REMOTE_LOCAL_BIND:-127.0.0.1}"
@@ -17,6 +34,51 @@ safe_mode="${QWEN_CODE_SAFE_MODE:-0}"
 thinking_mode=0
 has_system_prompt_override=0
 thinking_append_system_prompt="${QWEN_THINKING_APPEND_SYSTEM_PROMPT:-When asked to implement, fix, refactor, add, or write code, modify the working tree with Qwen Code edit/write_file tools before answering. Do not put code blocks, patches, or replacement file contents in the final answer unless the user explicitly asks for snippets. If you cannot edit files, say so explicitly instead of showing code.}"
+
+ensure_managed_config_link() {
+    local backup_root backup_path suffix
+
+    if [[ -L "${qwen_config_target}" && "${qwen_config_target}" -ef "${qwen_config_source}" ]]; then
+        return 0
+    fi
+
+    if [[ -e "${qwen_config_target}" || -L "${qwen_config_target}" ]]; then
+        backup_root="${HOME}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+        backup_path="${backup_root}/.qwen/settings.json"
+        suffix=1
+        while [[ -e "${backup_path}" || -L "${backup_path}" ]]; do
+            backup_path="${backup_root}/.qwen/settings.json.${suffix}"
+            suffix=$((suffix + 1))
+        done
+        mkdir -p "$(dirname "${backup_path}")"
+        printf 'Backing up unmanaged Qwen settings %s -> %s\n' "${qwen_config_target}" "${backup_path}" >&2
+        mv "${qwen_config_target}" "${backup_path}"
+    fi
+
+    mkdir -p "$(dirname "${qwen_config_target}")"
+    rm -f "${qwen_config_target}"
+    ln -s "${qwen_config_source}" "${qwen_config_target}"
+}
+
+restore_managed_config_link() {
+    local exit_status=$? temporary_config
+
+    trap - EXIT
+    if [[ -f "${qwen_config_target}" && ! -L "${qwen_config_target}" ]]; then
+        temporary_config="$(mktemp "${qwen_config_source}.tmp.XXXXXX")"
+        printf 'Persisting Qwen settings %s -> %s\n' "${qwen_config_target}" "${qwen_config_source}" >&2
+        cp -p "${qwen_config_target}" "${temporary_config}"
+        mv "${temporary_config}" "${qwen_config_source}"
+        rm -f "${qwen_config_target}"
+        ln -s "${qwen_config_source}" "${qwen_config_target}"
+    else
+        ensure_managed_config_link
+    fi
+    exit "${exit_status}"
+}
+
+ensure_managed_config_link
+trap restore_managed_config_link EXIT
 
 qwen_bin() {
     if [[ -n "${QWEN_CODE_BIN:-}" && -x "$QWEN_CODE_BIN" ]]; then
@@ -115,7 +177,8 @@ should_add_safe_mode() {
 
 case "${1:-}" in
     auth|channel|extensions|hooks|mcp|review|serve|sessions|-v|--version|-h|--help)
-        exec "$real_qwen" "$@"
+        "$real_qwen" "$@"
+        exit $?
         ;;
 esac
 
@@ -187,4 +250,4 @@ if should_add_safe_mode "$@"; then
     set -- --safe-mode "$@"
 fi
 
-exec "$real_qwen" --model "$model" "$@"
+"$real_qwen" --model "$model" "$@"
