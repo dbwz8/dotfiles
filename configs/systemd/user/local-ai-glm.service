@@ -1,0 +1,18 @@
+[Unit]
+Description=Local GLM-4.7-Flash coding server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=LOCAL_AI_FOREGROUND=1
+ExecStart=%h/git/dotfiles/scripts/local-ai-server-start.sh
+ExecStop=/usr/bin/env LOCAL_AI_SERVICE_STOP=1 %h/git/dotfiles/scripts/local-ai-server-stop.sh
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+StandardOutput=append:%h/.local/state/local-ai-coding/logs/llama-server.log
+StandardError=append:%h/.local/state/local-ai-coding/logs/llama-server.log
+
+[Install]
+WantedBy=default.target

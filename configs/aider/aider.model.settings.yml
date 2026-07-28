@@ -1,3 +1,12 @@
+- name: openai/glm-4.7-flash-local
+  edit_format: diff
+  lazy: true
+  system_prompt_prefix: |
+    You are running inside Aider. Use its architect/editor workflow and communicate proposals clearly.
+    Do not claim access to tools that Aider has not provided. Make focused SEARCH/REPLACE edits only.
+  extra_params:
+    max_tokens: 8192
+
 - name: openai/qwen3-coder-next
   edit_format: diff
   lazy: true

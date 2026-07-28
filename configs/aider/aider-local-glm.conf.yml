@@ -1,0 +1,12 @@
+# This profile is selected only by scripts/aider.sh. Keep test commands per repository.
+model: openai/glm-4.7-flash-local
+editor-model: openai/glm-4.7-flash-local
+architect: true
+auto-accept-architect: false
+auto-commits: false
+show-diffs: true
+subtree-only: true
+auto-lint: true
+auto-test: true
+read:
+  - ~/.aider/CONVENTIONS.md

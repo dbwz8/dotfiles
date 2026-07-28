@@ -19,6 +19,8 @@
     ~/.aider.model.metadata.json: configs/aider/aider.model.metadata.json
     ~/.aider.model.settings.yml: configs/aider/aider.model.settings.yml
     ~/.aider/CONVENTIONS.md: configs/aider/CONVENTIONS.md
+    ~/.config/local-ai-coding.env: configs/local-ai/local-ai.env
+    ~/.config/systemd/user/local-ai-glm.service: configs/systemd/user/local-ai-glm.service
     ~/.qwen/settings.json: configs/qwen/qwen/settings.json
     ~/.qwen/QWEN.md: configs/qwen/qwen/QWEN.md
     ~/.config/atuin: configs/atuin
