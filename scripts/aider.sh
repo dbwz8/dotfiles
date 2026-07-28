@@ -3,11 +3,20 @@
 set -euo pipefail
 
 script_dir="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=local-ai-common.sh
+source "${script_dir}/local-ai-common.sh"
 dotfiles_root="${script_dir}/.."
 health_script="${script_dir}/local-ai-server-health.sh"
 profile_config="${dotfiles_root}/configs/aider/aider-local-glm.conf.yml"
 model_name="${AIDER_MODEL:-glm-4.7-flash-local}"
 aider_state_dir="${AIDER_STATE_DIR:-${HOME}/.local/state/local-ai-coding/aider}"
+server_mode="${AIDER_SERVER_MODE:-auto}"
+remote_host="${AIDER_REMOTE_HOST:-weckerAA}"
+remote_bind="${AIDER_REMOTE_BIND_HOST:-127.0.0.1}"
+remote_port="${AIDER_REMOTE_PORT:-8000}"
+tunnel_bind="${AIDER_TUNNEL_BIND:-127.0.0.1}"
+tunnel_port="${AIDER_TUNNEL_PORT:-18000}"
+tunnel_wait_seconds="${AIDER_TUNNEL_WAIT_SECONDS:-30}"
 
 aider_bin() {
     local candidate
@@ -74,7 +83,54 @@ if [[ "${working_dir}" == "${git_root}" && "${tracked_files}" -gt 500 && "${allo
     exit 2
 fi
 
-"${health_script}" --models-only
+endpoint_health() {
+    LOCAL_AI_HOST="$1" LOCAL_AI_PORT="$2" "${health_script}" --models-only
+}
+
+base_url=""
+case "${server_mode}" in
+    auto|local|remote)
+        ;;
+    *)
+        printf 'Unknown AIDER_SERVER_MODE=%s; use auto, local, or remote.\n' "${server_mode}" >&2
+        exit 2
+        ;;
+esac
+
+if [[ "${server_mode}" != "remote" ]] && endpoint_health "${LOCAL_AI_HOST}" "${LOCAL_AI_PORT}" >/dev/null 2>&1; then
+    base_url="http://${LOCAL_AI_HOST}:${LOCAL_AI_PORT}/v1"
+    printf 'Using local GLM endpoint.\n'
+elif [[ "${server_mode}" == "local" ]]; then
+    endpoint_health "${LOCAL_AI_HOST}" "${LOCAL_AI_PORT}"
+    exit 1
+else
+    command -v ssh >/dev/null 2>&1 || {
+        printf 'ssh is required to reach the GLM server at %s.\n' "${remote_host}" >&2
+        exit 1
+    }
+
+    if ! endpoint_health "${tunnel_bind}" "${tunnel_port}" >/dev/null 2>&1; then
+        printf 'Opening SSH tunnel to %s for the local GLM endpoint.\n' "${remote_host}"
+        ssh -f -N \
+            -o ExitOnForwardFailure=yes \
+            -L "${tunnel_bind}:${tunnel_port}:${remote_bind}:${remote_port}" \
+            "${remote_host}"
+    fi
+
+    for (( elapsed = 0; elapsed < tunnel_wait_seconds; elapsed += 1 )); do
+        if endpoint_health "${tunnel_bind}" "${tunnel_port}" >/dev/null 2>&1; then
+            base_url="http://${tunnel_bind}:${tunnel_port}/v1"
+            printf 'Using GLM through SSH tunnel at %s.\n' "${base_url}"
+            break
+        fi
+        sleep 1
+    done
+    if [[ -z "${base_url}" ]]; then
+        endpoint_health "${tunnel_bind}" "${tunnel_port}" || true
+        printf 'The GLM endpoint did not become reachable through %s.\n' "${remote_host}" >&2
+        exit 1
+    fi
+fi
 
 project_dir="${working_dir}"
 while [[ "${project_dir}" != "${git_root}" ]]; do
@@ -108,7 +164,7 @@ else
 fi
 printf 'Architect proposals require your manual acceptance. Add only relevant files to Aider context.\n'
 
-export OPENAI_API_BASE="http://127.0.0.1:8000/v1"
+export OPENAI_API_BASE="${base_url}"
 export OPENAI_BASE_URL="${OPENAI_API_BASE}"
 export OPENAI_API_KEY="${AIDER_OPENAI_API_KEY:-dummy}"
 mkdir -p "${aider_state_dir}"

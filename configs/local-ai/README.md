@@ -49,6 +49,14 @@ The normal `local-ai-server-start.sh` and `local-ai-server-stop.sh` commands
 delegate to this service when it is enabled, so they remain the convenient
 manual lifecycle commands.
 
+## Client machines
+
+`aider` first uses a healthy local endpoint. If none is available, it
+automatically opens an SSH tunnel to `weckerAA`, forwarding the server's
+`127.0.0.1:8000` endpoint to the client's `127.0.0.1:18000`. Set
+`AIDER_REMOTE_HOST` to use another server, `AIDER_SERVER_MODE=local` to forbid
+the fallback, or `AIDER_SERVER_MODE=remote` to always use it.
+
 ## Careful Aider workflow
 
 From a focused directory in a Git repository, run `aider`. The wrapper checks
