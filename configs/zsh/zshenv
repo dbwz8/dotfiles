@@ -1,5 +1,15 @@
 # Keep early zsh startup quiet and safe. This runs before /etc/zsh/zshrc.
 
+# Remote commands and background jobs do not source .zshrc.  Never let them
+# inherit an interactive editor that could block a Git operation.
+if [[ ! -o interactive ]]; then
+    export EDITOR=:
+    export VISUAL=:
+    export GIT_EDITOR=:
+    export GIT_TERMINAL_PROMPT=0
+    unset GPG_TTY
+fi
+
 # Work around broken vendor completion symlinks (seen with Docker Desktop on WSL)
 # before the system zshrc runs compinit.
 vendor_completions_dir=/usr/share/zsh/vendor-completions
