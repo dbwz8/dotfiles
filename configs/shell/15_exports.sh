@@ -49,10 +49,18 @@ export DOTFILES_LOCALE="${DOTFILES_LOCALE:-en_US.UTF-8}"
 export LANG="$DOTFILES_LOCALE"
 export LC_ALL="$DOTFILES_LOCALE"
 export LC_CTYPE="$DOTFILES_LOCALE"
-export EDITOR="nvim"
-export VISUAL="nvim"
-export GIT_EDITOR="nvim"
-export GPG_TTY=$(tty)
+if [ -t 0 ] && [ -t 1 ] && [ -t 2 ]; then
+    export EDITOR="nvim"
+    export VISUAL="nvim"
+    export GIT_EDITOR="nvim"
+    export GPG_TTY="$(tty)"
+else
+    export EDITOR=:
+    export VISUAL=:
+    export GIT_EDITOR=:
+    export GIT_TERMINAL_PROMPT=0
+    unset GPG_TTY
+fi
 _is_valid_github_token() {
     case "${1:-}" in
         ""|*[[:space:]]*) return 1 ;;
