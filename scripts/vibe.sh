@@ -33,7 +33,7 @@ proxy_script="${VIBE_PROXY_SCRIPT:-${script_dir}/vibe-openai-proxy.js}"
 proxy_log="${VIBE_PROXY_LOG:-$HOME/.vibe/logs/openai-proxy.log}"
 api_key="${VIBE_LOCAL_API_KEY:-local-vllm}"
 wait_seconds="${VIBE_REMOTE_TUNNEL_WAIT_SECONDS:-30}"
-max_output_tokens="${VIBE_MAX_OUTPUT_TOKENS:-2048}"
+max_output_tokens="${VIBE_MAX_OUTPUT_TOKENS:-4096}"
 
 ensure_managed_config_link() {
   local backup_root backup_path suffix

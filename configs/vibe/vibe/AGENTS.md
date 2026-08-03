@@ -13,19 +13,26 @@ agent. If a request conflicts with a rule, state the conflict before acting.
 3. Execute a shell command supplied by the user through the Bash tool exactly
    as requested; do not report completion unless it ran.
 
+## Tool payloads
+
+4. Keep each code-writing tool call small enough to complete as valid JSON:
+   change one file and at most 150 lines per call. Use `vibe-apply-patch` or a
+   native edit; never emit a whole source file through `cat`, `tee`, or shell
+   redirection. Split larger changes into successive, verified edits.
+
 ## Go edits
 
-4. Edit one Go file and one complete syntactic unit at a time. Read the full
+5. Edit one Go file and one complete syntactic unit at a time. Read the full
    enclosing function before changing its control flow. Do not change isolated
    braces or hand-format Go.
-5. Prefer `ast-grep` for structural targets. Prefer native `edit` for a small,
+6. Prefer `ast-grep` for structural targets. Prefer native `edit` for a small,
    exact replacement; use `vibe-apply-patch` for a scoped unified diff. Make
    the edit yourself—do not hand an available edit back to the user.
-6. Before native-editing an existing `.go` file, run
+7. Before native-editing an existing `.go` file, run
    `vibe-expand-go-indent <file.go>`. Then edit and immediately run
    `gofmt -w <file.go>`. Do not normalize before `vibe-apply-patch`; it formats
    changed Go files itself.
-7. Never write Go source with `cat`, `tee`, shell redirection, or `sed`. After
+8. Never write Go source with `cat`, `tee`, shell redirection, or `sed`. After
    each formatted Go edit, run the relevant Go test. On an edit, format, or test
    failure, re-read the target and diagnose it before retrying.
 
