@@ -44,3 +44,5 @@ export PATH="/home/wecker/.local/bin:$PATH"
 
 # Added by Qwen Code standalone installer
 export PATH="/home/wecker/.local/bin:$PATH"
+
+. "/mnt/d/data/caches/qwen36-vllm/bin/env"
