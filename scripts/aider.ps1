@@ -7,7 +7,7 @@ $localPort = if ($env:AIDER_REMOTE_LOCAL_PORT) { [int]$env:AIDER_REMOTE_LOCAL_PO
 $remoteBind = if ($env:AIDER_REMOTE_BIND_HOST) { $env:AIDER_REMOTE_BIND_HOST } else { "127.0.0.1" }
 $remotePort = if ($env:AIDER_REMOTE_PORT) { [int]$env:AIDER_REMOTE_PORT } else { 8023 }
 $localDirectPort = if ($env:AIDER_LOCAL_PORT) { [int]$env:AIDER_LOCAL_PORT } else { $remotePort }
-$model = if ($env:AIDER_MODEL) { $env:AIDER_MODEL } else { "qwen3-coder-next" }
+$model = if ($env:AIDER_MODEL) { $env:AIDER_MODEL } else { "qwen3.6-27b" }
 $apiKey = if ($env:AIDER_OPENAI_API_KEY) { $env:AIDER_OPENAI_API_KEY } else { "local-vllm" }
 $waitSeconds = if ($env:AIDER_REMOTE_TUNNEL_WAIT_SECONDS) { [int]$env:AIDER_REMOTE_TUNNEL_WAIT_SECONDS } else { 30 }
 

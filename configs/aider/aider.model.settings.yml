@@ -7,7 +7,7 @@
   extra_params:
     max_tokens: 8192
 
-- name: openai/qwen3-coder-next
+- name: openai/qwen3.6-27b
   edit_format: diff
   lazy: true
   system_prompt_prefix: |

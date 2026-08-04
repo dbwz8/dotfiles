@@ -26,7 +26,7 @@ local_port="${QWEN_REMOTE_LOCAL_PORT:-18023}"
 remote_bind="${QWEN_REMOTE_BIND_HOST:-127.0.0.1}"
 remote_port="${QWEN_REMOTE_PORT:-8023}"
 local_direct_port="${QWEN_LOCAL_PORT:-$remote_port}"
-model="${QWEN_REMOTE_MODEL:-qwen3-coder-next}"
+model="${QWEN_REMOTE_MODEL:-qwen3.6-27b}"
 api_key="${QWEN_REMOTE_API_KEY:-local-vllm}"
 wait_seconds="${QWEN_REMOTE_TUNNEL_WAIT_SECONDS:-30}"
 max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-8192}"
@@ -59,11 +59,22 @@ ensure_managed_config_link() {
     rm -f "${qwen_config_target}"
     ln -s "${qwen_config_source}" "${qwen_config_target}"
 }
+tunnel_pid=""
+
+cleanup_owned_tunnel() {
+    if [[ -n "${tunnel_pid}" ]] && kill -0 "${tunnel_pid}" 2>/dev/null; then
+        kill "${tunnel_pid}" 2>/dev/null || true
+        wait "${tunnel_pid}" 2>/dev/null || true
+    fi
+    tunnel_pid=""
+}
+
 
 restore_managed_config_link() {
     local exit_status=$? temporary_config
 
     trap - EXIT
+    cleanup_owned_tunnel
     if [[ -f "${qwen_config_target}" && ! -L "${qwen_config_target}" ]]; then
         temporary_config="$(mktemp "${qwen_config_source}.tmp.XXXXXX")"
         printf 'Persisting Qwen settings %s -> %s\n' "${qwen_config_target}" "${qwen_config_source}" >&2
@@ -80,6 +91,9 @@ restore_managed_config_link() {
 ensure_managed_config_link
 trap restore_managed_config_link EXIT
 
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
 qwen_bin() {
     if [[ -n "${QWEN_CODE_BIN:-}" && -x "$QWEN_CODE_BIN" ]]; then
         printf '%s\n' "$QWEN_CODE_BIN"
@@ -114,7 +128,7 @@ parsed_args=()
 while (($#)); do
     case "$1" in
         --coding)
-            model="${QWEN_CODER_MODEL:-qwen3-coder-next}"
+            model="${QWEN_CODER_MODEL:-qwen3.6-27b}"
             shift
             ;;
         --thinking)
@@ -213,10 +227,11 @@ fi
 
 if [[ "$server_mode" = "ssh" ]] && ! endpoint_ok; then
     printf '%s\n' "Opening SSH tunnel to ${remote_host} for Qwen Code..."
-    ssh -f -N \
+    ssh -N \
         -o ExitOnForwardFailure=yes \
         -L "${local_bind}:${local_port}:${remote_bind}:${remote_port}" \
-        "${remote_host}"
+        "${remote_host}" &
+    tunnel_pid=$!
 
     elapsed=0
     while [ "$elapsed" -lt "$wait_seconds" ]; do

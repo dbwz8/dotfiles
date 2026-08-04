@@ -2,10 +2,10 @@
   "modelProviders": {
     "openai": [
       {
-        "id": "qwen3-coder-next",
-        "name": "weckerAA Qwen Coder Next",
+        "id": "qwen3.6-27b",
+        "name": "weckerAA Qwen3.6-27B",
         "baseUrl": "http://127.0.0.1:18023/v1",
-        "description": "Qwen Coder served from weckerAA through the qwen SSH tunnel.",
+        "description": "Qwen3.6-27B served from weckerAA through the qwen SSH tunnel.",
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
           "contextWindowSize": 131072,
@@ -50,7 +50,7 @@
     }
   },
   "model": {
-    "name": "qwen3-coder-next",
+    "name": "qwen3.6-27b",
     "baseUrl": "http://127.0.0.1:18023/v1",
     "sessionTokenLimit": 122880,
     "skipStartupContext": true

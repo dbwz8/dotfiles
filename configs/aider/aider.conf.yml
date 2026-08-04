@@ -1,4 +1,4 @@
-model: openai/qwen3-coder-next
+model: openai/qwen3.6-27b
 openai-api-base: http://127.0.0.1:18023/v1
 openai-api-key: local-vllm
 verbose: false
