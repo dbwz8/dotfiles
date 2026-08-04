@@ -196,7 +196,9 @@ case "$server_mode" in
 esac
 
 endpoint_ok() {
-    curl -fsS --max-time 2 "${base_url}/models" >/dev/null 2>&1
+    curl -fsS --max-time 2 \
+        -H "Authorization: Bearer ${api_key}" \
+        "${base_url}/models" >/dev/null 2>&1
 }
 
 if [[ "$server_mode" = "ssh" ]] && ! command -v ssh >/dev/null 2>&1; then

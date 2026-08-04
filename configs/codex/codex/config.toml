@@ -1,6 +1,6 @@
 personality = "pragmatic"
-model = "gpt-5.6-terra"
-model_reasoning_effort = "high"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "xhigh"
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
 check_for_update_on_startup = false
@@ -117,6 +117,12 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/mnt/c/Users/wecker/git/dotfiles"]
+trust_level = "trusted"
+
+[projects."/"]
+trust_level = "trusted"
+
+[projects."/home/wecker/git/arch"]
 trust_level = "trusted"
 
 [mcp_servers.ionq-mcp-gateway]

@@ -129,7 +129,9 @@
       "Bash(b)",
       "Bash(q)",
       "Bash(sed *)",
-      "Bash(ls *)"
+      "Bash(ls *)",
+      "Bash(uv *)",
+      "Bash(cargo test *)"
     ]
   }
 }
