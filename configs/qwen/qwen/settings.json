@@ -69,12 +69,13 @@
   },
   "$version": 4,
   "ui": {
-    "autoModeAcknowledged": true,
-    "shellOutputMaxLines": 0
+    "autoModeAcknowledged": true
   },
   "permissions": {
     "allow": [
-      "Bash(time *)"
+      "Bash(time *)",
+      "Read(//home/wecker/git/languages/rust/docs/**)",
+      "Read(//home/wecker/git/languages/rust/**)"
     ]
   }
 }
