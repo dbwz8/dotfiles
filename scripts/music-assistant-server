@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly expected_host="weckerAA"
+readonly script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+readonly config_dir="${script_dir}/../configs/music-assistant/weckerAA"
+readonly compose_file="${config_dir}/compose.yaml"
+readonly env_file="${config_dir}/.env"
+
+die() {
+  printf '%s\n' "music-assistant-server: $*" >&2
+  exit 1
+}
+
+usage() {
+  cat <<'EOF'
+Usage: music-assistant-server <up|update|status|logs>
+
+This command deliberately manages Music Assistant only on weckerAA.
+EOF
+}
+
+[ "$(hostname -s)" = "${expected_host}" ] || \
+  die "this server is restricted to ${expected_host}"
+[ "$(uname -s)" = "Linux" ] || \
+  die "a supported Docker deployment requires Linux or Home Assistant OS"
+command -v docker >/dev/null 2>&1 || die "docker is required"
+docker compose version >/dev/null 2>&1 || die "docker compose is required"
+[ -f "${env_file}" ] || \
+  die "copy ${config_dir}/.env.example to ${env_file} and set the host paths"
+
+compose() {
+  docker compose --env-file "${env_file}" -f "${compose_file}" "$@"
+}
+
+case "${1:-}" in
+  up)
+    compose up -d
+    ;;
+  update)
+    compose pull
+    compose up -d
+    ;;
+  status)
+    compose ps
+    ;;
+  logs)
+    compose logs -f
+    ;;
+  -h|--help|help|"")
+    usage
+    ;;
+  *)
+    usage >&2
+    exit 2
+    ;;
+esac

@@ -1,0 +1,16 @@
+services:
+  music-assistant-server:
+    image: ghcr.io/music-assistant/server:latest
+    container_name: music-assistant-server
+    restart: unless-stopped
+
+    # Music Assistant requires layer-2 access for mDNS/uPnP discovery and
+    # network-player streaming. Do not replace this with published ports.
+    network_mode: host
+
+    volumes:
+      - ${MA_DATA_DIR:?Set MA_DATA_DIR in .env}:/data
+      - ${MA_MUSIC_DIR:?Set MA_MUSIC_DIR in .env}:/media:ro
+
+    environment:
+      LOG_LEVEL: ${MA_LOG_LEVEL:-info}
