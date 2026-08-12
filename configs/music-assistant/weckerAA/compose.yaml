@@ -11,6 +11,9 @@ services:
     volumes:
       - ${MA_DATA_DIR:?Set MA_DATA_DIR in .env}:/data
       - ${MA_MUSIC_DIR:?Set MA_MUSIC_DIR in .env}:/media:ro
+      # Temporary compatibility fix for the Alexa provider in MA 2.9.12.
+      # It is idempotent and reports instead of guessing if upstream changes.
+      - ./overrides/sitecustomize.py:/app/venv/lib/python3.14/site-packages/sitecustomize.py:ro
 
     environment:
       LOG_LEVEL: ${MA_LOG_LEVEL:-info}

@@ -1,0 +1,10 @@
+# Use this only for the dedicated locally managed Alexa tunnel. Remotely
+# managed tunnels override their local ingress files.
+ingress:
+  - hostname: music.dbwz8.com
+    service: http://127.0.0.1:8095
+  - hostname: alexa.dbwz8.com
+    service: http://127.0.0.1:5000
+  - hostname: stream.dbwz8.com
+    service: http://127.0.0.1:8097
+  - service: http_status:404

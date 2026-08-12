@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly expected_host="weckerAA"
+readonly config_dir="/opt/music-assistant-alexa"
+readonly compose_file="${config_dir}/docker-compose.yml"
+
+die() {
+  printf '%s\n' "music-assistant-alexa: $*" >&2
+  exit 1
+}
+
+usage() {
+  cat <<'EOF'
+Usage: music-assistant-alexa <up|update|status|logs>
+
+This command deliberately manages the Alexa bridge only on weckerAA.
+EOF
+}
+
+[ "$(hostname -s)" = "${expected_host}" ] || \
+  die "this Alexa bridge is restricted to ${expected_host}"
+[ "$(uname -s)" = "Linux" ] || die "the Alexa bridge requires Linux"
+command -v docker >/dev/null 2>&1 || die "docker is required"
+docker compose version >/dev/null 2>&1 || die "docker compose is required"
+[ -f "${compose_file}" ] || die "missing ${compose_file}"
+[ -f "${config_dir}/secrets/app_username.txt" ] || \
+  die "create ${config_dir}/secrets/app_username.txt"
+[ -f "${config_dir}/secrets/app_password.txt" ] || \
+  die "create ${config_dir}/secrets/app_password.txt"
+
+compose() {
+  docker compose -f "${compose_file}" "$@"
+}
+
+case "${1:-}" in
+  up)
+    compose up -d
+    ;;
+  update)
+    compose pull
+    compose up -d
+    ;;
+  status)
+    compose ps
+    ;;
+  logs)
+    compose logs -f
+    ;;
+  -h|--help|help|"")
+    usage
+    ;;
+  *)
+    usage >&2
+    exit 2
+    ;;
+esac
