@@ -17,3 +17,5 @@ services:
 
     environment:
       LOG_LEVEL: ${MA_LOG_LEVEL:-info}
+      # Bypass Alexa speech parsing and launch this private skill directly.
+      MA_ALEXA_SKILL_ID: ${MA_ALEXA_SKILL_ID:?Set MA_ALEXA_SKILL_ID in .env}

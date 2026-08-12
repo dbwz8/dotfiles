@@ -60,6 +60,11 @@ status are green.
 Keep the Alexa-app skill name as `Music Assistant`, but use the unique
 invocation name `wecker music`. Music Assistant sends that invocation itself
 when it starts an Alexa stream, so normal playback remains entirely in MA.
+Set `MA_ALEXA_SKILL_ID` in the server `.env` to the Alexa Developer Console
+skill ID. MA launches that exact private skill directly, avoiding Alexa's
+speech interpretation and default music-service fallbacks.
+MA uses Alexa's device media controls for pause, resume, and stop; those
+actions do not depend on a spoken skill command.
 
 ## Music Assistant Alexa provider
 
@@ -75,6 +80,9 @@ devices will then appear as MA players. The Amazon Alexa app is needed only to
 enable the development skill; playback is selected and controlled from MA.
 
 Music Assistant cannot provide true synchronized Alexa multi-room playback.
+For Alexa Household devices, MA routes custom commands through each speaker's
+owner account so a speaker such as Kitchen does not fall back to its default
+music service (for example, Pandora).
 
 ## Current Music Assistant compatibility fix
 

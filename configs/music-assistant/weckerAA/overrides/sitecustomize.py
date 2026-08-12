@@ -46,6 +46,48 @@ REPLACEMENTS = (
         '                mass.webserver.unregister_dynamic_route(post_path, "POST")\n',
         '                mass.webserver.unregister_dynamic_route(proxy_callback_path, "*")\n',
     ),
+    (
+        "        await self.api.run_custom(utter)\n",
+        "        await self.api.run_custom(utter, customer_id=self.device._device_family)\n",
+    ),
+    (
+        '        utter = await provider.get_intent_utterance("AMAZON.StopIntent", "stop")\n'
+        "        await self.api.run_custom(utter, customer_id=self.device._device_family)\n",
+        "        await self.api.stop(customer_id=self.device._device_family)\n",
+    ),
+    (
+        '        utter = await provider.get_intent_utterance("AMAZON.ResumeIntent", "resume")\n'
+        "        await self.api.run_custom(utter, customer_id=self.device._device_family)\n",
+        "        await provider.mass.player_queues.resume(self.player_id)\n",
+    ),
+    (
+        '        utter = await provider.get_intent_utterance("AMAZON.PauseIntent", "pause")\n'
+        "        await self.api.run_custom(utter, customer_id=self.device._device_family)\n",
+        "        await self.api.stop(customer_id=self.device._device_family)\n",
+    ),
+    (
+        "        await self.api.run_custom(ALEXA_LANGUAGE_COMMANDS[ask_command_key])\n",
+        "        await self.api.run_custom(\n"
+        "            ALEXA_LANGUAGE_COMMANDS[ask_command_key],\n"
+        "            customer_id=self.device._device_family,\n"
+        "        )\n",
+    ),
+    (
+        "        await self.api.run_custom(\n"
+        "            ALEXA_LANGUAGE_COMMANDS[ask_command_key],\n"
+        "            customer_id=self.device._device_family,\n"
+        "        )\n",
+        "        skill_id = os.environ.get(\"MA_ALEXA_SKILL_ID\", \"\").strip()\n"
+        "        if skill_id:\n"
+        "            await self.api.run_skill(\n"
+        "                skill_id, customer_id=self.device._device_family\n"
+        "            )\n"
+        "        else:\n"
+        "            await self.api.run_custom(\n"
+        "                ALEXA_LANGUAGE_COMMANDS[ask_command_key],\n"
+        "                customer_id=self.device._device_family,\n"
+        "            )\n",
+    ),
 )
 
 
