@@ -17,7 +17,7 @@
           "name": "Muse Glimmer 30B + DFlash (weckerAA)",
           "limit": {
             "context": 32768,
-            "output": 4096
+            "output": 2048
           }
         }
       }
