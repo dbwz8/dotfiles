@@ -462,6 +462,11 @@ Qwen Code remains available as an optional CLI and its configuration is linked b
 `./install`. Its wrapper is retained for legacy Qwen services; use `qwen --local`
 for a local endpoint or `qwen --remote` for the SSH-over-Cloudflare path.
 
+`./install` also installs OpenCode on Unix-like clients. Run `opencode-muse` in a
+Git repository to open a private SSH tunnel to the agents router and start
+OpenCode with Muse Glimmer 30B + DFlash as the coding model. OpenCode executes
+file and shell tools locally on the client.
+
 The local coding workflow is Aider architect mode against a local GLM-4.7-Flash
 llama.cpp endpoint. It replaces Vibe/Devstral as the default while preserving
 existing Vibe, Devstral, and remote-model configuration. `aider` verifies the

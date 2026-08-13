@@ -241,6 +241,8 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.qwen/settings.json"
     backup_link_conflict "$HOME/.qwen/QWEN.md"
     backup_link_conflict "$HOME/.local/bin/install-qwen-code"
+    backup_link_conflict "$HOME/.local/bin/install-opencode"
+    backup_link_conflict "$HOME/.local/bin/opencode-muse"
     backup_link_conflict "$HOME/.local/bin/qwen"
     backup_link_conflict "$HOME/.local/bin/vibe-expand-go-indent"
     backup_link_conflict "$HOME/.local/bin/vibe-apply-patch"
@@ -307,6 +309,12 @@ fi
 if [ -f "${DOTFILES}/scripts/install-qwen-code.sh" ]; then
     if ! bash "${DOTFILES}/scripts/install-qwen-code.sh"; then
         printf '%s\n' "⚠️  Qwen Code installation failed; continuing dotfiles install." >&2
+    fi
+fi
+
+if [ -f "${DOTFILES}/scripts/install-opencode.sh" ]; then
+    if ! bash "${DOTFILES}/scripts/install-opencode.sh"; then
+        printf '%s\n' "⚠️  OpenCode installation failed; continuing dotfiles install." >&2
     fi
 fi
 

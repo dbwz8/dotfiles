@@ -1,0 +1,26 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "dbwz8/muse-glimmer-30b",
+  "provider": {
+    "dbwz8": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "dbwz8 via SSH",
+      "options": {
+        "baseURL": "http://127.0.0.1:18022/v1",
+        "apiKey": "{env:OPENCODE_MUSE_API_KEY}",
+        "headers": {
+          "X-Agents-Client": "opencode"
+        }
+      },
+      "models": {
+        "muse-glimmer-30b": {
+          "name": "Muse Glimmer 30B + DFlash (weckerAA)",
+          "limit": {
+            "context": 32768,
+            "output": 4096
+          }
+        }
+      }
+    }
+  }
+}
