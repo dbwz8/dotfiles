@@ -2,7 +2,13 @@
 # Run OpenCode against Muse Glimmer through the private agents router.
 set -euo pipefail
 
-script_dir="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+script_path="${BASH_SOURCE[0]}"
+while [[ -L "${script_path}" ]]; do
+    script_dir="$(cd -P "$(dirname "${script_path}")" && pwd)"
+    script_path="$(readlink "${script_path}")"
+    [[ "${script_path}" = /* ]] || script_path="${script_dir}/${script_path}"
+done
+script_dir="$(cd -P "$(dirname "${script_path}")" && pwd)"
 dotfiles_root="$(cd -P "${script_dir}/.." && pwd)"
 config_path="${OPENCODE_MUSE_CONFIG:-${dotfiles_root}/configs/opencode/opencode-muse.json}"
 remote_host="${OPENCODE_MUSE_REMOTE_HOST:-weckerAA}"

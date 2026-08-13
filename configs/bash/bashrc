@@ -15,4 +15,7 @@ if command -v pyenv >/dev/null 2>&1; then
     eval "$(pyenv virtualenv-init -)"
 fi
 
-. "/mnt/d/data/caches/qwen36-vllm/bin/env"
+qwen_vllm_env="/mnt/d/data/caches/qwen36-vllm/bin/env"
+if [ -f "${qwen_vllm_env}" ]; then
+    . "${qwen_vllm_env}"
+fi

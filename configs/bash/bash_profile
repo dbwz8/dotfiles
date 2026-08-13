@@ -7,4 +7,7 @@ source "$HOME/.config/dotfiles-shell/main.sh"
 
 if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
 
-. "/mnt/d/data/caches/qwen36-vllm/bin/env"
+qwen_vllm_env="/mnt/d/data/caches/qwen36-vllm/bin/env"
+if [ -f "${qwen_vllm_env}" ]; then
+    . "${qwen_vllm_env}"
+fi
