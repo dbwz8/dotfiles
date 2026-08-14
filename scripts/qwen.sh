@@ -34,6 +34,11 @@ safe_mode="${QWEN_CODE_SAFE_MODE:-0}"
 thinking_mode=0
 has_system_prompt_override=0
 thinking_append_system_prompt="${QWEN_THINKING_APPEND_SYSTEM_PROMPT:-When asked to implement, fix, refactor, add, or write code, modify the working tree with Qwen Code edit/write_file tools before answering. Do not put code blocks, patches, or replacement file contents in the final answer unless the user explicitly asks for snippets. If you cannot edit files, say so explicitly instead of showing code.}"
+workspace_root="$(pwd -P)"
+workspace_append_system_prompt="${QWEN_WORKSPACE_APPEND_SYSTEM_PROMPT:-}"
+if [[ -z "$workspace_append_system_prompt" ]]; then
+    workspace_append_system_prompt="The current workspace root is ${workspace_root}. Resolve every relative workspace path against this root before calling a tool. When a tool requires an absolute file path, always provide that resolved absolute path. If a tool reports invalid arguments, correct them and continue the user's request; do not treat the request as missing."
+fi
 
 ensure_managed_config_link() {
     local backup_root backup_path suffix
@@ -259,8 +264,14 @@ export OPENAI_MODEL="${model}"
 export QWEN_MODEL="${model}"
 export QWEN_CODE_MAX_OUTPUT_TOKENS="${max_output_tokens}"
 
-if [[ "$thinking_mode" = "1" && "$has_system_prompt_override" = "0" ]]; then
-    set -- --append-system-prompt "$thinking_append_system_prompt" "$@"
+if [[ "$has_system_prompt_override" = "0" ]]; then
+    system_prompt="$workspace_append_system_prompt"
+    if [[ "$thinking_mode" = "1" ]]; then
+        system_prompt="${thinking_append_system_prompt}
+
+${workspace_append_system_prompt}"
+    fi
+    set -- --append-system-prompt "$system_prompt" "$@"
 fi
 
 if should_add_safe_mode "$@"; then
