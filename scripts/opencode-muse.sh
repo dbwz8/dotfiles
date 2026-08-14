@@ -87,5 +87,5 @@ fi
 
 export OPENCODE_CONFIG="${config_path}"
 export OPENCODE_MUSE_API_KEY="${api_key}"
-printf '%s\n' "Starting OpenCode with Muse Glimmer 30B + DFlash through ${base_url}."
+printf '%s\n' "Starting OpenCode with Muse Glimmer 30B through ${base_url}."
 "${real_opencode}" "$@"
