@@ -37,7 +37,7 @@ thinking_append_system_prompt="${QWEN_THINKING_APPEND_SYSTEM_PROMPT:-When asked 
 workspace_root="$(pwd -P)"
 workspace_append_system_prompt="${QWEN_WORKSPACE_APPEND_SYSTEM_PROMPT:-}"
 if [[ -z "$workspace_append_system_prompt" ]]; then
-    workspace_append_system_prompt="The current workspace root is ${workspace_root}. Resolve every relative workspace path against this root before calling a tool. When a tool requires an absolute file path, always provide that resolved absolute path. If a tool reports invalid arguments, correct them and continue the user's request; do not treat the request as missing."
+    workspace_append_system_prompt="The current workspace root is ${workspace_root}. Your home directory is ${HOME}; expand a path beginning with ~/ as ${HOME}/. Resolve every other relative workspace path against the workspace root before calling a tool. When a tool requires an absolute file path, always provide that resolved absolute path. If a tool reports invalid arguments, correct them and continue the user's request; do not treat the request as missing."
 fi
 
 ensure_managed_config_link() {
