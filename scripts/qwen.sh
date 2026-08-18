@@ -231,12 +231,12 @@ if [[ "$server_mode" = "ssh" ]]; then
         printf '%s\n' "Invalid Qwen remote profile: ${remote_profile}" >&2
         exit 1
     fi
-    # Select the desired single-GPU profile before opening the shared agent
-    # API tunnel. The agent API retains Qwen's native tool protocol while
-    # applying the common loop guard used by every supported coding client.
-    # The server-side selector is a no-op for an already healthy matching
-    # profile.
-    ssh "${remote_host}" "sudo -n systemctl start agents-qwen-llama-select.service"
+    # Select the desired single-GPU vLLM profile before opening the shared
+    # agent API tunnel. The agent API retains Qwen's native tool protocol
+    # while applying the common loop guard used by every supported coding
+    # client. The server-side selector is a no-op for an already healthy
+    # matching profile.
+    ssh "${remote_host}" "sudo -n systemctl start agents-vllm-switch@${remote_profile}.service"
 fi
 
 if ! command -v curl >/dev/null 2>&1; then
