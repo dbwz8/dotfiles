@@ -24,11 +24,12 @@ remote_host="${QWEN_REMOTE_HOST:-weckerAA}"
 local_bind="${QWEN_REMOTE_LOCAL_BIND:-127.0.0.1}"
 local_port="${QWEN_REMOTE_LOCAL_PORT:-18023}"
 remote_bind="${QWEN_REMOTE_BIND_HOST:-127.0.0.1}"
-remote_port="${QWEN_REMOTE_PORT:-8023}"
+remote_port="${QWEN_REMOTE_PORT:-8028}"
+remote_profile="${QWEN_REMOTE_PROFILE:-qwen3.8-27b}"
 local_direct_port="${QWEN_LOCAL_PORT:-$remote_port}"
-model="${QWEN_REMOTE_MODEL:-qwen3.6-27b}"
+model="${QWEN_REMOTE_MODEL:-qwen3.8-27b}"
 api_key="${QWEN_REMOTE_API_KEY:-local-vllm}"
-wait_seconds="${QWEN_REMOTE_TUNNEL_WAIT_SECONDS:-30}"
+wait_seconds="${QWEN_REMOTE_TUNNEL_WAIT_SECONDS:-90}"
 max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-8192}"
 safe_mode="${QWEN_CODE_SAFE_MODE:-0}"
 thinking_mode=0
@@ -133,7 +134,7 @@ parsed_args=()
 while (($#)); do
     case "$1" in
         --coding)
-            model="${QWEN_CODER_MODEL:-qwen3.6-27b}"
+            model="${QWEN_CODER_MODEL:-qwen3.8-27b}"
             shift
             ;;
         --thinking)
@@ -223,6 +224,19 @@ endpoint_ok() {
 if [[ "$server_mode" = "ssh" ]] && ! command -v ssh >/dev/null 2>&1; then
     printf '%s\n' "ssh is required to open the Qwen Code tunnel to ${remote_host}." >&2
     exit 1
+fi
+
+if [[ "$server_mode" = "ssh" ]]; then
+    if [[ ! "$remote_profile" =~ ^[a-z0-9][a-z0-9.-]*$ ]]; then
+        printf '%s\n' "Invalid Qwen remote profile: ${remote_profile}" >&2
+        exit 1
+    fi
+    # Select the desired single-GPU profile before opening the shared agent
+    # API tunnel. The agent API retains Qwen's native tool protocol while
+    # applying the common loop guard used by every supported coding client.
+    # The server-side selector is a no-op for an already healthy matching
+    # profile.
+    ssh "${remote_host}" "sudo -n systemctl start agents-qwen-llama-select.service"
 fi
 
 if ! command -v curl >/dev/null 2>&1; then
