@@ -6,6 +6,9 @@ approvals_reviewer = "auto_review"
 check_for_update_on_startup = false
 plan_mode_reasoning_effort = "high"
 
+[tui.keymap.global]
+open_external_editor = "ctrl-x"
+
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4

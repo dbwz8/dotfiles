@@ -75,7 +75,13 @@
     "allow": [
       "Bash(time *)",
       "Read(//home/wecker/git/languages/rust/docs/**)",
-      "Read(//home/wecker/git/languages/rust/**)"
+      "Read(//home/wecker/git/languages/rust/**)",
+      "Bash(cargo build)",
+      "Bash(cargo test)",
+      "Bash(cargo run *)",
+      "Bash(sed *)",
+      "Bash(xxd)",
+      "Agent(Explore)"
     ]
   }
 }
