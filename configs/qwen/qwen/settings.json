@@ -62,6 +62,7 @@
     "approvalMode": "auto-edit"
   },
   "memory": {
+    "enableManagedAutoMemory": false,
     "enableAutoSkill": false
   },
   "privacy": {
