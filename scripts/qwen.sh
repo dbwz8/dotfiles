@@ -36,6 +36,7 @@ wait_seconds="${QWEN_REMOTE_TUNNEL_WAIT_SECONDS:-90}"
 max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-4096}"
 safe_mode="${QWEN_CODE_SAFE_MODE:-0}"
 thinking_mode=0
+fast_mode=0
 has_system_prompt_override=0
 thinking_append_system_prompt="${QWEN_THINKING_APPEND_SYSTEM_PROMPT:-When asked to implement, fix, refactor, add, or write code, modify the working tree with Qwen Code edit/write_file tools before answering. Do not put code blocks, patches, or replacement file contents in the final answer unless the user explicitly asks for snippets. If you cannot edit files, say so explicitly instead of showing code.}"
 workspace_root="$(pwd -P)"
@@ -84,7 +85,10 @@ restore_managed_config_link() {
 
     trap - EXIT
     cleanup_owned_tunnel
-    if [[ -f "${qwen_config_target}" && ! -L "${qwen_config_target}" ]]; then
+    if [[ "${fast_mode}" = "1" ]]; then
+        rm -f "${qwen_config_target}"
+        ln -s "${qwen_config_source}" "${qwen_config_target}"
+    elif [[ -f "${qwen_config_target}" && ! -L "${qwen_config_target}" ]]; then
         temporary_config="$(mktemp "${qwen_config_source}.tmp.XXXXXX")"
         printf 'Persisting Qwen settings %s -> %s\n' "${qwen_config_target}" "${qwen_config_source}" >&2
         cp -p "${qwen_config_target}" "${temporary_config}"
@@ -99,6 +103,21 @@ restore_managed_config_link() {
 
 ensure_managed_config_link
 trap restore_managed_config_link EXIT
+
+enable_fast_mode_settings() {
+    local temporary_config
+
+    if ! command -v jq >/dev/null 2>&1; then
+        printf '%s\n' 'jq is required for qwen --fast.' >&2
+        exit 1
+    fi
+
+    temporary_config="$(mktemp "${qwen_config_source}.fast.XXXXXX")"
+    jq '(.modelProviders.openai[] | select(.id == "qwen3.8-27b") | .generationConfig.extra_body.chat_template_kwargs.enable_thinking) = false' \
+        "${qwen_config_source}" > "${temporary_config}"
+    rm -f "${qwen_config_target}"
+    mv "${temporary_config}" "${qwen_config_target}"
+}
 
 trap 'exit 129' HUP
 trap 'exit 130' INT
@@ -145,6 +164,10 @@ while (($#)); do
             thinking_mode=1
             shift
             ;;
+        --fast)
+            fast_mode=1
+            shift
+            ;;
         --system-prompt|--append-system-prompt)
             has_system_prompt_override=1
             parsed_args+=("$1")
@@ -175,6 +198,10 @@ while (($#)); do
     esac
 done
 set -- "${parsed_args[@]}"
+
+if [[ "${fast_mode}" = "1" ]]; then
+    enable_fast_mode_settings
+fi
 
 should_add_safe_mode() {
     case "$safe_mode" in
