@@ -53,7 +53,11 @@
     "name": "qwen3.8-27b",
     "baseUrl": "http://127.0.0.1:18023/v1",
     "sessionTokenLimit": 52000,
-    "skipStartupContext": true
+    "skipStartupContext": true,
+    "chatCompression": {
+      "maxRecentFilesToRetain": 0,
+      "maxRecentImagesToRetain": 0
+    }
   },
   "context": {
     "autoCompactThreshold": 0.85
