@@ -37,6 +37,8 @@ max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-4096}"
 safe_mode="${QWEN_CODE_SAFE_MODE:-0}"
 thinking_mode=0
 fast_mode=0
+temporary_settings=0
+reasoning_effort=""
 has_system_prompt_override=0
 thinking_append_system_prompt="${QWEN_THINKING_APPEND_SYSTEM_PROMPT:-When asked to implement, fix, refactor, add, or write code, modify the working tree with Qwen Code edit/write_file tools before answering. Do not put code blocks, patches, or replacement file contents in the final answer unless the user explicitly asks for snippets. If you cannot edit files, say so explicitly instead of showing code.}"
 workspace_root="$(pwd -P)"
@@ -85,7 +87,7 @@ restore_managed_config_link() {
 
     trap - EXIT
     cleanup_owned_tunnel
-    if [[ "${fast_mode}" = "1" ]]; then
+    if [[ "${temporary_settings}" = "1" ]]; then
         rm -f "${qwen_config_target}"
         ln -s "${qwen_config_source}" "${qwen_config_target}"
     elif [[ -f "${qwen_config_target}" && ! -L "${qwen_config_target}" ]]; then
@@ -104,19 +106,69 @@ restore_managed_config_link() {
 ensure_managed_config_link
 trap restore_managed_config_link EXIT
 
-enable_fast_mode_settings() {
+enable_reasoning_settings() {
     local temporary_config
 
     if ! command -v jq >/dev/null 2>&1; then
-        printf '%s\n' 'jq is required for qwen --fast.' >&2
+        printf '%s\n' 'jq is required for qwen reasoning overrides.' >&2
         exit 1
     fi
 
-    temporary_config="$(mktemp "${qwen_config_source}.fast.XXXXXX")"
-    jq '(.modelProviders.openai[] | select(.id == "qwen3.8-27b") | .generationConfig.extra_body.chat_template_kwargs.enable_thinking) = false' \
-        "${qwen_config_source}" > "${temporary_config}"
+    temporary_config="$(mktemp "${qwen_config_source}.reasoning.XXXXXX")"
+    if [[ "${fast_mode}" = "1" ]]; then
+        jq '(.modelProviders.openai[] | select(.id == "qwen3.8-27b") | .generationConfig.extra_body.chat_template_kwargs) |= (. + {enable_thinking: false} | del(.reasoning_effort))' \
+            "${qwen_config_source}" > "${temporary_config}"
+    else
+        jq --arg effort "${reasoning_effort}" \
+            '(.modelProviders.openai[] | select(.id == "qwen3.8-27b") | .generationConfig.extra_body.chat_template_kwargs) |= (. + {enable_thinking: true, reasoning_effort: $effort})' \
+            "${qwen_config_source}" > "${temporary_config}"
+    fi
     rm -f "${qwen_config_target}"
     mv "${temporary_config}" "${qwen_config_target}"
+    temporary_settings=1
+}
+
+print_wrapper_help() {
+    printf '%s\n' \
+        '' \
+        'Qwen wrapper options:' \
+        '  --reasoning xhigh    Maximum Qwen 3.8 reasoning (default).' \
+        '  --reasoning high     Alias for xhigh.' \
+        '  --reasoning medium   Moderate Qwen 3.8 reasoning.' \
+        '  --reasoning low      Minimal Qwen 3.8 reasoning.' \
+        '  --reasoning off      Disable reasoning.' \
+        '  --fast               Alias for --reasoning off.' \
+        ''
+}
+
+set_reasoning_effort() {
+    case "${1:-}" in
+        xhigh|high)
+            if [[ "${fast_mode}" = "1" ]]; then
+                printf '%s\n' '--reasoning cannot be combined with --fast.' >&2
+                exit 2
+            fi
+            reasoning_effort="xhigh"
+            ;;
+        medium|low)
+            if [[ "${fast_mode}" = "1" ]]; then
+                printf '%s\n' '--reasoning cannot be combined with --fast.' >&2
+                exit 2
+            fi
+            reasoning_effort="$1"
+            ;;
+        off|fast)
+            if [[ -n "${reasoning_effort}" ]]; then
+                printf '%s\n' '--fast cannot be combined with another reasoning mode.' >&2
+                exit 2
+            fi
+            fast_mode=1
+            ;;
+        *)
+            printf '%s\n' '--reasoning requires one of: xhigh, high, medium, low, off, fast.' >&2
+            exit 2
+            ;;
+    esac
 }
 
 trap 'exit 129' HUP
@@ -160,12 +212,45 @@ while (($#)); do
             shift
             ;;
         --thinking)
+            if [[ "${fast_mode}" = "1" || -n "${reasoning_effort}" ]]; then
+                printf '%s\n' '--thinking cannot be combined with Qwen 3.8 reasoning overrides.' >&2
+                exit 2
+            fi
             model="${QWEN_THINKING_MODEL:-${QWEN_DEBUG_MODEL:-qwq-32b}}"
             thinking_mode=1
             shift
             ;;
-        --fast)
+        --reasoning)
+            if (($# < 2)); then
+                printf '%s\n' '--reasoning requires one of: xhigh, high, medium, low, off, fast.' >&2
+                exit 2
+            fi
+            if [[ "${thinking_mode}" = "1" ]]; then
+                printf '%s\n' '--reasoning cannot be combined with --thinking.' >&2
+                exit 2
+            fi
+            set_reasoning_effort "$2"
+            shift 2
+            ;;
+        --reasoning=*)
+            if [[ "${thinking_mode}" = "1" ]]; then
+                printf '%s\n' '--reasoning cannot be combined with --thinking.' >&2
+                exit 2
+            fi
+            set_reasoning_effort "${1#--reasoning=}"
+            shift
+            ;;
+        --fast|--reasoning=fast)
+            if [[ "${thinking_mode}" = "1" || -n "${reasoning_effort}" ]]; then
+                printf '%s\n' '--fast cannot be combined with another reasoning mode or --thinking.' >&2
+                exit 2
+            fi
             fast_mode=1
+            shift
+            ;;
+        --help|-h)
+            print_wrapper_help
+            parsed_args+=("$1")
             shift
             ;;
         --system-prompt|--append-system-prompt)
@@ -199,8 +284,8 @@ while (($#)); do
 done
 set -- "${parsed_args[@]}"
 
-if [[ "${fast_mode}" = "1" ]]; then
-    enable_fast_mode_settings
+if [[ "${fast_mode}" = "1" || -n "${reasoning_effort}" ]]; then
+    enable_reasoning_settings
 fi
 
 should_add_safe_mode() {
