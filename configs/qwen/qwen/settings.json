@@ -13,6 +13,11 @@
             "max_tokens": 4096,
             "temperature": 0.2,
             "top_p": 0.8
+          },
+          "extra_body": {
+            "chat_template_kwargs": {
+              "preserve_thinking": false
+            }
           }
         }
       },
