@@ -8,7 +8,7 @@
         "description": "Qwen3.8-27B NVFP4 served directly by vLLM on weckerAA through the Qwen SSH tunnel.",
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
-          "contextWindowSize": 49152,
+          "contextWindowSize": 61440,
           "samplingParams": {
             "max_tokens": 4096,
             "temperature": 0.2,
@@ -37,7 +37,7 @@
     "OPENAI_API_KEY": "local-vllm"
   },
   "generationConfig": {
-    "contextWindowSize": 49152,
+    "contextWindowSize": 61440,
     "samplingParams": {
       "max_tokens": 4096,
       "temperature": 0.2,
@@ -52,7 +52,7 @@
   "model": {
     "name": "qwen3.8-27b",
     "baseUrl": "http://127.0.0.1:18023/v1",
-    "sessionTokenLimit": 40000,
+    "sessionTokenLimit": 52000,
     "skipStartupContext": true
   },
   "context": {
