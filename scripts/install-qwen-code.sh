@@ -10,6 +10,10 @@ esac
 
 installed_qwen="${QWEN_CODE_BIN:-$HOME/.local/lib/qwen-code/bin/qwen}"
 
+apply_qwen_compaction_patch() {
+    QWEN_CODE_BIN="$1" bash "${DOTFILES}/scripts/patch-qwen-code-compaction.sh"
+}
+
 qwen_command() {
     local dotfiles_root qwen_cmd wrapper_path
     dotfiles_root="${DOTFILES:-}"
@@ -48,6 +52,7 @@ restore_qwen_wrapper() {
 
 if [ -x "$installed_qwen" ]; then
     printf '%s\n' "Qwen Code already installed at $installed_qwen."
+    apply_qwen_compaction_patch "${installed_qwen}"
     restore_qwen_wrapper
     exit 0
 fi
@@ -63,12 +68,14 @@ curl -fsSL https://qwen-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/in
 
 if qwen_cmd="$(qwen_command)"; then
     printf '%s\n' "Qwen Code installed at $qwen_cmd."
+    apply_qwen_compaction_patch "${qwen_cmd}"
     restore_qwen_wrapper
     exit 0
 fi
 
 if [ -x "$installed_qwen" ]; then
     printf '%s\n' "Qwen Code installed at $installed_qwen."
+    apply_qwen_compaction_patch "${installed_qwen}"
     restore_qwen_wrapper
     exit 0
 fi
