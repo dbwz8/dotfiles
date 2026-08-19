@@ -82,7 +82,19 @@
       "Bash(cargo run *)",
       "Bash(sed *)",
       "Bash(xxd)",
-      "Agent(Explore)"
+      "Agent(Explore)",
+      "Read(//home/wecker/**)",
+      "Bash(cd *)",
+      "Bash(git status)",
+      "Bash(git log *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(head *)",
+      "Bash(echo *)",
+      "Bash(sort)",
+      "Bash(cat *)",
+      "Bash(git rev-parse *)",
+      "Bash(grep *)"
     ]
   }
 }
