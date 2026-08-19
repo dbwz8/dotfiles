@@ -24,7 +24,10 @@ remote_host="${QWEN_REMOTE_HOST:-weckerAA}"
 local_bind="${QWEN_REMOTE_LOCAL_BIND:-127.0.0.1}"
 local_port="${QWEN_REMOTE_LOCAL_PORT:-18023}"
 remote_bind="${QWEN_REMOTE_BIND_HOST:-127.0.0.1}"
-remote_port="${QWEN_REMOTE_PORT:-8028}"
+# Qwen Code owns its local tool loop.  Connect it straight to vLLM so a model
+# upgrade changes only the model/runtime, not a second server-side agent loop.
+# The browser chat UI continues to use the agent API on :8028.
+remote_port="${QWEN_REMOTE_PORT:-8023}"
 remote_profile="${QWEN_REMOTE_PROFILE:-qwen3.8-27b}"
 local_direct_port="${QWEN_LOCAL_PORT:-$remote_port}"
 model="${QWEN_REMOTE_MODEL:-qwen3.8-27b}"
@@ -231,11 +234,8 @@ if [[ "$server_mode" = "ssh" ]]; then
         printf '%s\n' "Invalid Qwen remote profile: ${remote_profile}" >&2
         exit 1
     fi
-    # Select the desired single-GPU vLLM profile before opening the shared
-    # agent API tunnel. The agent API retains Qwen's native tool protocol
-    # while applying the common loop guard used by every supported coding
-    # client. The server-side selector is a no-op for an already healthy
-    # matching profile.
+    # Select the desired single-GPU vLLM profile before opening the direct
+    # vLLM tunnel. The selector is a no-op for an already healthy profile.
     ssh "${remote_host}" "sudo -n systemctl start agents-vllm-switch@${remote_profile}.service"
 fi
 
