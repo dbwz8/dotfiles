@@ -16,7 +16,8 @@
           },
           "extra_body": {
             "chat_template_kwargs": {
-              "preserve_thinking": false
+              "preserve_thinking": false,
+              "enable_thinking": false
             }
           }
         }

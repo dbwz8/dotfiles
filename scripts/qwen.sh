@@ -132,11 +132,11 @@ print_wrapper_help() {
     printf '%s\n' \
         '' \
         'Qwen wrapper options:' \
-        '  --reasoning xhigh    Maximum Qwen 3.8 reasoning (default).' \
+        '  --reasoning xhigh    Maximum Qwen 3.8 reasoning.' \
         '  --reasoning high     Alias for xhigh.' \
         '  --reasoning medium   Moderate Qwen 3.8 reasoning.' \
         '  --reasoning low      Minimal Qwen 3.8 reasoning.' \
-        '  --reasoning off      Disable reasoning.' \
+        '  --reasoning off      Disable reasoning (default).' \
         '  --fast               Alias for --reasoning off.' \
         ''
 }
