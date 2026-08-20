@@ -348,7 +348,7 @@ if [[ "$server_mode" = "ssh" ]]; then
     fi
     # Select the desired single-GPU vLLM profile before opening the direct
     # vLLM tunnel. The selector is a no-op for an already healthy profile.
-    ssh "${remote_host}" "sudo -n systemctl start agents-vllm-switch@${remote_profile}.service"
+    ssh "${remote_host}" "sudo -n systemctl daemon-reload && sudo -n systemctl start agents-vllm-switch@${remote_profile}.service"
 fi
 
 if ! command -v curl >/dev/null 2>&1; then
