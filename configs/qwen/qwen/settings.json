@@ -3,9 +3,9 @@
     "openai": [
       {
         "id": "qwen3.8-27b",
-        "name": "weckerAA Qwen3.8-27B",
+        "name": "weckerAA Qwen3.8-27B Fast",
         "baseUrl": "http://127.0.0.1:18023/v1",
-        "description": "Qwen3.8-27B NVFP4 served directly by vLLM on weckerAA through the Qwen SSH tunnel.",
+        "description": "Qwen3.8-27B NVFP4 served directly by vLLM on weckerAA with thinking disabled.",
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
           "contextWindowSize": 81920,
@@ -15,9 +15,32 @@
             "top_p": 0.8
           },
           "extra_body": {
+            "enable_thinking": false,
             "chat_template_kwargs": {
               "preserve_thinking": false,
               "enable_thinking": false
+            }
+          }
+        }
+      },
+      {
+        "id": "qwen3.8-27b",
+        "name": "weckerAA Qwen3.8-27B Thinking",
+        "baseUrl": "http://localhost:18023/v1",
+        "description": "Qwen3.8-27B NVFP4 served directly by vLLM on weckerAA with thinking enabled for /effort levels.",
+        "envKey": "OPENAI_API_KEY",
+        "generationConfig": {
+          "contextWindowSize": 81920,
+          "samplingParams": {
+            "max_tokens": 4096,
+            "temperature": 0.2,
+            "top_p": 0.8
+          },
+          "extra_body": {
+            "enable_thinking": true,
+            "chat_template_kwargs": {
+              "preserve_thinking": false,
+              "enable_thinking": true
             }
           }
         }

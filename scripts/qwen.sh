@@ -37,6 +37,8 @@ max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-4096}"
 safe_mode="${QWEN_CODE_SAFE_MODE:-0}"
 thinking_mode=0
 fast_mode=0
+qwen_fast_base_url="http://127.0.0.1:18023/v1"
+qwen_thinking_base_url="http://localhost:18023/v1"
 temporary_settings=0
 reasoning_effort=""
 has_system_prompt_override=0
@@ -116,12 +118,17 @@ enable_reasoning_settings() {
 
     temporary_config="$(mktemp "${qwen_config_source}.reasoning.XXXXXX")"
     if [[ "${fast_mode}" = "1" ]]; then
-        jq '(.modelProviders.openai[] | select(.id == "qwen3.8-27b") | .generationConfig.extra_body.chat_template_kwargs) |= (. + {enable_thinking: false} | del(.reasoning_effort))' \
-            "${qwen_config_source}" > "${temporary_config}"
+        jq --arg base_url "${qwen_fast_base_url}" '
+            .model.name = "qwen3.8-27b"
+            | .model.baseUrl = $base_url
+            | del(.model.reasoningEffort)
+        ' "${qwen_config_source}" > "${temporary_config}"
     else
-        jq --arg effort "${reasoning_effort}" \
-            '(.modelProviders.openai[] | select(.id == "qwen3.8-27b") | .generationConfig.extra_body.chat_template_kwargs) |= (. + {enable_thinking: true, reasoning_effort: $effort})' \
-            "${qwen_config_source}" > "${temporary_config}"
+        jq --arg base_url "${qwen_thinking_base_url}" --arg effort "${reasoning_effort}" '
+            .model.name = "qwen3.8-27b"
+            | .model.baseUrl = $base_url
+            | .model.reasoningEffort = $effort
+        ' "${qwen_config_source}" > "${temporary_config}"
     fi
     rm -f "${qwen_config_target}"
     mv "${temporary_config}" "${qwen_config_target}"
@@ -284,10 +291,6 @@ while (($#)); do
 done
 set -- "${parsed_args[@]}"
 
-if [[ "${fast_mode}" = "1" || -n "${reasoning_effort}" ]]; then
-    enable_reasoning_settings
-fi
-
 should_add_safe_mode() {
     case "$safe_mode" in
         0|false|FALSE|no|NO)
@@ -316,6 +319,13 @@ case "${1:-}" in
         exit $?
         ;;
 esac
+
+if [[ "${thinking_mode}" = "0" && "${fast_mode}" = "0" && -z "${reasoning_effort}" ]]; then
+    fast_mode=1
+fi
+if [[ "${fast_mode}" = "1" || -n "${reasoning_effort}" ]]; then
+    enable_reasoning_settings
+fi
 
 case "$server_mode" in
     local)
