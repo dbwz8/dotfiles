@@ -23,6 +23,8 @@ if [[ ($- == *i*) && -n "$ZSH_VERSION" ]]; then
         source "$_dotfiles_root/submodules/zsh-autosuggestions/zsh-autosuggestions.zsh"
     fi
     if [ -f "$_dotfiles_root/submodules/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+        # Avoid re-highlighting huge command buffers on every keystroke.
+        ZSH_HIGHLIGHT_MAXLENGTH=300
         source "$_dotfiles_root/submodules/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     fi
     if [ -f "$_dotfiles_root/submodules/zsh-z/zsh-z.plugin.zsh" ]; then
