@@ -86,7 +86,8 @@
     "chatCompression": {
       "maxRecentFilesToRetain": 0,
       "maxRecentImagesToRetain": 0
-    }
+    },
+    "reasoningEffort": "low"
   },
   "context": {
     "autoCompactThreshold": 0.85
