@@ -1,6 +1,6 @@
 layout {
     cwd "/home/wecker/git"
-    tab name="kl" hide_floating_panes=true {
+    tab name="coding" hide_floating_panes=true {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
