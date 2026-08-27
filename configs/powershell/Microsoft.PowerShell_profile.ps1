@@ -144,7 +144,8 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
     if (Get-Command direnv -ErrorAction SilentlyContinue) {
         Invoke-Expression (& { (direnv hook pwsh | Out-String) })
     }
-    if (Get-Command atuin -ErrorAction SilentlyContinue) {
+    # Set DOTFILES_ENABLE_ATUIN_POWERSHELL=0 to disable Atuin integration.
+    if ($env:DOTFILES_ENABLE_ATUIN_POWERSHELL -ne "0" -and (Get-Command atuin -ErrorAction SilentlyContinue)) {
         Invoke-Expression (& { (atuin init powershell --disable-up-arrow | Out-String) })
     }
 }

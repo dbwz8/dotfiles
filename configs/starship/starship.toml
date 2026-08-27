@@ -1,4 +1,5 @@
 scan_timeout = 1
+command_timeout = 2_000
 
 [time]
 disabled = false
@@ -19,4 +20,3 @@ zsh_indicator = ""
 unknown_indicator = ""
 format = '[$indicator](cyan bold) '
 disabled = false
-
