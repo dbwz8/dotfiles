@@ -6,6 +6,10 @@
         "name": "weckerAA Qwen3.8-27B Fast",
         "baseUrl": "http://127.0.0.1:18023/v1",
         "description": "Qwen3.8-27B FP8 vision-language model served directly by vLLM on weckerAA with thinking disabled.",
+        "capabilities": {
+          "vision": true,
+          "agent": true
+        },
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
           "contextWindowSize": 32768,
@@ -28,6 +32,10 @@
         "name": "weckerAA Qwen3.8-27B Thinking",
         "baseUrl": "http://localhost:18023/v1",
         "description": "Qwen3.8-27B FP8 vision-language model served directly by vLLM on weckerAA with thinking enabled for /effort levels.",
+        "capabilities": {
+          "vision": true,
+          "agent": true
+        },
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
           "contextWindowSize": 32768,
