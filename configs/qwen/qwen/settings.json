@@ -13,6 +13,9 @@
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
           "contextWindowSize": 32768,
+          "modalities": {
+            "image": true
+          },
           "samplingParams": {
             "max_tokens": 4096,
             "temperature": 0.2,
@@ -39,6 +42,9 @@
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
           "contextWindowSize": 32768,
+          "modalities": {
+            "image": true
+          },
           "samplingParams": {
             "max_tokens": 4096,
             "temperature": 0.2,
