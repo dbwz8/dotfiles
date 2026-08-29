@@ -12,7 +12,7 @@
         },
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
-          "contextWindowSize": 32768,
+          "contextWindowSize": 49152,
           "modalities": {
             "image": true
           },
@@ -41,7 +41,7 @@
         },
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
-          "contextWindowSize": 32768,
+          "contextWindowSize": 49152,
           "modalities": {
             "image": true
           },
@@ -80,7 +80,7 @@
     "OPENAI_API_KEY": "local-vllm"
   },
   "generationConfig": {
-    "contextWindowSize": 32768,
+    "contextWindowSize": 49152,
     "samplingParams": {
       "max_tokens": 4096,
       "temperature": 0.2,
@@ -95,7 +95,7 @@
   "model": {
     "name": "qwen3.8-27b",
     "baseUrl": "http://127.0.0.1:18023/v1",
-    "sessionTokenLimit": 28672,
+    "sessionTokenLimit": 43008,
     "skipStartupContext": true,
     "chatCompression": {
       "maxRecentFilesToRetain": 0,
