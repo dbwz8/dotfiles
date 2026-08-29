@@ -19,7 +19,7 @@ script_path="$(resolve_script_path)"
 script_dir="$(cd -P "$(dirname "${script_path}")" && pwd)"
 qwen_config_source="$(cd -P "${script_dir}/../configs/qwen/qwen" && pwd)/settings.json"
 qwen_config_target="${HOME}/.qwen/settings.json"
-server_mode="${QWEN_SERVER_MODE:-ssh}"
+server_mode="${QWEN_SERVER_MODE:-local}"
 remote_host="${QWEN_REMOTE_HOST:-weckerAA}"
 local_bind="${QWEN_REMOTE_LOCAL_BIND:-127.0.0.1}"
 local_port="${QWEN_REMOTE_LOCAL_PORT:-18023}"
@@ -37,8 +37,6 @@ max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-4096}"
 safe_mode="${QWEN_CODE_SAFE_MODE:-0}"
 thinking_mode=0
 fast_mode=0
-qwen_fast_base_url="http://127.0.0.1:18023/v1"
-qwen_thinking_base_url="http://localhost:18023/v1"
 temporary_settings=0
 reasoning_effort=""
 has_system_prompt_override=0
@@ -118,13 +116,13 @@ enable_reasoning_settings() {
 
     temporary_config="$(mktemp "${qwen_config_source}.reasoning.XXXXXX")"
     if [[ "${fast_mode}" = "1" ]]; then
-        jq --arg base_url "${qwen_fast_base_url}" '
+        jq --arg base_url "${base_url}" '
             .model.name = "qwen3.8-27b"
             | .model.baseUrl = $base_url
             | del(.model.reasoningEffort)
         ' "${qwen_config_source}" > "${temporary_config}"
     else
-        jq --arg base_url "${qwen_thinking_base_url}" --arg effort "${reasoning_effort}" '
+        jq --arg base_url "${base_url}" --arg effort "${reasoning_effort}" '
             .model.name = "qwen3.8-27b"
             | .model.baseUrl = $base_url
             | .model.reasoningEffort = $effort
@@ -323,9 +321,6 @@ esac
 if [[ "${thinking_mode}" = "0" && "${fast_mode}" = "0" && -z "${reasoning_effort}" ]]; then
     fast_mode=1
 fi
-if [[ "${fast_mode}" = "1" || -n "${reasoning_effort}" ]]; then
-    enable_reasoning_settings
-fi
 
 case "$server_mode" in
     local)
@@ -339,6 +334,10 @@ case "$server_mode" in
         exit 1
         ;;
 esac
+
+if [[ "${fast_mode}" = "1" || -n "${reasoning_effort}" ]]; then
+    enable_reasoning_settings
+fi
 
 endpoint_ok() {
     curl -fsS --max-time 2 \
