@@ -4,7 +4,7 @@
       {
         "id": "qwen3.8-27b",
         "name": "weckerAA Qwen3.8-27B Fast",
-        "baseUrl": "http://127.0.0.1:8023/v1",
+        "baseUrl": "http://127.0.0.1:18023/v1",
         "description": "Qwen3.8-27B FP8 vision-language model served directly by vLLM on weckerAA with thinking disabled.",
         "capabilities": {
           "vision": true,
@@ -33,7 +33,7 @@
       {
         "id": "qwen3.8-27b",
         "name": "weckerAA Qwen3.8-27B Thinking",
-        "baseUrl": "http://localhost:8023/v1",
+        "baseUrl": "http://localhost:18023/v1",
         "description": "Qwen3.8-27B FP8 vision-language model served directly by vLLM on weckerAA with thinking enabled for /effort levels.",
         "capabilities": {
           "vision": true,
@@ -94,7 +94,7 @@
   },
   "model": {
     "name": "qwen3.8-27b",
-    "baseUrl": "http://127.0.0.1:8023/v1",
+    "baseUrl": "http://127.0.0.1:18023/v1",
     "sessionTokenLimit": 43008,
     "skipStartupContext": true,
     "chatCompression": {
