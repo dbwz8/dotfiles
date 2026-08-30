@@ -31,9 +31,11 @@ if [[ ($- == *i*) && -n "$ZSH_VERSION" ]]; then
         source "$_dotfiles_root/submodules/zsh-z/zsh-z.plugin.zsh"
     fi
 
-    # -- fix Atuin [Ctrl-r] key binding
-    if command -v atuin &> /dev/null; then
+    # -- Prefer Atuin history search, but keep Ctrl-R usable if it failed to start.
+    if (( $+widgets[atuin-search] )); then
         bindkey -M emacs '^r' atuin-search  # This again because `omz/lib/key-bindings.zsh` overwrote it
+    else
+        bindkey -M emacs '^r' history-incremental-search-backward
     fi
     bindkey '^[v' .describe-key-briefly # alt-v to describe any key
     bindkey '^[OA' up-line-or-search
