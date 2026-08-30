@@ -95,6 +95,14 @@
   "model": {
     "name": "qwen3.8-27b",
     "baseUrl": "http://127.0.0.1:18023/v1",
+    "generationConfig": {
+      "contextWindowSize": 49152,
+      "samplingParams": {
+        "max_tokens": 4096,
+        "temperature": 0.2,
+        "top_p": 0.8
+      }
+    },
     "sessionTokenLimit": 43008,
     "skipStartupContext": true,
     "chatCompression": {
