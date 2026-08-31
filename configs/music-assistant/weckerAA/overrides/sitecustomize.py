@@ -15,6 +15,7 @@ from pathlib import Path
 
 PROVIDER = Path(__file__).parent / "music_assistant/providers/alexa/__init__.py"
 
+import os
 REPLACEMENTS = (
     (
         "from alexapy import AlexaAPI, AlexaLogin, AlexaProxy\n",
@@ -94,6 +95,25 @@ REPLACEMENTS = (
 def apply() -> None:
     """Apply known-safe substitutions to the installed provider."""
     source = PROVIDER.read_text(encoding="utf-8")
+    if "from alexapy import AlexaAPI, AlexaLogin, AlexaProxy\\n" not in source:
+        old = """        await self.api.run_custom(ALEXA_LANGUAGE_COMMANDS[ask_command_key])
+"""
+        new = """        skill_id = os.environ.get("MA_ALEXA_SKILL_ID", "").strip()
+        if skill_id:
+            await self.api.run_skill(skill_id, customer_id=self.device._device_family)
+        else:
+            await self.api.run_custom(
+                ALEXA_LANGUAGE_COMMANDS[ask_command_key],
+                customer_id=self.device._device_family,
+            )
+"""
+        if new in source:
+            return
+        if old not in source:
+            print("Music Assistant Alexa compatibility fix skipped: upstream changed")
+            return
+        PROVIDER.write_text(source.replace(old, new, 1), encoding="utf-8")
+        return
     updated = source
     for old, new in REPLACEMENTS:
         if new in updated:
