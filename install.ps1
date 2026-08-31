@@ -581,6 +581,18 @@ if ($dotbins) {
         "uv"
     )
     if ($githubAuthValid) {
+        $atuinBinary = Join-Path $HOME ".dotbins\windows\amd64\bin\atuin.exe"
+        $atuinDaemonProcesses = @()
+        if (Test-Path $atuinBinary) {
+            $atuinDaemonProcesses = @(Get-CimInstance Win32_Process -Filter "Name = 'atuin.exe'" -ErrorAction SilentlyContinue | Where-Object {
+                $_.ExecutablePath -eq $atuinBinary -and $_.CommandLine -match "\sdaemon\s+start(\s|$)"
+            })
+        }
+        if ($atuinDaemonProcesses.Count -gt 0) {
+            Write-Host "Stopping the Atuin daemon while dotbins updates its executable..."
+            $atuinDaemonProcesses | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
+        }
+
         $previousPythonIoEncoding = $env:PYTHONIOENCODING
         $previousPythonUtf8 = $env:PYTHONUTF8
         $env:PYTHONIOENCODING = "utf-8"
@@ -597,6 +609,10 @@ if ($dotbins) {
                 Remove-Item Env:\PYTHONUTF8 -ErrorAction SilentlyContinue
             } else {
                 $env:PYTHONUTF8 = $previousPythonUtf8
+            }
+            if ($atuinDaemonProcesses.Count -gt 0) {
+                Write-Host "Restarting the Atuin daemon..."
+                Start-Process -FilePath $atuinBinary -ArgumentList @("daemon", "start") -WindowStyle Hidden
             }
         }
     } else {
