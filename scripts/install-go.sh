@@ -43,7 +43,7 @@ latest_go_version() {
     fi
 
     require_command curl
-    version="$(curl -fsSL "$GO_VERSION_URL" | sed -n '1{s/[[:space:]].*$//;p;q;}')"
+    version="$(curl -fsSL --retry 3 "$GO_VERSION_URL" | sed -n '1{s/[[:space:]].*$//;p;q;}')"
     if [ -z "$version" ] || [ "$version" = "${version#go}" ]; then
         printf '%s\n' "Could not resolve the latest Go version from $GO_VERSION_URL." >&2
         exit 1
