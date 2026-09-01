@@ -12,6 +12,7 @@ if (Test-IsDisabled -Value $env:DOTFILES_INSTALL_GO) {
 
 $GoVersionUrl = if ($env:DOTFILES_GO_VERSION_URL) { $env:DOTFILES_GO_VERSION_URL } else { "https://go.dev/VERSION?m=text" }
 $GoDownloadBase = if ($env:DOTFILES_GO_DOWNLOAD_BASE) { $env:DOTFILES_GO_DOWNLOAD_BASE } else { "https://go.dev/dl" }
+$GoChecksumBase = if ($env:DOTFILES_GO_CHECKSUM_BASE) { $env:DOTFILES_GO_CHECKSUM_BASE } else { "https://dl.google.com/go" }
 $GoInstallRoot = if ($env:DOTFILES_GO_INSTALL_ROOT) { $env:DOTFILES_GO_INSTALL_ROOT } else { Join-Path $HOME ".local\go" }
 $DefaultGoTools = @("golang.org/x/tools/gopls@latest", "golang.org/x/tools/cmd/goimports@latest")
 $GoTools = if ($env:DOTFILES_GO_TOOLS) { $env:DOTFILES_GO_TOOLS -split "\s+" | Where-Object { $_ } } else { $DefaultGoTools }
@@ -101,13 +102,22 @@ function Add-UserPathEntry {
 function Get-GoArchiveSha256 {
     param([Parameter(Mandatory = $true)][string]$ArchiveName)
 
-    $releases = Invoke-RestMethod -Uri "$GoDownloadBase/?mode=json&include=all"
-    $file = $releases.files | Where-Object { $_.filename -eq $ArchiveName } | Select-Object -First 1
-    if (-not $file -or -not $file.sha256) {
-        throw "Could not find a SHA-256 checksum for $ArchiveName."
+    $checksumUrls = @("$GoDownloadBase/$ArchiveName.sha256")
+    if ($GoChecksumBase -ne $GoDownloadBase) {
+        $checksumUrls += "$GoChecksumBase/$ArchiveName.sha256"
     }
 
-    return $file.sha256
+    foreach ($checksumUrl in $checksumUrls) {
+        try {
+            $checksum = ((Invoke-RestMethod -Uri $checksumUrl) -split "\s+")[0].Trim()
+            if ($checksum -match "^[0-9a-fA-F]{64}$") {
+                return $checksum
+            }
+        } catch {
+        }
+    }
+
+    throw "Could not find a SHA-256 checksum for $ArchiveName."
 }
 
 function Install-GoArchive {

@@ -16,6 +16,7 @@ fi
 
 GO_VERSION_URL="${DOTFILES_GO_VERSION_URL:-https://go.dev/VERSION?m=text}"
 GO_DOWNLOAD_BASE="${DOTFILES_GO_DOWNLOAD_BASE:-https://go.dev/dl}"
+GO_CHECKSUM_BASE="${DOTFILES_GO_CHECKSUM_BASE:-https://dl.google.com/go}"
 GO_INSTALL_ROOT="${DOTFILES_GO_INSTALL_ROOT:-/usr/local/go}"
 GO_TOOLS="${DOTFILES_GO_TOOLS:-golang.org/x/tools/gopls@latest golang.org/x/tools/cmd/goimports@latest}"
 GO_LEGACY_INSTALL_ROOT="$HOME/.local/go"
@@ -129,30 +130,22 @@ compare_go_versions() {
 }
 
 fetch_archive_sha256() {
-    local archive_name
+    local archive_name checksum checksum_url
     archive_name="$1"
 
-    require_command awk
-    require_command tr
+    for checksum_url in "$GO_DOWNLOAD_BASE/$archive_name.sha256" "$GO_CHECKSUM_BASE/$archive_name.sha256"; do
+        checksum="$(curl -fsSL --retry 3 "$checksum_url" 2>/dev/null | sed -n '1{s/[[:space:]].*$//;p;q;}' || true)"
+        case "$checksum" in
+            *[!0-9A-Fa-f]*|'') continue ;;
+        esac
 
-    curl -fsSL "$GO_DOWNLOAD_BASE/?mode=json&include=all" \
-        | tr '{},' '\n' \
-        | awk -v target="$archive_name" '
-            {
-                compact = $0
-                gsub(/[[:space:]]/, "", compact)
-            }
-            compact == "\"filename\":\"" target "\"" {
-                found = 1
-                next
-            }
-            found && compact ~ /^"sha256":/ {
-                sub(/^"sha256":"/, "", compact)
-                sub(/"$/, "", compact)
-                print compact
-                found = 0
-            }
-        '
+        if [ "${#checksum}" -eq 64 ]; then
+            printf '%s\n' "$checksum"
+            return 0
+        fi
+    done
+
+    return 1
 }
 
 verify_archive() {

@@ -58,25 +58,39 @@ with_vibe_wrapper_temporarily_removed() {
   return "$status"
 }
 
-"$UV_BIN" tool install --force --python python3.12 --with pip aider-chat@latest
-"$UV_BIN" tool install agent-cli
-"$UV_BIN" tool install asciinema
-"$UV_BIN" tool install black
-"$UV_BIN" tool install bump-my-version
-"$UV_BIN" tool install clip-files
-"$UV_BIN" tool install conda-lock
-"$UV_BIN" tool install dotbins
-"$UV_BIN" tool install dotbot
-"$UV_BIN" tool install fileup
-"$UV_BIN" tool install llm --with llm-gemini --with llm-anthropic --with llm-ollama
-with_vibe_wrapper_temporarily_removed "$UV_BIN" tool install --python python3.12 mistral-vibe
-"$UV_BIN" tool install markdown-code-runner
-"$UV_BIN" tool install mypy
-"$UV_BIN" tool install pre-commit --with pre-commit-uv
-"$UV_BIN" tool install pygount
-"$UV_BIN" tool install rsync-time-machine
-"$UV_BIN" tool install ruff
-"$UV_BIN" tool install smassh
-"$UV_BIN" tool install tuitorial
-"$UV_BIN" tool install "unidep[all]"
+install_uv_tool() {
+  local tool_name
+  tool_name="$1"
+  shift
+
+  if "$UV_BIN" tool install "$@"; then
+    return 0
+  fi
+
+  printf '%s\n' "Repairing the failed uv tool environment: $tool_name" >&2
+  "$UV_BIN" tool uninstall "$tool_name" || true
+  "$UV_BIN" tool install "$@"
+}
+
+install_uv_tool aider-chat --force --python python3.12 --with pip aider-chat@latest
+install_uv_tool agent-cli agent-cli
+install_uv_tool asciinema asciinema
+install_uv_tool black black
+install_uv_tool bump-my-version bump-my-version
+install_uv_tool clip-files clip-files
+install_uv_tool conda-lock conda-lock
+install_uv_tool dotbins dotbins
+install_uv_tool dotbot dotbot
+install_uv_tool fileup fileup
+install_uv_tool llm llm --with llm-gemini --with llm-anthropic --with llm-ollama
+with_vibe_wrapper_temporarily_removed install_uv_tool mistral-vibe --python python3.12 mistral-vibe
+install_uv_tool markdown-code-runner markdown-code-runner
+install_uv_tool mypy mypy
+install_uv_tool pre-commit pre-commit --with pre-commit-uv
+install_uv_tool pygount pygount
+install_uv_tool rsync-time-machine rsync-time-machine
+install_uv_tool ruff ruff
+install_uv_tool smassh smassh
+install_uv_tool tuitorial tuitorial
+install_uv_tool unidep "unidep[all]"
 with_vibe_wrapper_temporarily_removed "$UV_BIN" tool upgrade --all

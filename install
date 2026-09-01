@@ -126,6 +126,8 @@ uv_bin() {
 }
 
 DOTFILES_BACKUP_ROOT=""
+DOTBIN_STOPPED_SYSTEMD_SERVICES=()
+DOTBIN_STOP_DECLINED=0
 
 dotfiles_backup_root() {
     if [ -n "${DOTFILES_BACKUP_DIR:-}" ]; then
@@ -246,6 +248,20 @@ prepare_dotbot_link_conflicts() {
     backup_link_conflict "$HOME/.local/bin/qwen"
     backup_link_conflict "$HOME/.local/bin/vibe-expand-go-indent"
     backup_link_conflict "$HOME/.local/bin/vibe-apply-patch"
+    backup_link_conflict "$HOME/.local/share/applications/ulm.desktop"
+    backup_link_conflict "$HOME/.local/share/icons/hicolor/256x256/apps/ulm.png"
+    backup_link_conflict "$HOME/.local/bin/nbviewer"
+    backup_link_conflict "$HOME/.local/bin/run"
+    backup_link_conflict "$HOME/.local/bin/install-codex"
+    backup_link_conflict "$HOME/.local/bin/install-claude"
+    backup_link_conflict "$HOME/.local/bin/install-go"
+    backup_link_conflict "$HOME/.local/bin/install-macos-packages"
+    backup_link_conflict "$HOME/.local/bin/vibe"
+    backup_link_conflict "$HOME/.local/bin/sync-dotfiles"
+    backup_link_conflict "$HOME/.local/bin/sync-local-dotfiles"
+    backup_link_conflict "$HOME/.local/bin/sync-uv-tools"
+    backup_link_conflict "$HOME/.local/bin/ulm"
+    backup_link_conflict "$HOME/.local/bin/upload-file"
     remove_legacy_managed_link "$HOME/.local/bin/qwen-remote"
     remove_legacy_managed_link "$HOME/.local/bin/qwen-weckerAA"
     remove_legacy_vibe_hooks_link
@@ -347,18 +363,174 @@ dotbins_bin() {
 }
 
 dotbins_sync_current() {
-    local dotbins_bin
+    local dotbins_bin status
     dotbins_bin="$1"
+
+    if ! stop_busy_dotbin_processes; then
+        restart_dotbin_systemd_services || true
+        if [ "$DOTBIN_STOP_DECLINED" -eq 1 ]; then
+            return 0
+        fi
+        return 1
+    fi
 
     if [ "$(uname -s)" = "Darwin" ]; then
         # eza has no upstream macOS release asset; the Brewfile installs it instead.
-        "$dotbins_bin" sync --current \
+        if "$dotbins_bin" sync --current \
             ast-grep delta duf dust fd gh git-lfs hyperfine rg tree-sitter yazi zellij \
-            bat direnv fzf lazygit micromamba starship zoxide atuin keychain uv
-        return
+            bat direnv fzf lazygit micromamba starship zoxide atuin keychain uv; then
+            status=0
+        else
+            status=$?
+        fi
+    elif "$dotbins_bin" sync --current; then
+        status=0
+    else
+        status=$?
     fi
 
-    "$dotbins_bin" sync --current
+    restart_dotbin_systemd_services || status=1
+    return "$status"
+}
+
+stop_busy_dotbin_processes() {
+    local os arch bin_dir bin pid pids stopped unit stopped_service
+
+    case "${DOTFILES_STOP_DOTBIN_PROCESSES:-1}" in
+        0|false|FALSE|no|NO)
+            return 0
+            ;;
+    esac
+
+    DOTBIN_STOP_DECLINED=0
+
+    if ! command -v fuser >/dev/null 2>&1; then
+        return 0
+    fi
+
+    os=$(uname -s | tr '[:upper:]' '[:lower:]')
+    if [ "$os" = "darwin" ]; then
+        os="macos"
+    fi
+
+    arch=$(uname -m)
+    case "$arch" in
+        x86_64) arch="amd64" ;;
+        aarch64|arm64) arch="arm64" ;;
+        *) return 0 ;;
+    esac
+
+    bin_dir="$HOME/.dotbins/$os/$arch/bin"
+    [ -d "$bin_dir" ] || return 0
+
+    stopped=0
+    for bin in "$bin_dir"/*; do
+        [ -f "$bin" ] || continue
+        pids="$(fuser "$bin" 2>/dev/null || true)"
+        for pid in $pids; do
+            case "$pid" in
+                *[!0-9]*|'') continue ;;
+            esac
+
+            unit="$(sed -n 's#.*/\([^/]*\.service\)$#\1#p' "/proc/$pid/cgroup" 2>/dev/null | head -n 1 || true)"
+            for stopped_service in "${DOTBIN_STOPPED_SYSTEMD_SERVICES[@]}"; do
+                [ "$unit" = "$stopped_service" ] && continue 2
+            done
+
+            if [ -n "$unit" ] && command -v systemctl >/dev/null 2>&1 \
+                && systemctl is-active --quiet "$unit"; then
+                if ! confirm_dotbin_stop "system service $unit (using $bin)"; then
+                    return 1
+                fi
+                printf '%s\n' "Stopping system service $unit before updating $bin."
+                if dotbin_systemctl stop "$unit"; then
+                    DOTBIN_STOPPED_SYSTEMD_SERVICES+=("$unit")
+                    stopped=1
+                    continue
+                fi
+                printf '%s\n' "⚠️  Could not stop system service $unit for $bin." >&2
+                return 1
+            fi
+
+            if ! confirm_dotbin_stop "running Dotbins tool $bin (PID $pid)"; then
+                return 1
+            fi
+            printf '%s\n' "Stopping running Dotbins tool $bin (PID $pid) before update."
+            if kill -TERM "$pid" 2>/dev/null; then
+                stopped=1
+            else
+                printf '%s\n' "⚠️  Could not stop PID $pid for $bin." >&2
+            fi
+        done
+    done
+
+    [ "$stopped" -eq 1 ] || return 0
+
+    for _ in 1 2 3 4 5; do
+        sleep 1
+        for bin in "$bin_dir"/*; do
+            [ -f "$bin" ] || continue
+            if fuser "$bin" >/dev/null 2>&1; then
+                break 2
+            fi
+        done
+        return 0
+    done
+
+    printf '%s\n' "⚠️  Some Dotbins tools are still running; skipping dotbins sync." >&2
+    return 1
+}
+
+confirm_dotbin_stop() {
+    local description response
+    description="$1"
+
+    if [ ! -t 0 ]; then
+        printf '%s\n' "⚠️  $description is busy; rerun ./install interactively to approve stopping it." >&2
+        DOTBIN_STOP_DECLINED=1
+        return 1
+    fi
+
+    printf 'Stop %s before Dotbins sync? [y/N] ' "$description"
+    read -r response
+    case "$response" in
+        y|Y|yes|YES)
+            return 0
+            ;;
+    esac
+
+    printf '%s\n' "Skipping Dotbins sync because $description was not approved for stopping."
+    DOTBIN_STOP_DECLINED=1
+    return 1
+}
+
+restart_dotbin_systemd_services() {
+    local unit status
+    status=0
+
+    for unit in "${DOTBIN_STOPPED_SYSTEMD_SERVICES[@]}"; do
+        printf '%s\n' "Restarting system service $unit after Dotbins sync."
+        if ! dotbin_systemctl start "$unit"; then
+            printf '%s\n' "⚠️  Could not restart system service $unit." >&2
+            status=1
+        fi
+    done
+
+    DOTBIN_STOPPED_SYSTEMD_SERVICES=()
+    return "$status"
+}
+
+dotbin_systemctl() {
+    if systemctl "$@" 2>/dev/null; then
+        return 0
+    fi
+
+    if command -v sudo >/dev/null 2>&1; then
+        sudo systemctl "$@"
+        return $?
+    fi
+
+    return 1
 }
 
 network_host_resolves() {
