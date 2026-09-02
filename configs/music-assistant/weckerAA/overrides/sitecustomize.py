@@ -54,7 +54,7 @@ REPLACEMENTS = (
     (
         '        utter = await provider.get_intent_utterance("AMAZON.StopIntent", "stop")\n'
         "        await self.api.run_custom(utter, customer_id=self.device._device_family)\n",
-        "        await self.api.stop(customer_id=self.device._device_family)\n",
+        "        await self.api.stop()\n",
     ),
     (
         '        utter = await provider.get_intent_utterance("AMAZON.ResumeIntent", "resume")\n'
@@ -107,12 +107,29 @@ def apply() -> None:
                 customer_id=self.device._device_family,
             )
 """
+        stop_old = (
+            '        utter = await provider.get_intent_utterance("AMAZON.StopIntent", "stop")\n'
+            "        await self.api.run_custom(utter)\n"
+        )
+        stop_new = "        await self.api.stop()\n"
         if new in source:
+            if stop_new in source:
+                return
+            if stop_old not in source:
+                print("Music Assistant Alexa compatibility fix skipped: upstream changed")
+                return
+            PROVIDER.write_text(source.replace(stop_old, stop_new, 1), encoding="utf-8")
             return
         if old not in source:
             print("Music Assistant Alexa compatibility fix skipped: upstream changed")
             return
-        PROVIDER.write_text(source.replace(old, new, 1), encoding="utf-8")
+        updated = source.replace(old, new, 1)
+        if stop_new not in updated:
+            if stop_old not in updated:
+                print("Music Assistant Alexa compatibility fix skipped: upstream changed")
+                return
+            updated = updated.replace(stop_old, stop_new, 1)
+        PROVIDER.write_text(updated, encoding="utf-8")
         return
     updated = source
     for old, new in REPLACEMENTS:
