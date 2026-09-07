@@ -6,16 +6,35 @@ $startupDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::Startup)
 $shortcutPath = Join-Path $startupDir "Caps Lock Zellij Leader.lnk"
 $packageId = "AutoHotkey.AutoHotkey"
 
+function Find-AutoHotkeyExecutable {
+    foreach ($commandName in @("AutoHotkey64.exe", "AutoHotkey.exe")) {
+        $command = Get-Command $commandName -ErrorAction SilentlyContinue
+        if ($command) {
+            return $command.Source
+        }
+    }
+
+    # winget installs the v2 package per-user, but the current PowerShell
+    # session does not receive its updated PATH.
+    foreach ($path in @(
+        (Join-Path $env:LOCALAPPDATA "Programs\AutoHotkey\v2\AutoHotkey64.exe"),
+        (Join-Path $env:LOCALAPPDATA "Programs\AutoHotkey\v2\AutoHotkey.exe"),
+        (Join-Path $env:ProgramFiles "AutoHotkey\v2\AutoHotkey64.exe"),
+        (Join-Path $env:ProgramFiles "AutoHotkey\v2\AutoHotkey.exe")
+    )) {
+        if (Test-Path -LiteralPath $path) {
+            return $path
+        }
+    }
+}
+
 if (-not (Test-Path $scriptPath)) {
     throw "Caps Lock leader script is missing: $scriptPath"
 }
 
-$autoHotkey = Get-Command AutoHotkey64.exe -ErrorAction SilentlyContinue
-if (-not $autoHotkey) {
-    $autoHotkey = Get-Command AutoHotkey.exe -ErrorAction SilentlyContinue
-}
+$autoHotkeyPath = Find-AutoHotkeyExecutable
 
-if (-not $autoHotkey) {
+if (-not $autoHotkeyPath) {
     $winget = Get-Command winget.exe -ErrorAction SilentlyContinue
     if (-not $winget) {
         Write-Warning "Skipping Caps Lock Zellij leader setup because winget.exe was not found. Install AutoHotkey v2 and rerun install.ps1."
@@ -28,19 +47,16 @@ if (-not $autoHotkey) {
         throw "Failed to install AutoHotkey for the Caps Lock Zellij leader."
     }
 
-    $autoHotkey = Get-Command AutoHotkey64.exe -ErrorAction SilentlyContinue
-    if (-not $autoHotkey) {
-        $autoHotkey = Get-Command AutoHotkey.exe -ErrorAction SilentlyContinue
-    }
+    $autoHotkeyPath = Find-AutoHotkeyExecutable
 }
 
-if (-not $autoHotkey) {
+if (-not $autoHotkeyPath) {
     throw "AutoHotkey was installed, but its executable could not be located."
 }
 
 $shell = New-Object -ComObject WScript.Shell
 $shortcut = $shell.CreateShortcut($shortcutPath)
-$shortcut.TargetPath = $autoHotkey.Source
+$shortcut.TargetPath = $autoHotkeyPath
 $shortcut.Arguments = '"' + $scriptPath + '"'
 $shortcut.WorkingDirectory = $repoRoot
 $shortcut.Save()
