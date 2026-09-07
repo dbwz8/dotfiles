@@ -533,8 +533,6 @@ foreach ($profileTarget in $profileTargets) {
 
 & (Join-Path $RepoRoot "scripts\install-zellij.ps1")
 
-& (Join-Path $RepoRoot "scripts\install-caps-lock-zellij.ps1")
-
 & (Join-Path $RepoRoot "scripts\install-openwhispr.ps1")
 
 & $PwshPath -NoProfile -ExecutionPolicy Bypass -File (Join-Path $RepoRoot "scripts\install-codex.ps1")

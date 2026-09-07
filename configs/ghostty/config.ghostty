@@ -9,6 +9,4 @@ window-padding-y = 6
 mouse-hide-while-typing = true
 shell-integration = detect
 command = direct:/bin/zsh -lic zellij
-# Use Caps Lock as Zellij's leader (Ctrl-F1), then use standard tmux keys.
-keybind = caps_lock=csi:1;5P
 confirm-close-surface = false
