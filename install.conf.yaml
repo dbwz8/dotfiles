@@ -64,6 +64,7 @@
       if: '[ `uname` = Darwin ]'
       path: configs/vscode/Code/User/settings.json
     ~/.local/bin/nbviewer: scripts/nbviewer.sh
+    ~/.local/bin/mdpdf: scripts/mdpdf.sh
     ~/.local/bin/run: scripts/run.sh
     ~/.local/bin/install-codex: scripts/install-codex.sh
     ~/.local/bin/install-opencode: scripts/install-opencode.sh
