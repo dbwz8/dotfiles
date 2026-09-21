@@ -11,7 +11,7 @@
         },
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
-          "contextWindowSize": 16384,
+          "contextWindowSize": 32768,
           "samplingParams": {
             "max_tokens": 4096,
             "temperature": 0.2,
@@ -25,7 +25,7 @@
     "OPENAI_API_KEY": "local-vllm"
   },
   "generationConfig": {
-    "contextWindowSize": 16384,
+    "contextWindowSize": 32768,
     "samplingParams": {
       "max_tokens": 4096,
       "temperature": 0.2,
@@ -41,14 +41,14 @@
     "name": "qwen3-coder-next-80b",
     "baseUrl": "http://127.0.0.1:18023/v1",
     "generationConfig": {
-      "contextWindowSize": 16384,
+      "contextWindowSize": 32768,
       "samplingParams": {
         "max_tokens": 4096,
         "temperature": 0.2,
         "top_p": 0.8
       }
     },
-    "sessionTokenLimit": 12000,
+    "sessionTokenLimit": 28000,
     "skipStartupContext": true,
     "chatCompression": {
       "maxRecentFilesToRetain": 0,

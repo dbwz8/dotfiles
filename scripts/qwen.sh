@@ -24,9 +24,10 @@ remote_host="${QWEN_REMOTE_HOST:-weckerAA}"
 local_bind="${QWEN_REMOTE_LOCAL_BIND:-127.0.0.1}"
 local_port="${QWEN_REMOTE_LOCAL_PORT:-18023}"
 remote_bind="${QWEN_REMOTE_BIND_HOST:-127.0.0.1}"
-# Qwen Code owns its local tool loop. Connect it to the llama.cpp-backed
-# coding-agent endpoint; the browser chat UI continues to use the router.
-remote_port="${QWEN_REMOTE_PORT:-8032}"
+# Qwen Code owns its local tool loop, including its conversation and tool-turn
+# history. Connect it directly to llama.cpp; the browser chat UI uses the
+# separate agent API and router.
+remote_port="${QWEN_REMOTE_PORT:-8031}"
 local_direct_port="${QWEN_LOCAL_PORT:-$remote_port}"
 model="${QWEN_REMOTE_MODEL:-qwen3-coder-next-80b}"
 api_key="${QWEN_REMOTE_API_KEY:-local-vllm}"
