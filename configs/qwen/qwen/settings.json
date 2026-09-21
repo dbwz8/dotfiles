@@ -2,73 +2,18 @@
   "modelProviders": {
     "openai": [
       {
-        "id": "qwen3.8-27b",
-        "name": "weckerAA Qwen3.8-27B Fast",
+        "id": "qwen3-coder-next-80b",
+        "name": "weckerAA Qwen3-Coder-Next 80B",
         "baseUrl": "http://127.0.0.1:18023/v1",
-        "description": "Qwen3.8-27B FP8 vision-language model served directly by vLLM on weckerAA with thinking disabled.",
+        "description": "Qwen3-Coder-Next 80B served by llama.cpp through the local coding-agent endpoint on weckerAA.",
         "capabilities": {
-          "vision": true,
           "agent": true
         },
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
-          "contextWindowSize": 49152,
-          "modalities": {
-            "image": true
-          },
+          "contextWindowSize": 16384,
           "samplingParams": {
             "max_tokens": 4096,
-            "temperature": 0.2,
-            "top_p": 0.8
-          },
-          "extra_body": {
-            "enable_thinking": false,
-            "chat_template_kwargs": {
-              "preserve_thinking": false,
-              "enable_thinking": false
-            }
-          }
-        }
-      },
-      {
-        "id": "qwen3.8-27b",
-        "name": "weckerAA Qwen3.8-27B Thinking",
-        "baseUrl": "http://localhost:18023/v1",
-        "description": "Qwen3.8-27B FP8 vision-language model served directly by vLLM on weckerAA with thinking enabled for /effort levels.",
-        "capabilities": {
-          "vision": true,
-          "agent": true
-        },
-        "envKey": "OPENAI_API_KEY",
-        "generationConfig": {
-          "contextWindowSize": 49152,
-          "modalities": {
-            "image": true
-          },
-          "samplingParams": {
-            "max_tokens": 4096,
-            "temperature": 0.2,
-            "top_p": 0.8
-          },
-          "extra_body": {
-            "enable_thinking": true,
-            "chat_template_kwargs": {
-              "preserve_thinking": false,
-              "enable_thinking": true
-            }
-          }
-        }
-      },
-      {
-        "id": "qwq-32b",
-        "name": "weckerAA QwQ-32B Debug",
-        "baseUrl": "http://127.0.0.1:18023/v1",
-        "description": "QwQ-32B served from weckerAA through the shared agent API SSH tunnel.",
-        "envKey": "OPENAI_API_KEY",
-        "generationConfig": {
-          "contextWindowSize": 131072,
-          "samplingParams": {
-            "max_tokens": 8192,
             "temperature": 0.2,
             "top_p": 0.8
           }
@@ -80,7 +25,7 @@
     "OPENAI_API_KEY": "local-vllm"
   },
   "generationConfig": {
-    "contextWindowSize": 49152,
+    "contextWindowSize": 16384,
     "samplingParams": {
       "max_tokens": 4096,
       "temperature": 0.2,
@@ -93,17 +38,17 @@
     }
   },
   "model": {
-    "name": "qwen3.8-27b",
+    "name": "qwen3-coder-next-80b",
     "baseUrl": "http://127.0.0.1:18023/v1",
     "generationConfig": {
-      "contextWindowSize": 49152,
+      "contextWindowSize": 16384,
       "samplingParams": {
         "max_tokens": 4096,
         "temperature": 0.2,
         "top_p": 0.8
       }
     },
-    "sessionTokenLimit": 43008,
+    "sessionTokenLimit": 12000,
     "skipStartupContext": true,
     "chatCompression": {
       "maxRecentFilesToRetain": 0,
