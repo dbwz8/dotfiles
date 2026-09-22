@@ -45,6 +45,7 @@
     ~/.config/dask/distributed.yaml: configs/dask/distributed.yaml
     ~/.config/git/attributes: configs/git/attributes
     ~/.config/ghostty/config.ghostty: configs/ghostty/config.ghostty
+    ~/.config/lazygit/config.yml: configs/lazygit/config.yml
     ~/.config/nvim:
       path: configs/nvim
       force: true
@@ -72,6 +73,7 @@
     ~/.local/bin/install-go: scripts/install-go.sh
     ~/.local/bin/install-qwen-code: scripts/install-qwen-code.sh
     ~/.local/bin/install-macos-packages: scripts/install-macos-packages.sh
+    ~/.local/bin/lg-repo-status: scripts/lg-repo-status
     ~/.local/bin/qwen: scripts/qwen.sh
     ~/.local/bin/opencode-muse: scripts/opencode-muse.sh
     ~/.local/bin/vibe: scripts/vibe.sh

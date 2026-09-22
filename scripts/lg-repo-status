@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+
+# Show a compact status line for each repository in Lazygit's recent-repo state.
+set -uo pipefail
+
+find_state_file() {
+    local candidate config_dir
+    local -a candidates=()
+
+    if [ -n "${LAZYGIT_STATE_FILE:-}" ]; then
+        candidates+=("$LAZYGIT_STATE_FILE")
+    fi
+
+    if [ -n "${XDG_STATE_HOME:-}" ]; then
+        candidates+=("$XDG_STATE_HOME/lazygit/state.yml")
+    fi
+    candidates+=("$HOME/.local/state/lazygit/state.yml")
+
+    if command -v lazygit >/dev/null 2>&1; then
+        config_dir="$(lazygit --print-config-dir 2>/dev/null || true)"
+        if [ -n "$config_dir" ]; then
+            candidates+=("$config_dir/state.yml")
+        fi
+    fi
+
+    if [ -n "${XDG_CONFIG_HOME:-}" ]; then
+        candidates+=("$XDG_CONFIG_HOME/lazygit/state.yml")
+    fi
+    candidates+=(
+        "$HOME/.config/lazygit/state.yml"
+        "$HOME/Library/Application Support/lazygit/state.yml"
+    )
+
+    for candidate in "${candidates[@]}"; do
+        if [ -f "$candidate" ]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+decode_state_path() {
+    local value="$1"
+
+    case "$value" in
+        \"*\")
+            value="${value#\"}"
+            value="${value%\"}"
+            # Lazygit's YAML encoder uses the usual escapes for quoted paths.
+            printf '%b\n' "$value"
+            ;;
+        \'*\')
+            value="${value#\'}"
+            value="${value%\'}"
+            printf '%s\n' "${value//\'\'/\'}"
+            ;;
+        *)
+            printf '%s\n' "$value"
+            ;;
+    esac
+}
+
+print_repo_status() {
+    local repo_path="$1" repo_name branch status_line status
+    local modified_count untracked_count upstream counts ahead behind sync_status
+
+    if [ ! -d "$repo_path" ]; then
+        printf '%-24s %-18s %-24s %s\n' "$(basename "$repo_path")" '-' 'missing' "$repo_path"
+        return
+    fi
+
+    if ! git -C "$repo_path" rev-parse --show-toplevel >/dev/null 2>&1; then
+        printf '%-24s %-18s %-24s %s\n' "$(basename "$repo_path")" '-' 'not a Git repository' "$repo_path"
+        return
+    fi
+
+    repo_name="$(basename "$repo_path")"
+    branch="$(git -C "$repo_path" symbolic-ref --quiet --short HEAD 2>/dev/null || true)"
+    if [ -z "$branch" ]; then
+        branch="detached@$(git -C "$repo_path" rev-parse --short HEAD 2>/dev/null || printf '?')"
+    fi
+
+    status="$(git -C "$repo_path" status --porcelain=v1 --untracked-files=normal 2>/dev/null || true)"
+    modified_count=0
+    untracked_count=0
+    while IFS= read -r status_line; do
+        [ -n "$status_line" ] || continue
+        if [ "${status_line:0:2}" = '??' ]; then
+            untracked_count=$((untracked_count + 1))
+        else
+            modified_count=$((modified_count + 1))
+        fi
+    done <<< "$status"
+
+    if [ "$modified_count" -eq 0 ] && [ "$untracked_count" -eq 0 ]; then
+        status="clean M:0 U:0"
+    else
+        status="dirty M:${modified_count} U:${untracked_count}"
+    fi
+
+    upstream="$(git -C "$repo_path" rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null || true)"
+    if [ -z "$upstream" ]; then
+        sync_status='no upstream'
+    else
+        counts="$(git -C "$repo_path" rev-list --left-right --count "${upstream}...HEAD" 2>/dev/null || true)"
+        if read -r behind ahead <<< "$counts" && [ -n "${ahead:-}" ]; then
+            sync_status="${upstream} ahead:${ahead} behind:${behind}"
+        else
+            sync_status="${upstream} unavailable"
+        fi
+    fi
+
+    printf '%-24s %-18s %-24s %s  %s\n' "$repo_name" "$branch" "$status" "$sync_status" "$repo_path"
+}
+
+main() {
+    local state_file encoded_path repo_path
+
+    state_file="$(find_state_file)" || {
+        printf '%s\n' 'Could not find Lazygit state.yml; open a repository in Lazygit first.' >&2
+        return 1
+    }
+
+    printf 'Lazygit recent repositories: %s\n' "$state_file"
+    printf '%-24s %-18s %-24s %s\n' 'REPOSITORY' 'BRANCH' 'WORKTREE' 'UPSTREAM / PATH'
+    printf '%s\n' '---------------------------------------------------------------------------------------------------------------'
+
+    while IFS= read -r encoded_path; do
+        repo_path="$(decode_state_path "$encoded_path")"
+        [ -n "$repo_path" ] || continue
+        print_repo_status "$repo_path"
+    done < <(
+        awk '
+            /^[[:space:]]*recentrepos:[[:space:]]*$/ { in_recent_repos = 1; next }
+            in_recent_repos && /^[^[:space:]]/ { exit }
+            in_recent_repos && /^[[:space:]]*-[[:space:]]/ {
+                sub(/^[[:space:]]*-[[:space:]]*/, "")
+                print
+            }
+        ' "$state_file"
+    )
+}
+
+main "$@"
