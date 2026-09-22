@@ -118,12 +118,14 @@ enable_reasoning_settings() {
         jq --arg base_url "${base_url}" '
             .model.name = "qwen3-coder-next-80b"
             | .model.baseUrl = $base_url
+            | (.modelProviders.openai[]? | select(.id == "qwen3-coder-next-80b").baseUrl) = $base_url
             | del(.model.reasoningEffort)
         ' "${qwen_config_source}" > "${temporary_config}"
     else
         jq --arg base_url "${base_url}" --arg effort "${reasoning_effort}" '
             .model.name = "qwen3-coder-next-80b"
             | .model.baseUrl = $base_url
+            | (.modelProviders.openai[]? | select(.id == "qwen3-coder-next-80b").baseUrl) = $base_url
             | .model.reasoningEffort = $effort
         ' "${qwen_config_source}" > "${temporary_config}"
     fi
