@@ -535,6 +535,8 @@ foreach ($profileTarget in $profileTargets) {
 
 & (Join-Path $RepoRoot "scripts\install-openwhispr.ps1")
 
+& (Join-Path $RepoRoot "scripts\install-music-assistant.ps1")
+
 & $PwshPath -NoProfile -ExecutionPolicy Bypass -File (Join-Path $RepoRoot "scripts\install-codex.ps1")
 
 & (Join-Path $RepoRoot "scripts\install-claude.ps1")

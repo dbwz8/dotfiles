@@ -34,8 +34,8 @@ stream port, `8097` by default.
 
 ## Clients
 
-No client-side configuration is stored in dotfiles: the official clients
-discover the server with mDNS, and their first-run setup can use
+No player-specific client configuration is stored in dotfiles: the official
+clients discover the server with mDNS, and their first-run setup can use
 `http://weckerAA:8095` when discovery is unavailable.
 
 Install the official desktop companion app from its GitHub releases using the
@@ -48,12 +48,14 @@ native package for the device:
 | Debian/Ubuntu Linux | `.deb` |
 | Other Linux distributions | AppImage or `.rpm` |
 
-The desktop client is upstream alpha software, so it is intentionally not
-included in the global installer or pinned in this repository. It provides
-native audio playback, media controls, and system-tray support. Android and
-iOS official clients are beta and are installed through their respective
-testing channels; a browser at the server URL remains a fully supported
-zero-install client.
+On Windows, `install.ps1` installs or updates the desktop companion from the
+latest official GitHub release. The installer verifies the release's published
+SHA-256 before running the matching x64 or ARM64 MSI. Windows requests administrator
+consent when replacing an existing machine-wide installation. It does not modify the
+player's local settings. The app provides native audio playback, media
+controls, and system-tray support. Android and iOS official clients are beta
+and are installed through their respective testing channels; a browser at the
+server URL remains a fully supported zero-install client.
 
 Upstream references:
 
