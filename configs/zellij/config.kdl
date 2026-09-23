@@ -100,6 +100,8 @@ keybinds clear-defaults=true {
         bind "w" { SearchToggleOption "Wrap"; }
     }
     session {
+        // Ctrl-q enters this mode; press q to confirm quitting or Esc to cancel.
+        bind "q" { Quit; }
         bind "a" {
             LaunchOrFocusPlugin "zellij:about" {
                 floating true
@@ -173,7 +175,7 @@ keybinds clear-defaults=true {
         bind "Alt o" { MoveTab "right"; }
         bind "Alt p" { TogglePaneInGroup; }
         bind "Alt Shift p" { ToggleGroupMarking; }
-        bind "Ctrl q" { Quit; }
+        bind "Ctrl q" { SwitchToMode "session"; }
         bind "Shift enter" { Write 13; }
     }
     shared_except "locked" "move" {

@@ -134,6 +134,9 @@ trust_level = "trusted"
 [projects."/home/wecker/git/perf-mod"]
 trust_level = "trusted"
 
+[projects."/tmp"]
+trust_level = "trusted"
+
 [mcp_servers.ionq-mcp-gateway]
 url = "https://prod-mcp-gateway.ionq.co/mcp"
 
