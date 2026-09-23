@@ -2,16 +2,16 @@
   "modelProviders": {
     "openai": [
       {
-        "id": "qwen3-coder-next-80b",
-        "name": "weckerAA Qwen3-Coder-Next 80B",
+        "id": "qwen3.8n-27b",
+        "name": "weckerAA Qwen3.8n 27B Code",
         "baseUrl": "http://127.0.0.1:18023/v1",
-        "description": "Qwen3-Coder-Next 80B served directly by llama.cpp on weckerAA.",
+        "description": "Qwen3.8n 27B selected through the weckerAA model router.",
         "capabilities": {
           "agent": true
         },
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
-          "contextWindowSize": 65536,
+          "contextWindowSize": 32768,
           "samplingParams": {
             "max_tokens": 4096,
             "temperature": 0.2,
@@ -25,7 +25,7 @@
     "OPENAI_API_KEY": "local-vllm"
   },
   "generationConfig": {
-    "contextWindowSize": 65536,
+    "contextWindowSize": 32768,
     "samplingParams": {
       "max_tokens": 4096,
       "temperature": 0.2,
@@ -38,17 +38,17 @@
     }
   },
   "model": {
-    "name": "qwen3-coder-next-80b",
+    "name": "qwen3.8n-27b",
     "baseUrl": "http://127.0.0.1:18023/v1",
     "generationConfig": {
-      "contextWindowSize": 65536,
+      "contextWindowSize": 32768,
       "samplingParams": {
         "max_tokens": 4096,
         "temperature": 0.2,
         "top_p": 0.8
       }
     },
-    "sessionTokenLimit": 52000,
+    "sessionTokenLimit": 28000,
     "skipStartupContext": true,
     "chatCompression": {
       "maxRecentFilesToRetain": 0,
