@@ -2,16 +2,16 @@
   "modelProviders": {
     "openai": [
       {
-        "id": "qwen3.8n-27b",
-        "name": "weckerAA Qwen3.8n 27B Code",
+        "id": "qwen3.8-27b",
+        "name": "weckerAA Qwen3.8 27B Code",
         "baseUrl": "http://127.0.0.1:18023/v1",
-        "description": "Qwen3.8n 27B selected through the weckerAA model router.",
+        "description": "Qwen3.8 27B image-aware Code profile selected through the weckerAA model router.",
         "capabilities": {
           "agent": true
         },
         "envKey": "OPENAI_API_KEY",
         "generationConfig": {
-          "contextWindowSize": 32768,
+          "contextWindowSize": 49152,
           "samplingParams": {
             "max_tokens": 4096,
             "temperature": 0.2,
@@ -25,7 +25,7 @@
     "OPENAI_API_KEY": "local-vllm"
   },
   "generationConfig": {
-    "contextWindowSize": 32768,
+    "contextWindowSize": 49152,
     "samplingParams": {
       "max_tokens": 4096,
       "temperature": 0.2,
@@ -38,10 +38,10 @@
     }
   },
   "model": {
-    "name": "qwen3.8n-27b",
+    "name": "qwen3.8-27b",
     "baseUrl": "http://127.0.0.1:18023/v1",
     "generationConfig": {
-      "contextWindowSize": 32768,
+      "contextWindowSize": 49152,
       "samplingParams": {
         "max_tokens": 4096,
         "temperature": 0.2,

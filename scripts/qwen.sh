@@ -29,7 +29,7 @@ remote_bind="${QWEN_REMOTE_BIND_HOST:-127.0.0.1}"
 # separate agent API and router.
 remote_port="${QWEN_REMOTE_PORT:-8022}"
 local_direct_port="${QWEN_LOCAL_PORT:-$remote_port}"
-model="${QWEN_REMOTE_MODEL:-qwen3.8n-27b}"
+model="${QWEN_REMOTE_MODEL:-qwen3.8-27b}"
 api_key="${QWEN_REMOTE_API_KEY:-local-vllm}"
 wait_seconds="${QWEN_REMOTE_TUNNEL_WAIT_SECONDS:-90}"
 max_output_tokens="${QWEN_CODE_MAX_OUTPUT_TOKENS:-4096}"
@@ -116,16 +116,16 @@ enable_reasoning_settings() {
     temporary_config="$(mktemp "${qwen_config_source}.reasoning.XXXXXX")"
     if [[ "${fast_mode}" = "1" ]]; then
         jq --arg base_url "${base_url}" '
-            .model.name = "qwen3.8n-27b"
+            .model.name = "qwen3.8-27b"
             | .model.baseUrl = $base_url
-            | (.modelProviders.openai[]? | select(.id == "qwen3.8n-27b").baseUrl) = $base_url
+            | (.modelProviders.openai[]? | select(.id == "qwen3.8-27b").baseUrl) = $base_url
             | del(.model.reasoningEffort)
         ' "${qwen_config_source}" > "${temporary_config}"
     else
         jq --arg base_url "${base_url}" --arg effort "${reasoning_effort}" '
-            .model.name = "qwen3.8n-27b"
+            .model.name = "qwen3.8-27b"
             | .model.baseUrl = $base_url
-            | (.modelProviders.openai[]? | select(.id == "qwen3.8n-27b").baseUrl) = $base_url
+            | (.modelProviders.openai[]? | select(.id == "qwen3.8-27b").baseUrl) = $base_url
             | .model.reasoningEffort = $effort
         ' "${qwen_config_source}" > "${temporary_config}"
     fi
@@ -214,7 +214,7 @@ parsed_args=()
 while (($#)); do
     case "$1" in
         --coding)
-            model="${QWEN_CODER_MODEL:-qwen3.8n-27b}"
+            model="${QWEN_CODER_MODEL:-qwen3.8-27b}"
             shift
             ;;
         --thinking)
@@ -222,7 +222,7 @@ while (($#)); do
                 printf '%s\n' '--thinking cannot be combined with Qwen 3.8 reasoning overrides.' >&2
                 exit 2
             fi
-            model="${QWEN_THINKING_MODEL:-${QWEN_DEBUG_MODEL:-qwen3.8n-27b}}"
+            model="${QWEN_THINKING_MODEL:-${QWEN_DEBUG_MODEL:-qwen3.8-27b}}"
             thinking_mode=1
             shift
             ;;
