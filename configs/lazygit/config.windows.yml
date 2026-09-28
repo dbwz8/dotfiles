@@ -1,0 +1,6 @@
+customCommands:
+  - key: ';'
+    context: 'global'
+    command: 'lg-repo-status'
+    description: 'Show status for Lazygit recent repositories'
+    output: 'terminal'

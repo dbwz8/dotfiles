@@ -7,4 +7,6 @@
     ~/.config/atuin: configs/atuin
     ~/.config/git/attributes: configs/git/attributes
     ~/.config/starship.toml: configs/starship/starship.toml
+    ~/.local/bin/lg-repo-status.cmd: scripts/lg-repo-status.cmd
+    ~/.local/bin/lg-repo-status.ps1: scripts/lg-repo-status.ps1
     ~/.mambarc: configs/mamba/mambarc

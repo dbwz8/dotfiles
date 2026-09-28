@@ -477,12 +477,22 @@ function Install-NeovimConfigLink {
         -TargetPath $nvimTarget
 }
 
+function Install-LazygitConfigLink {
+    $lazygitSource = Join-Path $RepoRoot "configs\lazygit\config.windows.yml"
+    $localAppData = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
+
+    Install-ManagedFileLink `
+        -SourcePath $lazygitSource `
+        -TargetPath (Join-Path $localAppData "lazygit\config.yml")
+}
+
 Install-CodexConfigLinks
 Install-ClaudeConfigLinks
 Install-AiderConfigLinks
 Install-GitConfigLinks
 Install-VSCodeConfigLinks
 Install-NeovimConfigLink
+Install-LazygitConfigLink
 
 function Install-PowerShellProfileBootstrap {
     param([Parameter(Mandatory = $true)][string]$TargetPath)
