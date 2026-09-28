@@ -62,12 +62,31 @@ decode_state_path() {
     esac
 }
 
+is_wsl_windows_mount_path() {
+    local path="$1" kernel_release
+
+    case "$path" in
+        /mnt/[[:alpha:]]|/mnt/[[:alpha:]]/*) ;;
+        *) return 1 ;;
+    esac
+
+    [ -r /proc/sys/kernel/osrelease ] || return 1
+    kernel_release="$(< /proc/sys/kernel/osrelease)"
+    [[ "$kernel_release" =~ [Mm]icrosoft|WSL ]]
+}
+
 print_repo_status() {
     local repo_path="$1" repo_name branch status_line status
     local modified_count untracked_count upstream counts ahead behind sync_status
 
     if [ ! -d "$repo_path" ]; then
         printf '%-24s %-18s %-24s %s\n' "$(basename "$repo_path")" '-' 'missing' "$repo_path"
+        return
+    fi
+
+    if is_wsl_windows_mount_path "$repo_path" \
+        && [ "${LG_REPO_STATUS_INCLUDE_WINDOWS_MOUNTS:-0}" != '1' ]; then
+        printf '%-24s %-18s %-24s %s\n' "$(basename "$repo_path")" '-' 'skipped (Windows mount)' "$repo_path"
         return
     fi
 
