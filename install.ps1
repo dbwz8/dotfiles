@@ -480,10 +480,14 @@ function Install-NeovimConfigLink {
 function Install-LazygitConfigLink {
     $lazygitSource = Join-Path $RepoRoot "configs\lazygit\config.windows.yml"
     $localAppData = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } else { Join-Path $HOME "AppData\Local" }
+    $localBin = Join-Path $HOME ".local\bin"
 
     Install-ManagedFileLink `
         -SourcePath $lazygitSource `
         -TargetPath (Join-Path $localAppData "lazygit\config.yml")
+    Install-ManagedFileLink `
+        -SourcePath (Join-Path $RepoRoot "scripts\lg-repo-status.ps1") `
+        -TargetPath (Join-Path $localBin "lg-repo-status.ps1")
 }
 
 Install-CodexConfigLinks

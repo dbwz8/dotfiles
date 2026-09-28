@@ -74,7 +74,7 @@ function Invoke-Git {
         return $null
     }
 
-    $output = & $git.Source -C $Repository @Arguments 2>$null
+    $output = & $git.Source -c core.untrackedCache=false -C $Repository @Arguments 2>$null
     if ($LASTEXITCODE -ne 0) {
         return $null
     }
