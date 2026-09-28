@@ -1,6 +1,6 @@
 customCommands:
   - key: ';'
     context: 'global'
-    command: 'lg-repo-status'
+    command: 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%USERPROFILE%\.local\bin\lg-repo-status.ps1"'
     description: 'Show status for Lazygit recent repositories'
     output: 'terminal'
