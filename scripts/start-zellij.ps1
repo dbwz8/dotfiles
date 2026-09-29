@@ -23,7 +23,10 @@ if ((Test-Path $repoBin) -and -not (($env:PATH -split [System.IO.Path]::PathSepa
     $env:PATH = "$repoBin$([System.IO.Path]::PathSeparator)$env:PATH"
 }
 
-$zellij = Get-Command zellij.exe -ErrorAction Stop
+$zellij = Get-Command zellij.exe -CommandType Application -ErrorAction SilentlyContinue
+if (-not $zellij) {
+    $zellij = Get-Command zellij -CommandType Application -ErrorAction Stop
+}
 $zellijConfigArgs = @()
 if (Test-Path $zellijConfigDir) {
     $zellijConfigArgs += @("--config-dir", $zellijConfigDir)

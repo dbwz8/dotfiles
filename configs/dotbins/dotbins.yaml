@@ -35,8 +35,11 @@ tools:
   zellij:
     repo: zellij-org/zellij
     asset_patterns:
+      linux:
+        amd64: zellij-no-web-x86_64-unknown-linux-musl.tar.gz
+        arm64: zellij-no-web-aarch64-unknown-linux-musl.tar.gz
       windows:
-        amd64: null
+        amd64: zellij-no-web-x86_64-pc-windows-msvc.zip
 
   bat:
     repo: sharkdp/bat

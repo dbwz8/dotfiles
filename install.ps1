@@ -582,6 +582,7 @@ if ($dotbins) {
         "git-lfs",
         "hyperfine",
         "rg",
+        "zellij",
         "yazi",
         "bat",
         "direnv",
