@@ -1,10 +1,10 @@
 personality = "pragmatic"
-model = "gpt-5.6-luna"
-model_reasoning_effort = "high"
+model = "gpt-6.1-sol"
+model_reasoning_effort = "medium"
 approval_policy = "on-request"
-approvals_reviewer = "auto_review"
+approvals_reviewer = "user"
 check_for_update_on_startup = false
-plan_mode_reasoning_effort = "high"
+plan_mode_reasoning_effort = "medium"
 
 [tui.keymap.global]
 open_external_editor = "ctrl-x"
@@ -12,6 +12,7 @@ open_external_editor = "ctrl-x"
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4
+"gpt-6.1-sol" = 4
 
 [projects."/Users/wecker/git/dotfiles"]
 trust_level = "trusted"
