@@ -456,6 +456,37 @@ On macOS, `./install` runs `scripts/install-macos-packages.sh` first so a new Ma
 
 On Windows, run `.\install.ps1`. The installer now bootstraps PowerShell 7 with `winget` when `pwsh.exe` is missing, syncs the shared Zellij config, installs Codex with OpenAI's standalone installer, and installs the local WLM Rust app from `$HOME\git\languages\rust\WLM` into `~\.cargo\bin` when that checkout and `cargo.exe` are available. It also installs the local Sudoku Rust app from `$HOME\git\languages\rust\Sudoku`. Set `WLM_SOURCE` or `SUDOKU_SOURCE` before running the installer to use a different checkout path.
 
+To measure install costs, enable timing for two normal installs. Each invocation
+writes a separate CSV under `~/.local/state/dotfiles/install-timings` and prints
+its path. The first run includes pending updates; the second measures the cost
+when tools are already current. These commands perform the usual installations
+and updates:
+
+```powershell
+$env:DOTFILES_TIME_INSTALL = "1"
+.\install.ps1
+.\install.ps1
+Remove-Item Env:\DOTFILES_TIME_INSTALL
+
+$reports = Get-ChildItem "$HOME/.local/state/dotfiles/install-timings/windows-*.csv" |
+    Sort-Object LastWriteTime -Descending | Select-Object -First 2
+foreach ($report in $reports) {
+    Write-Host $report.Name
+    Import-Csv $report.FullName | Sort-Object { [double]$_.seconds } -Descending |
+        Format-Table step, seconds, result, exit_code -AutoSize
+}
+```
+
+On Unix, run `DOTFILES_TIME_INSTALL=1 ./install` twice. Unix durations have
+one-second resolution. Reports include major install steps, individual uv tool
+installs, the separate uv upgrade pass, and total elapsed time. Dotbins is timed
+as a group; Unix reports also record time in its process-stop prompts separately.
+Group timings include their child rows, so do not sum all rows. Unmeasured setup
+work is included in the total. `completed` means the step returned normally,
+including a script that skipped work or handled an error itself; inspect installer
+output before treating it as a successful installation. Review the expensive
+items for removal or opt-in installation after comparing both reports.
+
 Codex is installed outside dotbins so Windows and WSL use OpenAI's standalone installers directly. `./install` runs `scripts/install-codex.sh` on Unix-like systems, including WSL, and adds `bubblewrap` to apt-based Linux setups for the Codex Linux sandbox. Set `DOTFILES_INSTALL_CODEX=0` before running the installer to skip Codex.
 
 Qwen Code remains available as an optional CLI and its configuration is linked by

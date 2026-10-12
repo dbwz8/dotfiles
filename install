@@ -4,6 +4,10 @@ set -euo pipefail
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${BASEDIR}"
 DOTFILES="${DOTFILES:-$BASEDIR}"
+source "$BASEDIR/scripts/install-timing.sh"
+dotfiles_timing_init
+DOTFILES_TIMING_STARTED=$SECONDS
+trap 'dotfiles_timing_exit=$?; dotfiles_timing_write total "$DOTFILES_TIMING_STARTED" "$([ "$dotfiles_timing_exit" -eq 0 ] && printf completed || printf failed)" "$dotfiles_timing_exit"' EXIT
 
 is_wsl() {
     [ -n "${WSL_DISTRO_NAME:-}" ] && return 0
@@ -270,21 +274,25 @@ prepare_dotbot_link_conflicts() {
 }
 
 require_native_wsl_checkout || exit 1
+dotfiles_submodules_started=$SECONDS
 ensure_required_submodules
+dotfiles_timing_write submodules "$dotfiles_submodules_started" completed 0
 
 if should_install_macos_packages; then
     if [ -f "${DOTFILES}/scripts/install-macos-packages.sh" ]; then
-        bash "${DOTFILES}/scripts/install-macos-packages.sh"
+        dotfiles_timed_step "install-macos-packages.sh" bash "${DOTFILES}/scripts/install-macos-packages.sh"
     fi
 fi
 
+dotfiles_links_started=$SECONDS
 prepare_dotbot_link_conflicts
+dotfiles_timing_write link-preparation "$dotfiles_links_started" completed 0
 
 DOTBOT_BIN="${BASEDIR}/submodules/dotbot/bin/dotbot"
 if [ -f "$DOTBOT_BIN" ] && command -v python3 >/dev/null 2>&1; then
-    python3 "$DOTBOT_BIN" -d "$BASEDIR" -c "install.conf.yaml" "${@}"
+    dotfiles_timed_step "dotbot links" python3 "$DOTBOT_BIN" -d "$BASEDIR" -c "install.conf.yaml" "${@}"
 elif UV_BIN="$(uv_bin)"; then
-    "$UV_BIN" tool run dotbot -d "$BASEDIR" -c "install.conf.yaml" "${@}"
+    dotfiles_timed_step "dotbot links" "$UV_BIN" tool run dotbot -d "$BASEDIR" -c "install.conf.yaml" "${@}"
 else
     printf '%s\n' "dotbot is unavailable." >&2
     printf '%s\n' "Initialize submodules with: git submodule update --init --recursive --remote" >&2
@@ -294,50 +302,50 @@ fi
 
 if should_install_linux_packages; then
     if [ -x "${DOTFILES}/scripts/install-slurm-client.sh" ]; then
-        if ! "${DOTFILES}/scripts/install-slurm-client.sh"; then
+        if ! dotfiles_timed_step "install-slurm-client.sh" "${DOTFILES}/scripts/install-slurm-client.sh"; then
             printf '%s\n' "⚠️  slurm-client installation failed; continuing dotfiles install." >&2
         fi
     fi
 
     if [ -f "${DOTFILES}/scripts/install-linux-packages.sh" ]; then
-        if ! bash "${DOTFILES}/scripts/install-linux-packages.sh"; then
+        if ! dotfiles_timed_step "install-linux-packages.sh" bash "${DOTFILES}/scripts/install-linux-packages.sh"; then
             printf '%s\n' "⚠️  Linux package installation failed; continuing dotfiles install." >&2
         fi
     fi
 fi
 
 if [ -f "${DOTFILES}/scripts/setup-nvidia-gpu-settings.sh" ]; then
-    if ! bash "${DOTFILES}/scripts/setup-nvidia-gpu-settings.sh"; then
+    if ! dotfiles_timed_step "setup-nvidia-gpu-settings.sh" bash "${DOTFILES}/scripts/setup-nvidia-gpu-settings.sh"; then
         printf '%s\n' "⚠️  NVIDIA GPU settings setup failed; continuing dotfiles install." >&2
     fi
 fi
 
 if [ -f "${DOTFILES}/scripts/install-codex.sh" ]; then
-    if ! bash "${DOTFILES}/scripts/install-codex.sh"; then
+    if ! dotfiles_timed_step "install-codex.sh" bash "${DOTFILES}/scripts/install-codex.sh"; then
         printf '%s\n' "⚠️  Codex CLI installation failed; continuing dotfiles install." >&2
     fi
 fi
 
 if [ -f "${DOTFILES}/scripts/install-claude.sh" ]; then
-    if ! bash "${DOTFILES}/scripts/install-claude.sh"; then
+    if ! dotfiles_timed_step "install-claude.sh" bash "${DOTFILES}/scripts/install-claude.sh"; then
         printf '%s\n' "⚠️  Claude Code installation failed; continuing dotfiles install." >&2
     fi
 fi
 
 if [ -f "${DOTFILES}/scripts/install-qwen-code.sh" ]; then
-    if ! bash "${DOTFILES}/scripts/install-qwen-code.sh"; then
+    if ! dotfiles_timed_step "install-qwen-code.sh" bash "${DOTFILES}/scripts/install-qwen-code.sh"; then
         printf '%s\n' "⚠️  Qwen Code installation failed; continuing dotfiles install." >&2
     fi
 fi
 
 if [ -f "${DOTFILES}/scripts/install-opencode.sh" ]; then
-    if ! bash "${DOTFILES}/scripts/install-opencode.sh"; then
+    if ! dotfiles_timed_step "install-opencode.sh" bash "${DOTFILES}/scripts/install-opencode.sh"; then
         printf '%s\n' "⚠️  OpenCode installation failed; continuing dotfiles install." >&2
     fi
 fi
 
 if [ -f "${DOTFILES}/scripts/install-go.sh" ]; then
-    if ! bash "${DOTFILES}/scripts/install-go.sh"; then
+    if ! dotfiles_timed_step "install-go.sh" bash "${DOTFILES}/scripts/install-go.sh"; then
         printf '%s\n' "Go installation failed; aborting dotfiles install." >&2
         exit 1
     fi
@@ -345,7 +353,7 @@ fi
 
 if [ -f "${DOTFILES}/scripts/install-sudoku.sh" ] \
     && { [ -n "${SUDOKU_SOURCE:-}" ] || [ -d "$HOME/git/languages/rust/Sudoku" ]; }; then
-    if ! bash "${DOTFILES}/scripts/install-sudoku.sh"; then
+    if ! dotfiles_timed_step "install-sudoku.sh" bash "${DOTFILES}/scripts/install-sudoku.sh"; then
         printf '%s\n' "⚠️  Sudoku installation failed; continuing dotfiles install." >&2
     fi
 fi
@@ -368,7 +376,7 @@ dotbins_sync_current() {
     local dotbins_bin status
     dotbins_bin="$1"
 
-    if ! stop_busy_dotbin_processes; then
+    if ! dotfiles_timed_step "dotbins stop prompts" stop_busy_dotbin_processes; then
         restart_dotbin_systemd_services || true
         if [ "$DOTBIN_STOP_DECLINED" -eq 1 ]; then
             return 0
@@ -620,7 +628,7 @@ sanitize_github_token_env() {
 sanitize_github_token_env
 
 if DOTBINS_BIN="$(dotbins_bin)"; then
-    if should_sync_network_tools "api.github.com" "dotbins sync" && ! dotbins_sync_current "$DOTBINS_BIN"; then
+    if should_sync_network_tools "api.github.com" "dotbins sync" && ! dotfiles_timed_step "dotbins sync (includes stop prompts)" dotbins_sync_current "$DOTBINS_BIN"; then
         printf '%s\n' "⚠️  dotbins sync failed; continuing dotfiles install." >&2
     fi
 else
@@ -628,7 +636,7 @@ else
     printf '%s\n' "    Install uv and rerun ./install to provision tools like micromamba." >&2
 fi
 
-if should_sync_network_tools "pypi.org" "uv tool sync" && ! bash "${DOTFILES}/scripts/sync-uv-tools.sh"; then
+if should_sync_network_tools "pypi.org" "uv tool sync" && ! dotfiles_timed_step "sync-uv-tools.sh" bash "${DOTFILES}/scripts/sync-uv-tools.sh"; then
     printf '%s\n' "⚠️  uv tool sync failed; continuing dotfiles install." >&2
 fi
 

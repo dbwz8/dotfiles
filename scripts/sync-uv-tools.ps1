@@ -1,4 +1,5 @@
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "install-timing.ps1")
 
 function Get-UvPath {
     $uv = Get-Command uv.exe -ErrorAction SilentlyContinue
@@ -39,7 +40,7 @@ $tools = @(
 )
 
 foreach ($tool in $tools) {
-    & $uv tool install $tool.Split(" ")
+    Invoke-DotfilesTimedStep "uv install: $tool" { & $uv tool install $tool.Split(" ") }
 }
 
-& $uv tool upgrade --all
+Invoke-DotfilesTimedStep "uv upgrade --all" { & $uv tool upgrade --all }

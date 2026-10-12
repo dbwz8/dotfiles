@@ -1,5 +1,6 @@
 #! /usr/bin/env bash
 set -euo pipefail
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/install-timing.sh"
 
 uv_bin() {
   if command -v uv >/dev/null 2>&1; then
@@ -72,25 +73,25 @@ install_uv_tool() {
   "$UV_BIN" tool install "$@"
 }
 
-install_uv_tool aider-chat --force --python python3.12 --with pip aider-chat@latest
-install_uv_tool agent-cli agent-cli
-install_uv_tool asciinema asciinema
-install_uv_tool black black
-install_uv_tool bump-my-version bump-my-version
-install_uv_tool clip-files clip-files
-install_uv_tool conda-lock conda-lock
-install_uv_tool dotbins dotbins
-install_uv_tool dotbot dotbot
-install_uv_tool fileup fileup
-install_uv_tool llm llm --with llm-gemini --with llm-anthropic --with llm-ollama
-with_vibe_wrapper_temporarily_removed install_uv_tool mistral-vibe --python python3.12 mistral-vibe
-install_uv_tool markdown-code-runner markdown-code-runner
-install_uv_tool mypy mypy
-install_uv_tool pre-commit pre-commit --with pre-commit-uv
-install_uv_tool pygount pygount
-install_uv_tool rsync-time-machine rsync-time-machine
-install_uv_tool ruff ruff
-install_uv_tool smassh smassh
-install_uv_tool tuitorial tuitorial
-install_uv_tool unidep "unidep[all]"
-with_vibe_wrapper_temporarily_removed "$UV_BIN" tool upgrade --all
+dotfiles_timed_step "uv install: aider-chat" install_uv_tool aider-chat --force --python python3.12 --with pip aider-chat@latest
+dotfiles_timed_step "uv install: agent-cli" install_uv_tool agent-cli agent-cli
+dotfiles_timed_step "uv install: asciinema" install_uv_tool asciinema asciinema
+dotfiles_timed_step "uv install: black" install_uv_tool black black
+dotfiles_timed_step "uv install: bump-my-version" install_uv_tool bump-my-version bump-my-version
+dotfiles_timed_step "uv install: clip-files" install_uv_tool clip-files clip-files
+dotfiles_timed_step "uv install: conda-lock" install_uv_tool conda-lock conda-lock
+dotfiles_timed_step "uv install: dotbins" install_uv_tool dotbins dotbins
+dotfiles_timed_step "uv install: dotbot" install_uv_tool dotbot dotbot
+dotfiles_timed_step "uv install: fileup" install_uv_tool fileup fileup
+dotfiles_timed_step "uv install: llm" install_uv_tool llm llm --with llm-gemini --with llm-anthropic --with llm-ollama
+dotfiles_timed_step "uv install: mistral-vibe" with_vibe_wrapper_temporarily_removed install_uv_tool mistral-vibe --python python3.12 mistral-vibe
+dotfiles_timed_step "uv install: markdown-code-runner" install_uv_tool markdown-code-runner markdown-code-runner
+dotfiles_timed_step "uv install: mypy" install_uv_tool mypy mypy
+dotfiles_timed_step "uv install: pre-commit" install_uv_tool pre-commit pre-commit --with pre-commit-uv
+dotfiles_timed_step "uv install: pygount" install_uv_tool pygount pygount
+dotfiles_timed_step "uv install: rsync-time-machine" install_uv_tool rsync-time-machine rsync-time-machine
+dotfiles_timed_step "uv install: ruff" install_uv_tool ruff ruff
+dotfiles_timed_step "uv install: smassh" install_uv_tool smassh smassh
+dotfiles_timed_step "uv install: tuitorial" install_uv_tool tuitorial tuitorial
+dotfiles_timed_step "uv install: unidep" install_uv_tool unidep "unidep[all]"
+dotfiles_timed_step "uv upgrade --all" with_vibe_wrapper_temporarily_removed "$UV_BIN" tool upgrade --all

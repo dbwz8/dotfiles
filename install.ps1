@@ -3,6 +3,11 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $RepoRoot
 $env:DOTFILES = $RepoRoot
+. (Join-Path $RepoRoot "scripts\install-timing.ps1")
+Start-DotfilesTimingReport
+$dotfilesTotalTimer = [Diagnostics.Stopwatch]::StartNew()
+$dotfilesTotalResult = "completed"
+try {
 
 $githubAuthValid = $false
 $env:GITHUB_TOKEN = $null
@@ -40,7 +45,7 @@ function Ensure-RequiredSubmodules {
     }
 }
 
-Ensure-RequiredSubmodules
+Invoke-DotfilesTimedStep "Ensure-RequiredSubmodules" { Ensure-RequiredSubmodules }
 
 $gh = Get-Command gh.exe -ErrorAction SilentlyContinue
 if ($gh) {
@@ -158,7 +163,7 @@ function Ensure-Pwsh {
     return $pwshPath
 }
 
-$PwshPath = Ensure-Pwsh
+$PwshPath = Invoke-DotfilesTimedStep "PowerShell" { Ensure-Pwsh }
 
 function Ensure-UserPathEntry {
     param([Parameter(Mandatory = $true)][string]$PathEntry)
@@ -306,9 +311,9 @@ function Ensure-Neovim {
     return $nvimPath
 }
 
-Ensure-Neovim | Out-Null
+Invoke-DotfilesTimedStep "Ensure-Neovim" { Ensure-Neovim } | Out-Null
 
-Invoke-Dotbot
+Invoke-DotfilesTimedStep "Invoke-Dotbot" { Invoke-Dotbot }
 
 $zellijSourceDir = Join-Path $RepoRoot "configs\zellij"
 if (Test-Path $zellijSourceDir) {
@@ -541,24 +546,24 @@ foreach ($profileTarget in $profileTargets) {
     Install-PowerShellProfileBootstrap -TargetPath $profileTarget
 }
 
-& (Join-Path $RepoRoot "scripts\install-wlm.ps1")
+Invoke-DotfilesTimedStep "install-wlm.ps1" { & (Join-Path $RepoRoot "scripts\install-wlm.ps1") }
 
-& (Join-Path $RepoRoot "scripts\install-sudoku.ps1")
+Invoke-DotfilesTimedStep "install-sudoku.ps1" { & (Join-Path $RepoRoot "scripts\install-sudoku.ps1") }
 
-& (Join-Path $RepoRoot "scripts\install-zellij.ps1")
+Invoke-DotfilesTimedStep "install-zellij.ps1" { & (Join-Path $RepoRoot "scripts\install-zellij.ps1") }
 
-& (Join-Path $RepoRoot "scripts\install-openwhispr.ps1")
+Invoke-DotfilesTimedStep "install-openwhispr.ps1" { & (Join-Path $RepoRoot "scripts\install-openwhispr.ps1") }
 
-& (Join-Path $RepoRoot "scripts\install-music-assistant.ps1")
+Invoke-DotfilesTimedStep "install-music-assistant.ps1" { & (Join-Path $RepoRoot "scripts\install-music-assistant.ps1") }
 
-& $PwshPath -NoProfile -ExecutionPolicy Bypass -File (Join-Path $RepoRoot "scripts\install-codex.ps1") -Update
+Invoke-DotfilesTimedStep "install-codex.ps1" { & $PwshPath -NoProfile -ExecutionPolicy Bypass -File (Join-Path $RepoRoot "scripts\install-codex.ps1") -Update }
 
-& (Join-Path $RepoRoot "scripts\install-claude.ps1")
+Invoke-DotfilesTimedStep "install-claude.ps1" { & (Join-Path $RepoRoot "scripts\install-claude.ps1") }
 
 
-& (Join-Path $RepoRoot "scripts\install-go.ps1")
+Invoke-DotfilesTimedStep "install-go.ps1" { & (Join-Path $RepoRoot "scripts\install-go.ps1") }
 
-& (Join-Path $RepoRoot "scripts\sync-uv-tools.ps1")
+Invoke-DotfilesTimedStep "sync-uv-tools.ps1" { & (Join-Path $RepoRoot "scripts\sync-uv-tools.ps1") }
 
 $dotbins = $null
 $dotbinsCommand = Get-Command dotbins.exe -ErrorAction SilentlyContinue
@@ -615,7 +620,7 @@ if ($dotbins) {
         $env:PYTHONIOENCODING = "utf-8"
         $env:PYTHONUTF8 = "1"
         try {
-            & $dotbins sync --current @tools
+            Invoke-DotfilesTimedStep "dotbins sync" { & $dotbins sync --current @tools }
         } finally {
             if ($null -eq $previousPythonIoEncoding) {
                 Remove-Item Env:\PYTHONIOENCODING -ErrorAction SilentlyContinue
@@ -638,4 +643,11 @@ if ($dotbins) {
     }
 } else {
     Write-Warning "dotbins is not installed; skipping CLI tool sync."
+}
+
+} catch {
+    $dotfilesTotalResult = "failed"
+    throw
+} finally {
+    Write-DotfilesTiming "total" $dotfilesTotalTimer $dotfilesTotalResult $null
 }
