@@ -26,6 +26,16 @@ if [[ $- == *i* ]]; then
     alias vim='nvim'
     alias wrap='tput smam'
 
+    ssh() {
+        local ssh_exit_status=0
+        command ssh "$@" || ssh_exit_status=$?
+        if [ -t 0 ] && [ -t 1 ]; then
+            # A broken connection cannot relay the remote TUI's mouse cleanup.
+            printf '\033[?1000l\033[?1002l\033[?1003l\033[?1004l\033[?1005l\033[?1006l\033[?1015l'
+        fi
+        return "$ssh_exit_status"
+    }
+
     aider() {
         local aider_script="${DOTFILES:-$HOME/git/dotfiles}/scripts/aider.sh"
         if [ -f "$aider_script" ]; then
@@ -38,6 +48,8 @@ if [[ $- == *i* ]]; then
     zellij() {
         local zellij_tmp_base="${TMPDIR:-/tmp}/zellij-$(id -u)"
         local zellij_config_args=()
+        local zellij_exit_status=0
+        local zellij_boot_id=unknown
         mkdir -p "$HOME/.cache/zellij" "$HOME/.local/share/zellij"
         mkdir -p "$zellij_tmp_base/zellij-log"
         if [ -n "${XDG_RUNTIME_DIR:-}" ]; then
@@ -46,7 +58,14 @@ if [[ $- == *i* ]]; then
         if [ -n "${WSL_DISTRO_NAME:-}" ] && [ -f "${DOTFILES:-$HOME/git/dotfiles}/configs/zellij/config-wsl.kdl" ]; then
             zellij_config_args=(--config-dir "${DOTFILES:-$HOME/git/dotfiles}/configs/zellij" --config "${DOTFILES:-$HOME/git/dotfiles}/configs/zellij/config-wsl.kdl")
         fi
-        command zellij "${zellij_config_args[@]}" "$@"
+        if [ -r /proc/sys/kernel/random/boot_id ]; then
+            IFS= read -r zellij_boot_id < /proc/sys/kernel/random/boot_id
+        fi
+        # Retain the boot ID to correlate missing exit records with WSL restarts.
+        printf '%s start shell=%s boot=%s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$$" "$zellij_boot_id" >> "$HOME/.cache/zellij/launcher.log"
+        command zellij "${zellij_config_args[@]}" "$@" || zellij_exit_status=$?
+        printf '%s exit shell=%s boot=%s status=%s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$$" "$zellij_boot_id" "$zellij_exit_status" >> "$HOME/.cache/zellij/launcher.log"
+        return "$zellij_exit_status"
     }
     alias zj='zellij'
 fi

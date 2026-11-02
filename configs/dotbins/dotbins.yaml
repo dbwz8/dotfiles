@@ -11,6 +11,16 @@ platforms:
 
 tools:
   ast-grep: ast-grep/ast-grep
+  cloudflared:
+    repo: cloudflare/cloudflared
+    asset_patterns:
+      linux:
+        amd64: ^cloudflared-linux-amd64$
+        arm64: ^cloudflared-linux-arm64$
+      macos:
+        arm64: ^cloudflared-darwin-arm64\.tgz$
+      windows:
+        amd64: ^cloudflared-windows-amd64\.exe$
   delta: dandavison/delta
   duf: 
     repo: muesli/duf
