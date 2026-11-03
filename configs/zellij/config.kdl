@@ -102,6 +102,9 @@ keybinds clear-defaults=true {
     session {
         // Ctrl-q enters this mode; press q to confirm quitting or Esc to cancel.
         bind "q" { Quit; }
+        bind "]" { FocusHostSession; SwitchToMode "normal"; }
+        bind "[" { FocusGuestSession; SwitchToMode "normal"; }
+        bind "f" { ToggleHostFullscreen; SwitchToMode "normal"; }
         bind "a" {
             LaunchOrFocusPlugin "zellij:about" {
                 floating true
