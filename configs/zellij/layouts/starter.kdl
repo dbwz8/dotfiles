@@ -14,12 +14,7 @@ layout {
         pane name="2" size="50%"
     }
 
-    tab name="weckerAA" split_direction="horizontal" {
-        pane name="1" focus=true command="ssh" {
-            args "weckerAA"
-        }
-        pane name="2" size="50%" command="ssh" {
-            args "weckerAA"
-        }
+    tab name="weckerAA" {
+        pane name="1" focus=true
     }
 }
