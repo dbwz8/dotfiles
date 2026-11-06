@@ -18,6 +18,7 @@ if [[ $- == *i* ]]; then
     alias pc='pre-commit run --all-files'
     alias p="pytest"
     alias py="python"
+    alias ssh-weckerAA-remote='bash "${DOTFILES:-$HOME/git/dotfiles}/scripts/reconnect-running.sh" weckerAA-remote'
     alias slurm_rsync="rsync -azvh wecker@obsidian:git/sap/qec_team/data/dbwPlay_save/'*.json' ~/git/sap/qec_team/data/dbwPlay_save"
     alias ts='tmux-start work'
     alias u='cd ..'
