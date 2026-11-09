@@ -11,3 +11,29 @@ qwen_vllm_env="/mnt/d/data/caches/qwen36-vllm/bin/env"
 if [ -f "${qwen_vllm_env}" ]; then
     . "${qwen_vllm_env}"
 fi
+
+# >>> ionq-gar >>>
+# Managed by `ionq-gar install`; remove with `ionq-gar uninstall`.
+# Plain POSIX sh: zsh, bash (including macOS's bash 3.2) and sh reading ~/.profile all run it.
+_ionq_gar_python=/home/wecker/.local/share/uv/tools/ionq-gar/bin/python
+_ionq_gar_url=https://oauth2accesstoken@us-east4-python.pkg.dev/ionq-actions/ionq-apps/simple/
+_ionq_gar_bin=/home/wecker/.local/share/ionq-gar/bin
+if [ -x "$_ionq_gar_python" ]; then
+  # uv gets the index from ionq-gar's block in uv.toml; it only needs to be told to ask keyring.
+  case " ${PIP_EXTRA_INDEX_URL-} " in
+    *" $_ionq_gar_url "*) ;;
+    *) PIP_EXTRA_INDEX_URL="$_ionq_gar_url${PIP_EXTRA_INDEX_URL:+ $PIP_EXTRA_INDEX_URL}" ;;
+  esac
+  UV_KEYRING_PROVIDER=subprocess
+  PIP_KEYRING_PROVIDER=subprocess
+  export PIP_EXTRA_INDEX_URL UV_KEYRING_PROVIDER PIP_KEYRING_PROVIDER
+  # Appended, not prepended: this keyring is only for systems that have no other one.
+  case ":$PATH:" in
+    *":$_ionq_gar_bin:"*) ;;
+    *) PATH="$PATH:$_ionq_gar_bin" ;;
+  esac
+elif grep -qs ionq_gar_keyring "${XDG_CONFIG_HOME:-$HOME/.config}/python_keyring/keyringrc.cfg"; then
+  echo 'ionq-gar: the tool is missing but keyring still uses it, so keyring will fail. See "Recovering from a removed tool" in the ionq-gar README.' >&2
+fi
+unset _ionq_gar_python _ionq_gar_url _ionq_gar_bin
+# <<< ionq-gar <<<
