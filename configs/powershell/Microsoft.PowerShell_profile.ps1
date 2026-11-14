@@ -146,6 +146,13 @@ if ($PSVersionTable.PSVersion.Major -ge 7) {
     }
     # Set DOTFILES_ENABLE_ATUIN_POWERSHELL=0 to disable Atuin integration.
     if ($env:DOTFILES_ENABLE_ATUIN_POWERSHELL -ne "0" -and (Get-Command atuin -ErrorAction SilentlyContinue)) {
+        # Start separately so the Windows daemon cannot inherit a history hook's output pipe.
+        # Otherwise the first command after reboot waits for that pipe until Ctrl-C.
+        # https://github.com/atuinsh/atuin/issues/4655
+        if ($IsWindows -and (atuin config get --resolved daemon.enabled) -eq "true" -and
+            (atuin config get --resolved daemon.autostart) -eq "true") {
+            Start-Process -FilePath (Get-Command atuin -CommandType Application).Source -ArgumentList @("daemon", "start") -WindowStyle Hidden
+        }
         Invoke-Expression (& { (atuin init powershell --disable-up-arrow | Out-String) })
     }
 }
