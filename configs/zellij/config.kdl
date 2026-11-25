@@ -288,6 +288,8 @@ plugins {
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
 }
+session_indicator false
+
 // Use a simplified UI without special fonts (arrow glyphs)
 // Options:
 //   - true
